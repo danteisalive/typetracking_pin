@@ -74,6 +74,8 @@ typedef TypesCount TypesCount;
 
 
 TypesCount TC;
+std::map<int, std::vector<int> >        TypeTreeTID;
+std::map<uint64_t, int>                 HashMapTID;
 
 
 
@@ -328,13 +330,44 @@ int main(INT32 argc, CHAR **argv)
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
 
-    // std::string fileName("merged.hash");
-    // std::map<std::string, TypeNode *> TypeHierarchy;
-    // std::string line;
-    // std::string prefix = "node";
-    // std::ifstream afile;
-    // afile.close();
+    std::string TIDFileName("merged.hash");
+    std::string HashMapFileName("final.hash");
 
+
+    // Replace 'Plop' with your file name.
+    std::ifstream           TIDFile(TIDFileName.c_str());
+    std::ifstream           HashMapFile(HashMapFileName.c_str());
+
+    std::string   line;
+    // Read one line at a time into the variable line:
+    while(std::getline(TIDFile, line))
+    {
+        std::stringstream  lineStream(line);
+
+        int value, key;
+        lineStream >> key;
+        // Read an integer at a time from the line
+        while(lineStream >> value)
+        {
+            // Add the integers from a line to a 1D array (vector)
+            TypeTreeTID[key].push_back(value);
+        }
+    }
+
+    while(std::getline(HashMapFile, line))
+    {
+        std::stringstream  lineStream(line);
+
+        uint64_t  key;
+        int value;
+
+        lineStream >> key;
+
+        // Add the integers from a line to a 1D array (vector)
+        HashMapTID[key] = value;
+
+        if (lineStream >> value) assert(0);
+    }
 
 
     // Never returns
