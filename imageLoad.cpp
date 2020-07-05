@@ -273,35 +273,59 @@ VOID ImageUnload(IMG img, VOID * v)
 
 VOID Trace(TRACE trace, VOID *v)
 {
-    INS head = BBL_InsHead(TRACE_BblHead(trace));
-    
-    INT32 line;
-    INT32 column;
-    string file;
+    if (!RTN_Valid(TRACE_Rtn(trace)))
+        return; 
 
-    PIN_GetSourceLocation(INS_Address(head), &column, &line, &file);
-    if (file != "")
+    if ((!IMG_Valid(SEC_Img(RTN_Sec(TRACE_Rtn(trace))))
+                || !IMG_IsMainExecutable(SEC_Img(RTN_Sec(TRACE_Rtn(trace)))) ))
+        return;
+        
+
+
+    std::string rtn_name = RTN_Name(TRACE_Rtn(trace));
+    if (
+        (rtn_name.find("lowfat_") != std::string::npos)     || 
+        (rtn_name.find("effective_") != std::string::npos)  || 
+        (rtn_name.find("EFFECTIVE_") != std::string::npos)  ||
+        (rtn_name.find("LOWFAT_") != std::string::npos) 
+    )
     {
-        //*out << file << ":" << dec << line << ":" << column << " " << hex;
+        //*out << "Function Name: " << rtn_name << std::endl; 
+    }
+    else 
+    {
+        *out << "Function Name: " << rtn_name << std::endl; 
     }
 
-    RTN rtn = RTN_FindByAddress(INS_Address(head));
+    // INS head = BBL_InsHead(TRACE_BblHead(trace));
+    
+    // INT32 line;
+    // INT32 column;
+    // string file;
+
+    // PIN_GetSourceLocation(INS_Address(head), &column, &line, &file);
+    // if (file != "")
+    // {
+    //     //*out << file << ":" << dec << line << ":" << column << " " << hex;
+    // }
+
+    // RTN rtn = RTN_FindByAddress(INS_Address(head));
 
 
-    if (RTN_Valid(rtn)){
-        IMG img = SEC_Img(RTN_Sec(rtn));
+    // if (RTN_Valid(rtn)){
+    //     IMG img = SEC_Img(RTN_Sec(rtn));
 
-        if (IMG_Valid(img)) {
-            // *out << IMG_Name(img)
-            //      << ":"
-            //      << RTN_Name(rtn)
-            //      << "+"
-            //      << INS_Address(head) - RTN_Address(rtn)
-            //      << " "
-            //      << INS_Disassemble(head)
-            //      << endl;
-        }
-    }
+    //     if (IMG_Valid(img)) {
+    //         // *out << IMG_Name(img)
+    //         //      << ":"
+    //         //      << RTN_Name(rtn)
+    //         //      << "+"
+    //         //      << INS_Address(head) - RTN_Address(rtn)
+    //         //      << " "
+    //         //      << INS_Disassemble(head)
+    //         //      << endl;
+    //     }
+    // }
 }
 
 // This function is called when the application exits
@@ -358,7 +382,7 @@ int main(INT32 argc, CHAR **argv)
     IMG_AddUnloadFunction(ImageUnload, 0);
 
     // if (!KnobImageOnly)
-    //    TRACE_AddInstrumentFunction(Trace, 0);
+    TRACE_AddInstrumentFunction(Trace, 0);
     
 
     // Register Fini to be called when the application exits

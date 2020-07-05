@@ -1,0 +1,141 @@
+Tool loading /home/dante/EffSan/test/Example.out at 0
+Tool loading /lib64/ld-linux-x86-64.so.2 at 0x7fcfd9d93000
+Tool loading [vdso] at 0x7ffd8a34b000
+Tool loading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7fcfc57b5000
+Tool loading /lib/x86_64-linux-gnu/libm.so.6 at 0x7fcfc5417000
+Tool loading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7fcfc51f8000
+Tool loading /lib/x86_64-linux-gnu/librt.so.1 at 0x7fcfc4ff0000
+Tool loading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7fcfc4dec000
+Tool loading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7fcfc4bd4000
+Tool loading /lib/x86_64-linux-gnu/libc.so.6 at 0x7fcfc47e3000
+Function Name: pthread_mutex_init@plt
+Function Name: pthread_mutex_init@plt
+Function Name: .plt
+Function Name: sysconf@plt
+Function Name: sysconf@plt
+Function Name: mmap@plt
+Function Name: mmap@plt
+Function Name: open@plt
+Function Name: open@plt
+Function Name: read@plt
+Function Name: read@plt
+Function Name: unlink@plt
+Function Name: unlink@plt
+Function Name: fcntl@plt
+Function Name: fcntl@plt
+Function Name: ftruncate@plt
+Function Name: ftruncate@plt
+Function Name: mmap@plt
+Function Name: close@plt
+Function Name: close@plt
+Function Name: memset@plt
+Function Name: memset@plt
+Function Name: mprotect@plt
+Function Name: mprotect@plt
+Function Name: mprotect@plt
+Function Name: sigaltstack@plt
+Function Name: sigaltstack@plt
+Function Name: sigaction@plt
+Function Name: sigaction@plt
+Function Name: strlen@plt
+Function Name: strlen@plt
+Function Name: .plt
+Function Name: pthread_mutex_lock@plt
+Function Name: pthread_mutex_lock@plt
+Function Name: pthread_mutex_unlock@plt
+Function Name: pthread_mutex_unlock@plt
+Function Name: mprotect@plt
+Function Name: memcpy@plt
+Function Name: memcpy@plt
+Function Name: _start
+Function Name: __libc_csu_init
+Function Name: _init
+Function Name: _init
+Function Name: __libc_csu_init
+Function Name: __libc_csu_init
+Function Name: __libc_csu_init
+Function Name: sigaction@plt
+Function Name: getenv@plt
+Function Name: getenv@plt
+Function Name: frame_dummy
+Function Name: register_tm_clones
+Function Name: register_tm_clones
+Function Name: main
+Function Name: fprintf@plt
+Function Name: fprintf@plt
+Function Name: main
+Function Name: _ZL8getValueIiET_PS0_i
+Function Name: fprintf@plt
+Function Name: _ZL8getValueIiET_PS0_i
+Function Name: main
+Function Name: main
+Function Name: main
+Function Name: mmap@plt
+Function Name: __libc_malloc@plt
+Function Name: __libc_malloc@plt
+Function Name: backtrace@plt
+Function Name: backtrace@plt
+Function Name: backtrace_symbols@plt
+Function Name: backtrace_symbols@plt
+Function Name: main
+Function Name: main
+Function Name: backtrace_symbols@plt
+Function Name: main
+Function Name: main
+Function Name: _ZL8getValueIdET_PS0_i
+Function Name: _ZL8getValueIdET_PS0_i
+Function Name: main
+Function Name: _ZdaPv
+Function Name: _ZdaPv
+Function Name: _ZdaPv
+Function Name: main
+Function Name: _ZL8getValueIiET_PS0_i
+Function Name: main
+Function Name: __do_global_dtors_aux
+Function Name: deregister_tm_clones
+Function Name: deregister_tm_clones
+Function Name: __do_global_dtors_aux
+Function Name: getrusage@plt
+Function Name: getrusage@plt
+Function Name: getenv@plt
+Function Name: fwrite@plt
+Function Name: fwrite@plt
+Function Name: fputc@plt
+Function Name: fputc@plt
+Function Name: isatty@plt
+Function Name: isatty@plt
+Function Name: sysconf@plt
+Function Name: mincore@plt
+Function Name: mincore@plt
+Function Name: strcmp@plt
+Function Name: strcmp@plt
+Function Name: isatty@plt
+Function Name: fwrite@plt
+Function Name: isatty@plt
+Function Name: strncmp@plt
+Function Name: strncmp@plt
+Function Name: isatty@plt
+Function Name: fprintf@plt
+Function Name: strlen@plt
+Function Name: snprintf@plt
+Function Name: snprintf@plt
+Function Name: strchr@plt
+Function Name: strchr@plt
+Function Name: _IO_putc@plt
+Function Name: _IO_putc@plt
+Function Name: _IO_putc@plt
+Function Name: readlink@plt
+Function Name: readlink@plt
+Function Name: fflush@plt
+Function Name: fflush@plt
+Function Name: _fini
+Tool unloading /home/dante/EffSan/test/Example.out at 0
+Tool unloading /lib64/ld-linux-x86-64.so.2 at 0x7fcfd9d93000
+Tool unloading [vdso] at 0x7ffd8a34b000
+Tool unloading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7fcfc57b5000
+Tool unloading /lib/x86_64-linux-gnu/libm.so.6 at 0x7fcfc5417000
+Tool unloading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7fcfc51f8000
+Tool unloading /lib/x86_64-linux-gnu/librt.so.1 at 0x7fcfc4ff0000
+Tool unloading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7fcfc4dec000
+Tool unloading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7fcfc4bd4000
+Tool unloading /lib/x86_64-linux-gnu/libc.so.6 at 0x7fcfc47e3000
