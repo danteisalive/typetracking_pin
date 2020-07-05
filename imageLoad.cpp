@@ -24,9 +24,9 @@
 #include <iostream>
 #include <dirent.h>
 #include <vector>
-#include <bits/stdc++.h>
-#include <unordered_map>
-#include <queue>
+//#include <bits/stdc++.h>
+// #include <unordered_map>
+// #include <queue>
 
 #include "TypeNode.hh"
 #include "lowfat-ptr-info.hh"
@@ -73,7 +73,7 @@ typedef std::map<uint64_t , std::pair<const char*, uint64_t> > TypesCount;
 typedef TypesCount TypesCount;
 
 
-TypesCount TC;
+TypesCount                              TC;
 std::map<int, std::vector<int> >        TypeTreeTID;
 std::map<uint64_t, int>                 HashMapTID;
 
@@ -103,12 +103,15 @@ VOID docount()
 VOID Arg1Before(CHAR * name, ADDRINT arg1, ADDRINT arg2)
 {
    
+    
+    
     void * ptr = (void*)arg1;
     size_t idx = lowfat_index(ptr);
     if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT || _LOWFAT_MAGICS[idx] == 0)
     {
         return;
     }
+
 
     void *base = lowfat_base(ptr);
 
@@ -117,40 +120,71 @@ VOID Arg1Before(CHAR * name, ADDRINT arg1, ADDRINT arg2)
     base = (void *)(meta + 1);
     const EFFECTIVE_TYPE *t = meta->type;
     
+    if (lowfat_is_heap_ptr(ptr))
+    {
+        //*out << std::dec << "HEAP PTR: " << meta->size << "\n";
+    }
+    else if (lowfat_is_global_ptr(ptr))
+    {
+        //*out << std::dec << "GLOBAL PTR: " << meta->size << "\n";
+    }
+    else if (lowfat_is_stack_ptr(ptr))
+    {
+        //*out << std::dec << "STACK PTR: " << meta->size << "\n";
+    }
+    else 
+        assert(0);
 
-    *out << std::dec << "PTR: " << meta->size << "\n";
-    // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-    // EFFECTIVE_BOUNDS sizes = {0, meta->size};
-    // EFFECTIVE_BOUNDS bounds = bases + sizes;
+    //*out << std::dec << "PTR: " << meta->size << "\n";
 
 
-    // if (EFFECTIVE_UNLIKELY(t == NULL))
+    if (EFFECTIVE_UNLIKELY(t == NULL))
+        return;
     //     t = &EFFECTIVE_TYPE_FREE;
 
-    t = t;
-
+    
     void * t1 = (void*) arg2;
     EFFECTIVE_TYPE * effective_meta = (EFFECTIVE_TYPE*)arg2;
+    effective_meta = effective_meta;
     uint64_t * effective_type = (uint64_t *)t1;
     uint64_t * effective_info = effective_type + 6; // 
     EFFECTIVE_INFO * effective_tid = (EFFECTIVE_INFO *)(*effective_info);
 
     if ( effective_tid->tid_info->num_accesses == 12345)
     {
-        *out << std::dec << effective_tid->name << " " << 
-                            effective_meta->hash << " " <<
-                            effective_meta->hash2 << " " << 
-                            effective_tid->tid_info->tid << " " << 
-                            effective_tid->tid_info->num_accesses <<  std::endl;
+        //  *out << std::dec   << t->info->name << "(" << t->info->tid_info->tid << ")" <<  
+        //                     " " << effective_tid->name << "(" << effective_tid->tid_info->tid << ")" << 
+        //                     std::endl; 
 
-        TypesCount::iterator type_count_iter = TC.find(effective_meta->hash);
+        // *out << std::dec << effective_tid->name << " " << 
+        //                     effective_meta->hash << " " <<
+        //                     effective_meta->hash2 << " " << 
+        //                     effective_tid->tid_info->tid << " " << 
+        //                     effective_tid->tid_info->num_accesses <<  std::endl;
+
+        // TypesCount::iterator type_count_iter = TC.find(effective_meta->hash);
+        // if (type_count_iter == TC.end())
+        // {
+        //     TC.insert(std::make_pair(effective_meta->hash, std::make_pair(effective_tid->name, 0)));
+        // }
+        // else 
+        // {
+        //     if (type_count_iter->second.first != effective_tid->name){
+        //         assert(0);
+        //     }
+        //     else 
+        //     {
+        //         type_count_iter->second.second++;
+        //     }
+        // }
+        TypesCount::iterator type_count_iter = TC.find(t->hash);
         if (type_count_iter == TC.end())
         {
-            TC.insert(std::make_pair(effective_meta->hash, std::make_pair(effective_tid->name, 0)));
+            TC.insert(std::make_pair(t->hash, std::make_pair(t->info->name, 0)));
         }
         else 
         {
-            if (type_count_iter->second.first != effective_tid->name){
+            if (type_count_iter->second.first != t->info->name){
                 assert(0);
             }
             else 
@@ -362,11 +396,10 @@ int main(INT32 argc, CHAR **argv)
         int value;
 
         lineStream >> key;
-
+        lineStream >> value;
         // Add the integers from a line to a 1D array (vector)
         HashMapTID[key] = value;
 
-        if (lineStream >> value) assert(0);
     }
 
 

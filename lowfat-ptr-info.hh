@@ -34,6 +34,30 @@
 
 
 
+//#define LOWFAT_SIZES_PAGES 1
+//#define LOWFAT_REGION_SIZE_SHIFT 36
+#define LOWFAT_STACK_MEMORY_SIZE 17179869184
+#define LOWFAT_GLOBAL_MEMORY_SIZE 17179869184
+#define LOWFAT_HEAP_MEMORY_SIZE 34359672832
+#define LOWFAT_STACK_MEMORY_OFFSET 51539607552
+#define LOWFAT_GLOBAL_MEMORY_OFFSET 34359701504
+#define LOWFAT_HEAP_MEMORY_OFFSET 0
+//#define LOWFAT_STACK_SIZE 67108864
+//#define LOWFAT_PAGE_SIZE 4096
+//#define LOWFAT_HEAP_ASLR_MASK 0xFFFFFFFFull
+//#define LOWFAT_MAX_HEAP_ALLOC_SIZE 17179869184
+// #define LOWFAT_TID_OFFSET 0x2d0
+// #define LOWFAT_JOINID_OFFSET 0x628
+// #define LOWFAT_NO_MEMORY_ALIAS 1
+// #define LOWFAT_NO_PROTECT 1
+// #define LOWFAT_NO_REPLACE_STD_MALLOC 1
+// #define LOWFAT_NO_REPLACE_STD_FREE 1
+// #define LOWFAT_MAX_STACK_ALLOC_SIZE 33554432
+// #define LOWFAT_MAX_GLOBAL_ALLOC_SIZE 67108864
+// #define LOWFAT_MIN_ALLOC_SIZE 16
+// #define LOWFAT_NUM_STACK_REGIONS 53
+// #define LOWFAT_STACK_REGION 63
+
 
 size_t lowfat_sizes[] =
 {
@@ -116,38 +140,38 @@ void *lowfat_region(const void *ptr)
     return (void *)(lowfat_index(ptr) * LOWFAT_REGION_SIZE);
 }
 
-static bool lowfat_is_ptr(const void *ptr)
+bool lowfat_is_ptr(const void *ptr)
 {
     size_t idx = lowfat_index(ptr);
     return (idx != 0 && idx <= LOWFAT_NUM_REGIONS+1);
 }
 
-// static bool lowfat_is_heap_ptr(const void *ptr)
-// {
-//     if (!lowfat_is_ptr(ptr))
-//         return false;
-//     void *heap_lo = lowfat_region(ptr) + LOWFAT_HEAP_MEMORY_OFFSET;
-//     void *heap_hi = heap_lo + LOWFAT_HEAP_MEMORY_SIZE;
-//     return (ptr >= heap_lo && ptr < heap_hi);
-// }
+bool lowfat_is_heap_ptr(const void *ptr)
+{
+    if (!lowfat_is_ptr(ptr))
+        return false;
+    void *heap_lo = lowfat_region(ptr) + LOWFAT_HEAP_MEMORY_OFFSET;
+    void *heap_hi = heap_lo + LOWFAT_HEAP_MEMORY_SIZE;
+    return (ptr >= heap_lo && ptr < heap_hi);
+}
 
-// static bool lowfat_is_stack_ptr(const void *ptr)
-// {
-//     if (!lowfat_is_ptr(ptr))
-//         return false;
-//     void *stack_lo = lowfat_region(ptr) + LOWFAT_STACK_MEMORY_OFFSET;
-//     void *stack_hi = stack_lo + LOWFAT_STACK_MEMORY_SIZE;
-//     return (ptr >= stack_lo && ptr < stack_hi);
-// }
+bool lowfat_is_stack_ptr(const void *ptr)
+{
+    if (!lowfat_is_ptr(ptr))
+        return false;
+    void *stack_lo = lowfat_region(ptr) + LOWFAT_STACK_MEMORY_OFFSET;
+    void *stack_hi = stack_lo + LOWFAT_STACK_MEMORY_SIZE;
+    return (ptr >= stack_lo && ptr < stack_hi);
+}
 
-// static bool lowfat_is_global_ptr(const void *ptr)
-// {
-//     if (!lowfat_is_ptr(ptr))
-//         return false;
-//     void *global_lo = lowfat_region(ptr) + LOWFAT_GLOBAL_MEMORY_OFFSET;
-//     void *global_hi = global_lo + LOWFAT_GLOBAL_MEMORY_SIZE;
-//     return (ptr >= global_lo && ptr < global_hi);
-// }
+bool lowfat_is_global_ptr(const void *ptr)
+{
+    if (!lowfat_is_ptr(ptr))
+        return false;
+    void *global_lo = lowfat_region(ptr) + LOWFAT_GLOBAL_MEMORY_OFFSET;
+    void *global_hi = global_lo + LOWFAT_GLOBAL_MEMORY_SIZE;
+    return (ptr >= global_lo && ptr < global_hi);
+}
 
 size_t lowfat_size(const void *ptr)
 {
