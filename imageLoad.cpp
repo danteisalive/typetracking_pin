@@ -79,6 +79,45 @@ std::map<uint64_t, int>                 HashMapTID;
 
 
 
+static void PrintRegisters(ADDRINT pc , const CONTEXT * ctxt)
+{
+    *out << "-------------------- " << std::hex << pc << std::dec << " ------------------" << std::endl;
+    for (int reg = (int)REG_GR_BASE; reg <= (int)REG_GR_LAST; ++reg)
+    {
+        // For the integer registers, it is safe to use ADDRINT. But make sure to pass a pointer to it.
+        ADDRINT val;
+        PIN_GetContextRegval(ctxt, (REG)reg, reinterpret_cast<UINT8*>(&val));
+
+        void * ptr = (void *) val;
+        std::string ptr_type = "";
+        
+            if (lowfat_is_heap_ptr(ptr))
+            {
+                ptr_type += "(HEAP)";
+            }
+            else if (lowfat_is_global_ptr(ptr))
+            {
+                ptr_type += "(GLOBAL)";
+            }
+            else if (lowfat_is_stack_ptr(ptr))
+            {
+                size_t idx = lowfat_index(ptr);
+                if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT || _LOWFAT_MAGICS[idx] == 0)
+                {
+                    ;
+                }
+                else 
+                {
+                    ptr_type += "(STACK)";
+                }
+                
+            }
+        
+        *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type << endl;
+    }
+
+}
+
 // This function is called before every instruction is executed
 VOID docount() 
 { 
@@ -291,41 +330,47 @@ VOID Trace(TRACE trace, VOID *v)
     )
     {
         //*out << "Function Name: " << rtn_name << std::endl; 
+        return;
     }
     else 
     {
-        *out << "Function Name: " << rtn_name << std::endl; 
+        //*out << "Function Name: " << rtn_name << std::endl; 
     }
 
-    // INS head = BBL_InsHead(TRACE_BblHead(trace));
-    
-    // INT32 line;
-    // INT32 column;
-    // string file;
+    //TRACE_InsertCall(trace, IPOINT_BEFORE, (AFUNPTR)PrintRegisters, IARG_CONST_CONTEXT, IARG_END);
 
-    // PIN_GetSourceLocation(INS_Address(head), &column, &line, &file);
-    // if (file != "")
-    // {
-    //     //*out << file << ":" << dec << line << ":" << column << " " << hex;
-    // }
+    // Insert a call to record the effective address.
+    for(BBL bbl = TRACE_BblHead(trace); BBL_Valid(bbl); bbl=BBL_Next(bbl))
+    {
+        for(INS ins = BBL_InsHead(bbl); INS_Valid(ins); ins=INS_Next(ins))
+        {
+            
+            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRegisters, IARG_INST_PTR , IARG_CONST_CONTEXT, IARG_END);
+            // if(INS_IsMemoryRead(ins) && INS_IsStandardMemop(ins))
+            // {
+            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
+            //                          IARG_MEMORYREAD_EA, offsetof(struct MEMREF, ea),
+            //                          IARG_END);
+            // }
 
-    // RTN rtn = RTN_FindByAddress(INS_Address(head));
+            // if (INS_HasMemoryRead2(ins) && INS_IsStandardMemop(ins))
+            // {
+            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
+            //                          IARG_MEMORYREAD2_EA, offsetof(struct MEMREF, ea),
+            //                          IARG_END);
+            // }
 
-
-    // if (RTN_Valid(rtn)){
-    //     IMG img = SEC_Img(RTN_Sec(rtn));
-
-    //     if (IMG_Valid(img)) {
-    //         // *out << IMG_Name(img)
-    //         //      << ":"
-    //         //      << RTN_Name(rtn)
-    //         //      << "+"
-    //         //      << INS_Address(head) - RTN_Address(rtn)
-    //         //      << " "
-    //         //      << INS_Disassemble(head)
-    //         //      << endl;
-    //     }
-    // }
+            // if(INS_IsMemoryWrite(ins) && INS_IsStandardMemop(ins))
+            // {
+            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
+            //                          IARG_MEMORYWRITE_EA, offsetof(struct MEMREF, ea),
+            //                          IARG_END);
+            // }
+        }
+    }
 }
 
 // This function is called when the application exits
