@@ -118,6 +118,14 @@ static void PrintRegisters(ADDRINT pc , const CONTEXT * ctxt)
 
 }
 
+static void PrintRRegisters_1(CHAR* where, string *disass, ADDRINT pc ,  string *reg_name, UINT64 val)
+{
+    *out << where << ": " << std::hex << pc << ": "<< *disass << 
+            " => "<< *reg_name << "(" << val << ")" <<  std::endl;
+    
+
+}
+
 // This function is called before every instruction is executed
 VOID docount() 
 { 
@@ -386,29 +394,83 @@ VOID Fini(INT32 code, VOID *v)
 // Pin calls this function every time a new instruction is encountered
 VOID Instruction(INS ins, VOID *v)
 {
+
     // Insert a call to docount before every instruction, no arguments are passed
     INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
 
-    // RTN rtn = RTN_FindByAddress(INS_Address(ins));
-    // std::string rtn_name = "UNK";
-    // if (RTN_Valid(rtn))
-    //     rtn_name = RTN_Name(rtn);
+    if (!RTN_Valid(INS_Rtn(ins)))
+        return; 
 
-    // if (rtn_name != "UNK" && rtn_name == "main")
-    // {
-    //     *out << "\n" << INS_Disassemble(ins) << "\nread:";
+    if ((!IMG_Valid(SEC_Img(RTN_Sec(INS_Rtn(ins))))
+                || !IMG_IsMainExecutable(SEC_Img(RTN_Sec(INS_Rtn(ins)))) ))
+        return;
+        
+
+
+    std::string rtn_name = RTN_Name(INS_Rtn(ins));
+    if (
+        (rtn_name.find("lowfat_") != std::string::npos)     || 
+        (rtn_name.find("effective_") != std::string::npos)  || 
+        (rtn_name.find("EFFECTIVE_") != std::string::npos)  ||
+        (rtn_name.find("LOWFAT_") != std::string::npos) 
+    )
+    {
+        //*out << "Function Name: " << rtn_name << std::endl; 
+        return;
+    }
+    else 
+    {
+        //*out << "Function Name: " << rtn_name << std::endl; 
+    }
+
+    //INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRegisters, IARG_INST_PTR , IARG_CONST_CONTEXT, IARG_END);
+
+    switch (INS_MaxNumRRegs(ins))
+    {
+        case 1:
+        {
+            if (REG_is_gr(INS_RegR(ins, 0)))
+            {
+                std::string * dis = new std::string(INS_Disassemble(ins)); 
+                std::string * reg_name = new std::string(REG_StringShort(INS_RegR(ins, 0)));
+
+                INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRRegisters_1, 
+                                IARG_ADDRINT, "Before",
+                                IARG_PTR, dis, 
+                                IARG_INST_PTR, 
+                                IARG_PTR, reg_name,
+                                IARG_REG_VALUE, INS_RegR(ins, 0),
+                                IARG_END);
+                if (INS_IsValidForIpointAfter(ins))
+                    INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintRRegisters_1, 
+                                IARG_ADDRINT, "After",
+                                IARG_PTR, dis, 
+                                IARG_INST_PTR, 
+                                IARG_PTR, reg_name,
+                                IARG_REG_VALUE, INS_RegR(ins, 0),
+                                IARG_END);
+            }
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+
+    // *out << "\n" << INS_Disassemble(ins) << "\nread:";
                     
-    //     for (UINT32 i = 0; i < INS_MaxNumRRegs(ins); i++)
-    //     {
-    //         *out << " " << REG_StringShort(INS_RegR(ins, i));
-    //     }
-    //     *out << "\nwrites:";
-    //     for (UINT32 i = 0; i < INS_MaxNumWRegs(ins); i++)
-    //     {
-    //         *out << " " << REG_StringShort(INS_RegW(ins, i));
-    //     }
-    //     *out << std::endl;
+    // for (UINT32 i = 0; i < INS_MaxNumRRegs(ins); i++)
+    // {
+    //     *out << " " << REG_StringShort(INS_RegR(ins, i));
     // }
+    // *out << "\nwrites:";
+    // for (UINT32 i = 0; i < INS_MaxNumWRegs(ins); i++)
+    // {
+    //     *out << " " << REG_StringShort(INS_RegW(ins, i));
+    // }
+    //     *out << std::endl;
+    
 }
 
 int main(INT32 argc, CHAR **argv)
@@ -426,8 +488,7 @@ int main(INT32 argc, CHAR **argv)
     IMG_AddInstrumentFunction(ImageLoad, 0);
     IMG_AddUnloadFunction(ImageUnload, 0);
 
-    // if (!KnobImageOnly)
-    TRACE_AddInstrumentFunction(Trace, 0);
+    //TRACE_AddInstrumentFunction(Trace, 0);
     
 
     // Register Fini to be called when the application exits
