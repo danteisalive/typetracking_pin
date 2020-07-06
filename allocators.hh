@@ -17,16 +17,42 @@ extern ofstream *out;
 
 static void PrintRRegisters_1(CHAR* where, string *disass, ADDRINT pc ,  string *reg_name, UINT64 val)
 {
-    *out << where << ": " << std::hex << pc << ": "<< *disass << 
-            " => "<< *reg_name << "(" << val << ")" <<  std::endl;
+    *out << "PrintRRegisters_1: " << where << ": " << std::hex << pc << ": "<< *disass << 
+            " => "<< *reg_name << "(" << val << ")" <<  
+            std::endl << std::endl ;
     
 
 }
 
+static void PrintRRegisters_2(CHAR* where, string *disass, ADDRINT pc ,  
+                            string *reg_name_0, UINT64 val_0, 
+                            string *reg_name_1, UINT64 val_1)
+{
+    *out << "PrintRRegisters_2: " << where << ": " << std::hex << pc << ": "<< *disass << " => "<< 
+            *reg_name_0 << "(" << val_0 << ") " <<  
+            *reg_name_1 << "(" << val_1 << ") " <<  
+            std::endl << std::endl ;
+    
+}
+
+static void PrintRRegisters_3(CHAR* where, string *disass, ADDRINT pc ,  
+                            string *reg_name_0, UINT64 val_0, 
+                            string *reg_name_1, UINT64 val_1,
+                            string *reg_name_2, UINT64 val_2)
+{
+    *out << "PrintRRegisters_3: " << where << ": " << std::hex << pc << ": "<< *disass << " => "<< 
+            *reg_name_0 << "(" << val_0 << ") " <<  
+            *reg_name_1 << "(" << val_1 << ") " <<  
+            *reg_name_2 << "(" << val_2 << ") " <<  
+            std::endl << std::endl ;
+    
+}
+
 static void PrintWRegisters_1(CHAR* where, string *disass, ADDRINT pc ,  string *reg_name, UINT64 val)
 {
-    *out << where << ": " << std::hex << pc << ": "<< *disass << 
-            " => "<< *reg_name << "(" << val << ")" <<  std::endl;
+    *out << "PrintWRegisters_1: "  << where << ": " << std::hex << pc << ": "<< *disass << 
+            " => "<< *reg_name << "(" << val << ")" <<  
+            std::endl << std::endl ;
     
 
 }
