@@ -51,11 +51,11 @@ using std::atoi;
 
 ofstream *out=0;
 
-static UINT64 NumOfCalls = 0; 
+UINT64 NumOfCalls = 0; 
 
 // The running count of instructions is kept here
 // make it static to help the compiler optimize docount
-static UINT64 icount = 0;
+UINT64 icount = 0;
 
 #define EFFECTIVETYPECHECK "effective_type_check"
 
@@ -70,8 +70,7 @@ KNOB<BOOL> KnobImageOnly(KNOB_MODE_WRITEONCE, "pintool",
     "l", "0", "List the loaded images");
 
 
-typedef std::map<uint64_t , std::pair<const char*, uint64_t> > TypesCount;
-typedef TypesCount TypesCount;
+
 
 
 TypesCount                              TC;
@@ -80,30 +79,6 @@ std::map<uint64_t, int>                 HashMapTID;
 
 
 
-
-
-
-
-// This function is called before every instruction is executed
-VOID docount() 
-{ 
-    icount++; 
-    uint64_t nonzero_tid = 0;
-    if (icount % 100000000 == 0){
-        //*out << std::dec << icount/100000000 << " " << NumOfCalls << endl;
-        
-        for (TypesCount::iterator it = TC.begin(); it != TC.end(); it++)
-        {
-            if (it->second.second != 0){
-                *out << std::dec << it->second.second << " ";
-                it->second.second = 0;
-                nonzero_tid++;
-            }
-        }
-        *out <<  nonzero_tid  << std::endl;
-        NumOfCalls = 0;
-    }
-}
 
 VOID Arg1Before(CHAR * name, ADDRINT arg1, ADDRINT arg2)
 {
@@ -349,209 +324,7 @@ VOID Fini(INT32 code, VOID *v)
 }
 
 
-// Pin calls this function every time a new instruction is encountered
-VOID Instruction(INS ins, VOID *v)
-{
 
-    // Insert a call to docount before every instruction, no arguments are passed
-    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
-
-    if (!RTN_Valid(INS_Rtn(ins)))
-        return; 
-
-    if ((!IMG_Valid(SEC_Img(RTN_Sec(INS_Rtn(ins))))
-                || !IMG_IsMainExecutable(SEC_Img(RTN_Sec(INS_Rtn(ins)))) ))
-        return;
-        
-
-    // SANITIZING SOME OF THE EFFECTIVE AND LOWFAT FUNCTIONS
-    std::string rtn_name = RTN_Name(INS_Rtn(ins));
-    if (
-        (rtn_name.find("lowfat_") != std::string::npos)     || 
-        (rtn_name.find("effective_") != std::string::npos)  || 
-        (rtn_name.find("EFFECTIVE_") != std::string::npos)  ||
-        (rtn_name.find("LOWFAT_") != std::string::npos) 
-    )
-    {
-        //*out << "Function Name: " << rtn_name << std::endl; 
-        return;
-    }
-    else 
-    {
-        //*out << "Function Name: " << rtn_name << std::endl; 
-    }
-
-    //IN CASE WE NEED THE WHOLE CONTEXT
-    //INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRegisters, IARG_INST_PTR , IARG_CONST_CONTEXT, IARG_END);
-
-    std::vector<UINT32> maxNumRRegs;
-    std::vector<UINT32> maxNumWRegs;
-    for (UINT32 i = 0; i < INS_MaxNumRRegs(ins); i++)
-    {
-        if (REG_is_gr(INS_RegR(ins, i))) maxNumRRegs.push_back(i);
-    }
-    for (UINT32 i = 0; i < INS_MaxNumWRegs(ins); i++)
-    {
-        if (REG_is_gr(INS_RegW(ins, i))) maxNumWRegs.push_back(i);
-    }
-
-    switch (maxNumRRegs.size())
-    {
-        case 1:
-        {
-            std::string * dis = new std::string(INS_Disassemble(ins)); 
-            std::string * reg_name = new std::string(REG_StringShort(INS_RegR(ins, maxNumRRegs[0])));
-
-            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRRegisters_1, 
-                                IARG_ADDRINT, "Read Before",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[0]),
-                                IARG_END);
-            if (INS_IsValidForIpointAfter(ins))
-                INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintRRegisters_1, 
-                                IARG_ADDRINT, "Read After",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[0]),
-                                IARG_END);
-            
-            break;
-        }
-        case 2:
-        {
-            std::string * dis = new std::string(INS_Disassemble(ins)); 
-            std::string * reg_name_0 = new std::string(REG_StringShort(INS_RegR(ins, maxNumRRegs[0])));
-            std::string * reg_name_1 = new std::string(REG_StringShort(INS_RegR(ins, maxNumRRegs[1])));
-
-            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRRegisters_2, 
-                                IARG_ADDRINT, "Read Before",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name_0,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[0]),
-                                IARG_PTR, reg_name_1,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[1]),
-                                IARG_END);
-            if (INS_IsValidForIpointAfter(ins))
-                INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintRRegisters_2, 
-                                IARG_ADDRINT, "Read After",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name_0,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[0]),
-                                IARG_PTR, reg_name_1,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[1]),
-                                IARG_END);
-            
-            break;
-        }
-        case 3:
-        {
-            std::string * dis = new std::string(INS_Disassemble(ins)); 
-            std::string * reg_name_0 = new std::string(REG_StringShort(INS_RegR(ins, maxNumRRegs[0])));
-            std::string * reg_name_1 = new std::string(REG_StringShort(INS_RegR(ins, maxNumRRegs[1])));
-            std::string * reg_name_2 = new std::string(REG_StringShort(INS_RegR(ins, maxNumRRegs[2])));
-
-            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRRegisters_3, 
-                                IARG_ADDRINT, "Read Before",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name_0,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[0]),
-                                IARG_PTR, reg_name_1,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[1]),
-                                IARG_PTR, reg_name_2,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[2]),
-                                IARG_END);
-            if (INS_IsValidForIpointAfter(ins))
-                INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintRRegisters_3, 
-                                IARG_ADDRINT, "Read After",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name_0,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[0]),
-                                IARG_PTR, reg_name_1,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[1]),
-                                IARG_PTR, reg_name_2,
-                                IARG_REG_VALUE, INS_RegR(ins, maxNumRRegs[2]),
-                                IARG_END);
-            
-            break;
-        }
-        default:
-        {
-            if (maxNumRRegs.size() >= 4)    {std::cerr << "maxNumRRegs.size() = " << maxNumRRegs.size() << std::endl; assert(0);}
-            else                            break;
-        }
-    }
-
-    switch (maxNumWRegs.size())
-    {
-        case 1:
-        {
-            
-            std::string * dis = new std::string(INS_Disassemble(ins)); 
-            std::string * reg_name = new std::string(REG_StringShort(INS_RegW(ins, maxNumWRegs[0])));
-
-            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintWRegisters_1, 
-                                IARG_ADDRINT, "Write Before",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name,
-                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[0]),
-                                IARG_END);
-            if (INS_IsValidForIpointAfter(ins))
-                INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintWRegisters_1, 
-                                IARG_ADDRINT, "Write After",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name,
-                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[0]),
-                                IARG_END);
-            
-            break;
-        }
-        case 2:
-        {
-            std::string * dis = new std::string(INS_Disassemble(ins)); 
-            std::string * reg_name_0 = new std::string(REG_StringShort(INS_RegW(ins, maxNumWRegs[0])));
-            std::string * reg_name_1 = new std::string(REG_StringShort(INS_RegW(ins, maxNumWRegs[1])));
-
-            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintWRegisters_2, 
-                                IARG_ADDRINT, "Write Before",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name_0,
-                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[0]),
-                                IARG_PTR, reg_name_1,
-                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[1]),
-                                IARG_END);
-            if (INS_IsValidForIpointAfter(ins))
-                INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintWRegisters_2, 
-                                IARG_ADDRINT, "Write After",
-                                IARG_PTR, dis, 
-                                IARG_INST_PTR, 
-                                IARG_PTR, reg_name_0,
-                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[0]),
-                                IARG_PTR, reg_name_1,
-                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[1]),
-                                IARG_END);
-            
-            break;
-        }
-        default:
-        {
-            if (maxNumWRegs.size() >= 3)    {std::cerr << "maxNumWRegs.size() = " << maxNumWRegs.size() << std::endl; assert(0);}
-            else                            break;
-        }
-    }
-
-
-    
-}
 
 int main(INT32 argc, CHAR **argv)
 {
@@ -671,4 +444,27 @@ VOID Instruction(INS ins, VOID *v)
     PIN_GetContextRegval(ctx, REG_SEG_GS_BASE, reinterpret_cast<UINT8*>(&regval));
     PIN_GetContextRegval(ctx, REG_SEG_FS_BASE, reinterpret_cast<UINT8*>(&regval));   
 }   
+*/
+
+/*
+static void PrintRegisters(const CONTEXT * ctxt)
+{
+    if (!printRegsNow) return;
+    static const UINT stRegSize = REG_Size(REG_ST_BASE);
+    for (int reg = (int)REG_GR_BASE; reg <= (int)REG_GR_LAST; ++reg)
+    {
+        // For the integer registers, it is safe to use ADDRINT. But make sure to pass a pointer to it.
+        ADDRINT val;
+        PIN_GetContextRegval(ctxt, (REG)reg, reinterpret_cast<UINT8*>(&val));
+        OutFile << REG_StringShort((REG)reg) << ": 0x" << hex << val << endl;
+    }
+    for (int reg = (int)REG_ST_BASE; reg <= (int)REG_ST_LAST; ++reg)
+    {
+        // For the x87 FPU stack registers, using PIN_REGISTER ensures a large enough buffer.
+        PIN_REGISTER val;
+        PIN_GetContextRegval(ctxt, (REG)reg, reinterpret_cast<UINT8*>(&val));
+        OutFile << REG_StringShort((REG)reg) << ": " << Val2Str(&val, stRegSize) << endl;
+    }
+}
+
 */

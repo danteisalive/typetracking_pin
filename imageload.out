@@ -1,1838 +1,1330 @@
 Tool loading /home/dante/EffSan/test/Example.out at 0
-Tool loading /lib64/ld-linux-x86-64.so.2 at 0x7f23d8e26000
-Tool loading [vdso] at 0x7ffc7638c000
-Tool loading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7f23c4848000
-Tool loading /lib/x86_64-linux-gnu/libm.so.6 at 0x7f23c44aa000
-Tool loading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7f23c428b000
-Tool loading /lib/x86_64-linux-gnu/librt.so.1 at 0x7f23c4083000
-Tool loading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7f23c3e7f000
-Tool loading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7f23c3c67000
-Tool loading /lib/x86_64-linux-gnu/libc.so.6 at 0x7f23c3876000
-PrintRRegisters_1: Read Before: 0x4034c6: push 0x27 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x4034c6: push 0x27 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x4034c6: push 0x27 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x4034c6: push 0x27 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403316: push 0xc => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x403316: push 0xc => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x403316: push 0xc => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x403316: push 0xc => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403536: push 0x2e => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x403536: push 0x2e => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x403536: push 0x2e => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x403536: push 0x2e => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403336: push 0xe => rsp(0x7ffc7633e3b8)
-
-PrintWRegisters_1: Write Before: 0x403336: push 0xe => rsp(0x7ffc7633e3b8)
-
-PrintRRegisters_1: Read After: 0x403336: push 0xe => rsp(0x7ffc7633e3b0)
-
-PrintWRegisters_1: Write After: 0x403336: push 0xe => rsp(0x7ffc7633e3b0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3b0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3b0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintRRegisters_1: Read Before: 0x403486: push 0x23 => rsp(0x7ffc7633e3b8)
-
-PrintWRegisters_1: Write Before: 0x403486: push 0x23 => rsp(0x7ffc7633e3b8)
-
-PrintRRegisters_1: Read After: 0x403486: push 0x23 => rsp(0x7ffc7633e3b0)
-
-PrintWRegisters_1: Write After: 0x403486: push 0x23 => rsp(0x7ffc7633e3b0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3b0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3b0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintRRegisters_1: Read Before: 0x403296: push 0x4 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x403296: push 0x4 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x403296: push 0x4 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x403296: push 0x4 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x4032e6: push 0x9 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x4032e6: push 0x9 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x4032e6: push 0x9 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x4032e6: push 0x9 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403456: push 0x20 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x403456: push 0x20 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x403456: push 0x20 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x403456: push 0x20 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403576: push 0x32 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x403576: push 0x32 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x403576: push 0x32 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x403576: push 0x32 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x4032b6: push 0x6 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x4032b6: push 0x6 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x4032b6: push 0x6 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x4032b6: push 0x6 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x4034e6: push 0x29 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x4034e6: push 0x29 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x4034e6: push 0x29 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x4034e6: push 0x29 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403556: push 0x30 => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x403556: push 0x30 => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x403556: push 0x30 => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x403556: push 0x30 => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403426: push 0x1d => rsp(0x7ffc7633e3f8)
-
-PrintWRegisters_1: Write Before: 0x403426: push 0x1d => rsp(0x7ffc7633e3f8)
-
-PrintRRegisters_1: Read After: 0x403426: push 0x1d => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write After: 0x403426: push 0x1d => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3f0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3e8)
-
-PrintRRegisters_1: Read Before: 0x403286: push 0x3 => rsp(0x7ffc7633e3b0)
-
-PrintWRegisters_1: Write Before: 0x403286: push 0x3 => rsp(0x7ffc7633e3b0)
-
-PrintRRegisters_1: Read After: 0x403286: push 0x3 => rsp(0x7ffc7633e3a8)
-
-PrintWRegisters_1: Write After: 0x403286: push 0x3 => rsp(0x7ffc7633e3a8)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a0)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a0)
-
-PrintRRegisters_1: Read Before: 0x403496: push 0x24 => rsp(0x7ffc7633e370)
-
-PrintWRegisters_1: Write Before: 0x403496: push 0x24 => rsp(0x7ffc7633e370)
-
-PrintRRegisters_1: Read After: 0x403496: push 0x24 => rsp(0x7ffc7633e368)
-
-PrintWRegisters_1: Write After: 0x403496: push 0x24 => rsp(0x7ffc7633e368)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e368)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e368)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e360)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e360)
-
-PrintRRegisters_1: Read Before: 0x403356: push 0x10 => rsp(0x7ffc7633e370)
-
-PrintWRegisters_1: Write Before: 0x403356: push 0x10 => rsp(0x7ffc7633e370)
-
-PrintRRegisters_1: Read After: 0x403356: push 0x10 => rsp(0x7ffc7633e368)
-
-PrintWRegisters_1: Write After: 0x403356: push 0x10 => rsp(0x7ffc7633e368)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e368)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e368)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e360)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e360)
-
-PrintRRegisters_1: Read Before: 0x403366: push 0x11 => rsp(0x7ffc7633e3b0)
-
-PrintWRegisters_1: Write Before: 0x403366: push 0x11 => rsp(0x7ffc7633e3b0)
-
-PrintRRegisters_1: Read After: 0x403366: push 0x11 => rsp(0x7ffc7633e3a8)
-
-PrintWRegisters_1: Write After: 0x403366: push 0x11 => rsp(0x7ffc7633e3a8)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a8)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a0)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x7ffc7633e3a0)
-
-PrintRRegisters_1: Read Before: 0x403592: mov r9, rdx => rdx(0x7f23d8e369a0)
-
-PrintWRegisters_1: Write Before: 0x403592: mov r9, rdx => r9(0)
-
-PrintRRegisters_1: Read After: 0x403592: mov r9, rdx => rdx(0x7f23d8e369a0)
-
-PrintWRegisters_1: Write After: 0x403592: mov r9, rdx => r9(0x7f23d8e369a0)
-
-PrintRRegisters_1: Read Before: 0x403595: pop rsi => rsp(0x3fd67ffe540)
-
-PrintWRegisters_2: Write Before: 0x403595: pop rsi => rsi(0x7f23d904f700) rsp(0x3fd67ffe540) 
-
-PrintRRegisters_1: Read After: 0x403595: pop rsi => rsp(0x3fd67ffe548)
-
-PrintWRegisters_2: Write After: 0x403595: pop rsi => rsi(0x1) rsp(0x3fd67ffe548) 
-
-PrintRRegisters_1: Read Before: 0x403596: mov rdx, rsp => rsp(0x3fd67ffe548)
-
-PrintWRegisters_1: Write Before: 0x403596: mov rdx, rsp => rdx(0x7f23d8e369a0)
-
-PrintRRegisters_1: Read After: 0x403596: mov rdx, rsp => rsp(0x3fd67ffe548)
-
-PrintWRegisters_1: Write After: 0x403596: mov rdx, rsp => rdx(0x3fd67ffe548)
-
-PrintRRegisters_1: Read Before: 0x403599: and rsp, 0xfffffffffffffff0 => rsp(0x3fd67ffe548)
-
-PrintWRegisters_1: Write Before: 0x403599: and rsp, 0xfffffffffffffff0 => rsp(0x3fd67ffe548)
-
-PrintRRegisters_1: Read After: 0x403599: and rsp, 0xfffffffffffffff0 => rsp(0x3fd67ffe540)
-
-PrintWRegisters_1: Write After: 0x403599: and rsp, 0xfffffffffffffff0 => rsp(0x3fd67ffe540)
-
-PrintRRegisters_2: Read Before: 0x40359d: push rax => rax(0x1c) rsp(0x3fd67ffe540) 
-
-PrintWRegisters_1: Write Before: 0x40359d: push rax => rsp(0x3fd67ffe540)
-
-PrintRRegisters_2: Read After: 0x40359d: push rax => rax(0x1c) rsp(0x3fd67ffe538) 
-
-PrintWRegisters_1: Write After: 0x40359d: push rax => rsp(0x3fd67ffe538)
-
-PrintRRegisters_2: Read Before: 0x40359e: push rsp => rsp(0x3fd67ffe538) rsp(0x3fd67ffe538) 
-
-PrintWRegisters_1: Write Before: 0x40359e: push rsp => rsp(0x3fd67ffe538)
-
-PrintRRegisters_2: Read After: 0x40359e: push rsp => rsp(0x3fd67ffe530) rsp(0x3fd67ffe530) 
-
-PrintWRegisters_1: Write After: 0x40359e: push rsp => rsp(0x3fd67ffe530)
-
-PrintWRegisters_1: Write Before: 0x40359f: mov r8, 0x409a10 => r8(0x7f23c3c62d80)
-
-PrintWRegisters_1: Write After: 0x40359f: mov r8, 0x409a10 => r8(0x409a10)
-
-PrintWRegisters_1: Write Before: 0x4035a6: mov rcx, 0x4099a0 => rcx(0x60)
-
-PrintWRegisters_1: Write After: 0x4035a6: mov rcx, 0x4099a0 => rcx(0x4099a0)
-
-PrintWRegisters_1: Write Before: 0x4035ad: mov rdi, 0x409890 => rdi(0x1)
-
-PrintWRegisters_1: Write After: 0x4035ad: mov rdi, 0x409890 => rdi(0x409890)
-
-PrintRRegisters_1: Read Before: 0x4035b4: call qword ptr [rip+0xaa36] => rsp(0x3fd67ffe530)
-
-PrintWRegisters_1: Write Before: 0x4035b4: call qword ptr [rip+0xaa36] => rsp(0x3fd67ffe530)
-
-PrintRRegisters_2: Read Before: 0x4099a0: push r15 => r15(0) rsp(0x3fd67ffe468) 
-
-PrintWRegisters_1: Write Before: 0x4099a0: push r15 => rsp(0x3fd67ffe468)
-
-PrintRRegisters_2: Read After: 0x4099a0: push r15 => r15(0) rsp(0x3fd67ffe460) 
-
-PrintWRegisters_1: Write After: 0x4099a0: push r15 => rsp(0x3fd67ffe460)
-
-PrintRRegisters_2: Read Before: 0x4099a2: push r14 => r14(0) rsp(0x3fd67ffe460) 
-
-PrintWRegisters_1: Write Before: 0x4099a2: push r14 => rsp(0x3fd67ffe460)
-
-PrintRRegisters_2: Read After: 0x4099a2: push r14 => r14(0) rsp(0x3fd67ffe458) 
-
-PrintWRegisters_1: Write After: 0x4099a2: push r14 => rsp(0x3fd67ffe458)
-
-PrintRRegisters_1: Read Before: 0x4099a4: mov r15, rdx => rdx(0x3fd67ffe558)
-
-PrintWRegisters_1: Write Before: 0x4099a4: mov r15, rdx => r15(0)
-
-PrintRRegisters_1: Read After: 0x4099a4: mov r15, rdx => rdx(0x3fd67ffe558)
-
-PrintWRegisters_1: Write After: 0x4099a4: mov r15, rdx => r15(0x3fd67ffe558)
-
-PrintRRegisters_2: Read Before: 0x4099a7: push r13 => r13(0x3fd67ffe540) rsp(0x3fd67ffe458) 
-
-PrintWRegisters_1: Write Before: 0x4099a7: push r13 => rsp(0x3fd67ffe458)
-
-PrintRRegisters_2: Read After: 0x4099a7: push r13 => r13(0x3fd67ffe540) rsp(0x3fd67ffe450) 
-
-PrintWRegisters_1: Write After: 0x4099a7: push r13 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x4099a9: push r12 => r12(0x403590) rsp(0x3fd67ffe450) 
-
-PrintWRegisters_1: Write Before: 0x4099a9: push r12 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read After: 0x4099a9: push r12 => r12(0x403590) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write After: 0x4099a9: push r12 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_1: Write Before: 0x4099ab: lea r12, ptr [rip+0x4026] => r12(0x403590)
-
-PrintWRegisters_1: Write After: 0x4099ab: lea r12, ptr [rip+0x4026] => r12(0x40d9d8)
-
-PrintRRegisters_2: Read Before: 0x4099b2: push rbp => rbp(0x4099a0) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x4099b2: push rbp => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x4099b2: push rbp => rbp(0x4099a0) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x4099b2: push rbp => rsp(0x3fd67ffe440)
-
-PrintWRegisters_1: Write Before: 0x4099b3: lea rbp, ptr [rip+0x4036] => rbp(0x4099a0)
-
-PrintWRegisters_1: Write After: 0x4099b3: lea rbp, ptr [rip+0x4036] => rbp(0x40d9f0)
-
-PrintRRegisters_2: Read Before: 0x4099ba: push rbx => rbx(0) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x4099ba: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read After: 0x4099ba: push rbx => rbx(0) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write After: 0x4099ba: push rbx => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x4099be: mov r14, rsi => rsi(0x3fd67ffe548)
-
-PrintWRegisters_1: Write Before: 0x4099be: mov r14, rsi => r14(0)
-
-PrintRRegisters_1: Read After: 0x4099be: mov r14, rsi => rsi(0x3fd67ffe548)
-
-PrintWRegisters_1: Write After: 0x4099be: mov r14, rsi => r14(0x3fd67ffe548)
-
-PrintRRegisters_2: Read Before: 0x4099c1: sub rbp, r12 => rbp(0x40d9f0) r12(0x40d9d8) 
-
-PrintWRegisters_1: Write Before: 0x4099c1: sub rbp, r12 => rbp(0x40d9f0)
-
-PrintRRegisters_2: Read After: 0x4099c1: sub rbp, r12 => rbp(0x18) r12(0x40d9d8) 
-
-PrintWRegisters_1: Write After: 0x4099c1: sub rbp, r12 => rbp(0x18)
-
-PrintRRegisters_1: Read Before: 0x4099c4: sub rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write Before: 0x4099c4: sub rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read After: 0x4099c4: sub rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write After: 0x4099c4: sub rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x4099c8: sar rbp, 0x3 => rbp(0x18)
-
-PrintWRegisters_1: Write Before: 0x4099c8: sar rbp, 0x3 => rbp(0x18)
-
-PrintRRegisters_1: Read After: 0x4099c8: sar rbp, 0x3 => rbp(0x3)
-
-PrintWRegisters_1: Write After: 0x4099c8: sar rbp, 0x3 => rbp(0x3)
-
-PrintRRegisters_1: Read Before: 0x4099cc: call 0x403228 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x4099cc: call 0x403228 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x403228: sub rsp, 0x8 => rsp(0x3fd67ffe428)
-
-PrintWRegisters_1: Write Before: 0x403228: sub rsp, 0x8 => rsp(0x3fd67ffe428)
-
-PrintRRegisters_1: Read After: 0x403228: sub rsp, 0x8 => rsp(0x3fd67ffe420)
-
-PrintWRegisters_1: Write After: 0x403228: sub rsp, 0x8 => rsp(0x3fd67ffe420)
-
-PrintWRegisters_1: Write Before: 0x40322c: mov rax, qword ptr [rip+0xadc5] => rax(0x7f23c3c64098)
-
-PrintWRegisters_1: Write After: 0x40322c: mov rax, qword ptr [rip+0xadc5] => rax(0)
-
-PrintRRegisters_2: Read Before: 0x403233: test rax, rax => rax(0) rax(0) 
-
-PrintRRegisters_2: Read After: 0x403233: test rax, rax => rax(0) rax(0) 
-
-PrintRRegisters_1: Read Before: 0x40323a: add rsp, 0x8 => rsp(0x3fd67ffe420)
-
-PrintWRegisters_1: Write Before: 0x40323a: add rsp, 0x8 => rsp(0x3fd67ffe420)
-
-PrintRRegisters_1: Read After: 0x40323a: add rsp, 0x8 => rsp(0x3fd67ffe428)
-
-PrintWRegisters_1: Write After: 0x40323a: add rsp, 0x8 => rsp(0x3fd67ffe428)
-
-PrintRRegisters_1: Read Before: 0x40323e: ret  => rsp(0x3fd67ffe428)
-
-PrintWRegisters_1: Write Before: 0x40323e: ret  => rsp(0x3fd67ffe428)
-
-PrintRRegisters_2: Read Before: 0x4099d1: test rbp, rbp => rbp(0x3) rbp(0x3) 
-
-PrintRRegisters_2: Read After: 0x4099d1: test rbp, rbp => rbp(0x3) rbp(0x3) 
-
-PrintRRegisters_2: Read Before: 0x4099d8: nop dword ptr [rax+rax*1], eax => rax(0) rax(0) 
-
-PrintRRegisters_2: Read After: 0x4099d8: nop dword ptr [rax+rax*1], eax => rax(0) rax(0) 
-
-PrintRRegisters_1: Read Before: 0x4099e0: mov rdx, r15 => r15(0x3fd67ffe558)
-
-PrintWRegisters_1: Write Before: 0x4099e0: mov rdx, r15 => rdx(0x3fd67ffe558)
-
-PrintRRegisters_1: Read After: 0x4099e0: mov rdx, r15 => r15(0x3fd67ffe558)
-
-PrintWRegisters_1: Write After: 0x4099e0: mov rdx, r15 => rdx(0x3fd67ffe558)
-
-PrintRRegisters_1: Read Before: 0x4099e3: mov rsi, r14 => r14(0x3fd67ffe548)
-
-PrintWRegisters_1: Write Before: 0x4099e3: mov rsi, r14 => rsi(0x3fd67ffe548)
-
-PrintRRegisters_1: Read After: 0x4099e3: mov rsi, r14 => r14(0x3fd67ffe548)
-
-PrintWRegisters_1: Write After: 0x4099e3: mov rsi, r14 => rsi(0x3fd67ffe548)
-
-PrintRRegisters_3: Read Before: 0x4099e9: call qword ptr [r12+rbx*8] => r12(0x40d9d8) rbx(0) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write Before: 0x4099e9: call qword ptr [r12+rbx*8] => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x4099ed: add rbx, 0x1 => rbx(0)
-
-PrintWRegisters_1: Write Before: 0x4099ed: add rbx, 0x1 => rbx(0)
-
-PrintRRegisters_1: Read After: 0x4099ed: add rbx, 0x1 => rbx(0x1)
-
-PrintWRegisters_1: Write After: 0x4099ed: add rbx, 0x1 => rbx(0x1)
-
-PrintRRegisters_2: Read Before: 0x4099f1: cmp rbp, rbx => rbp(0x3) rbx(0x1) 
-
-PrintRRegisters_2: Read After: 0x4099f1: cmp rbp, rbx => rbp(0x3) rbx(0x1) 
-
-PrintRRegisters_1: Read Before: 0x4099e0: mov rdx, r15 => r15(0x3fd67ffe558)
-
-PrintWRegisters_1: Write Before: 0x4099e0: mov rdx, r15 => rdx(0x3fd67ffe558)
-
-PrintRRegisters_1: Read After: 0x4099e0: mov rdx, r15 => r15(0x3fd67ffe558)
-
-PrintWRegisters_1: Write After: 0x4099e0: mov rdx, r15 => rdx(0x3fd67ffe558)
-
-PrintRRegisters_1: Read Before: 0x4099e3: mov rsi, r14 => r14(0x3fd67ffe548)
-
-PrintWRegisters_1: Write Before: 0x4099e3: mov rsi, r14 => rsi(0x3fd67ffe548)
-
-PrintRRegisters_1: Read After: 0x4099e3: mov rsi, r14 => r14(0x3fd67ffe548)
-
-PrintWRegisters_1: Write After: 0x4099e3: mov rsi, r14 => rsi(0x3fd67ffe548)
-
-PrintRRegisters_3: Read Before: 0x4099e9: call qword ptr [r12+rbx*8] => r12(0x40d9d8) rbx(0x1) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write Before: 0x4099e9: call qword ptr [r12+rbx*8] => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x403406: push 0x1b => rsp(0x3fd67ffe2d8)
-
-PrintWRegisters_1: Write Before: 0x403406: push 0x1b => rsp(0x3fd67ffe2d8)
-
-PrintRRegisters_1: Read After: 0x403406: push 0x1b => rsp(0x3fd67ffe2d0)
-
-PrintWRegisters_1: Write After: 0x403406: push 0x1b => rsp(0x3fd67ffe2d0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2d0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2d0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2c8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2c8)
-
-PrintRRegisters_1: Read Before: 0x4099ed: add rbx, 0x1 => rbx(0x1)
-
-PrintWRegisters_1: Write Before: 0x4099ed: add rbx, 0x1 => rbx(0x1)
-
-PrintRRegisters_1: Read After: 0x4099ed: add rbx, 0x1 => rbx(0x2)
-
-PrintWRegisters_1: Write After: 0x4099ed: add rbx, 0x1 => rbx(0x2)
-
-PrintRRegisters_2: Read Before: 0x4099f1: cmp rbp, rbx => rbp(0x3) rbx(0x2) 
-
-PrintRRegisters_2: Read After: 0x4099f1: cmp rbp, rbx => rbp(0x3) rbx(0x2) 
-
-PrintRRegisters_1: Read Before: 0x4099e0: mov rdx, r15 => r15(0x3fd67ffe558)
-
-PrintWRegisters_1: Write Before: 0x4099e0: mov rdx, r15 => rdx(0x409d43)
-
-PrintRRegisters_1: Read After: 0x4099e0: mov rdx, r15 => r15(0x3fd67ffe558)
-
-PrintWRegisters_1: Write After: 0x4099e0: mov rdx, r15 => rdx(0x3fd67ffe558)
-
-PrintRRegisters_1: Read Before: 0x4099e3: mov rsi, r14 => r14(0x3fd67ffe548)
-
-PrintWRegisters_1: Write Before: 0x4099e3: mov rsi, r14 => rsi(0x3fd67ffe190)
-
-PrintRRegisters_1: Read After: 0x4099e3: mov rsi, r14 => r14(0x3fd67ffe548)
-
-PrintWRegisters_1: Write After: 0x4099e3: mov rsi, r14 => rsi(0x3fd67ffe548)
-
-PrintRRegisters_3: Read Before: 0x4099e9: call qword ptr [r12+rbx*8] => r12(0x40d9d8) rbx(0x2) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write Before: 0x4099e9: call qword ptr [r12+rbx*8] => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x403605: sub rsi, 0x40e2e0 => rsi(0x40e2e0)
-
-PrintWRegisters_1: Write Before: 0x403605: sub rsi, 0x40e2e0 => rsi(0x40e2e0)
-
-PrintRRegisters_1: Read After: 0x403605: sub rsi, 0x40e2e0 => rsi(0)
-
-PrintWRegisters_1: Write After: 0x403605: sub rsi, 0x40e2e0 => rsi(0)
-
-PrintRRegisters_1: Read Before: 0x40360c: sar rsi, 0x3 => rsi(0)
-
-PrintWRegisters_1: Write Before: 0x40360c: sar rsi, 0x3 => rsi(0)
-
-PrintRRegisters_1: Read After: 0x40360c: sar rsi, 0x3 => rsi(0)
-
-PrintWRegisters_1: Write After: 0x40360c: sar rsi, 0x3 => rsi(0)
-
-PrintRRegisters_1: Read Before: 0x403610: mov rax, rsi => rsi(0)
-
-PrintWRegisters_1: Write Before: 0x403610: mov rax, rsi => rax(0)
-
-PrintRRegisters_1: Read After: 0x403610: mov rax, rsi => rsi(0)
-
-PrintWRegisters_1: Write After: 0x403610: mov rax, rsi => rax(0)
-
-PrintRRegisters_1: Read Before: 0x403613: shr rax, 0x3f => rax(0)
-
-PrintWRegisters_1: Write Before: 0x403613: shr rax, 0x3f => rax(0)
-
-PrintRRegisters_1: Read After: 0x403613: shr rax, 0x3f => rax(0)
-
-PrintWRegisters_1: Write After: 0x403613: shr rax, 0x3f => rax(0)
-
-PrintRRegisters_2: Read Before: 0x403617: add rsi, rax => rsi(0) rax(0) 
-
-PrintWRegisters_1: Write Before: 0x403617: add rsi, rax => rsi(0)
-
-PrintRRegisters_2: Read After: 0x403617: add rsi, rax => rsi(0) rax(0) 
-
-PrintWRegisters_1: Write After: 0x403617: add rsi, rax => rsi(0)
-
-PrintRRegisters_1: Read Before: 0x40361a: sar rsi, 0x1 => rsi(0)
-
-PrintWRegisters_1: Write Before: 0x40361a: sar rsi, 0x1 => rsi(0)
-
-PrintRRegisters_1: Read After: 0x40361a: sar rsi, 0x1 => rsi(0)
-
-PrintWRegisters_1: Write After: 0x40361a: sar rsi, 0x1 => rsi(0)
-
-PrintRRegisters_1: Read Before: 0x403630: ret  => rsp(0x3fd67ffe428)
-
-PrintWRegisters_1: Write Before: 0x403630: ret  => rsp(0x3fd67ffe428)
-
-PrintRRegisters_1: Read Before: 0x4099ed: add rbx, 0x1 => rbx(0x2)
-
-PrintWRegisters_1: Write Before: 0x4099ed: add rbx, 0x1 => rbx(0x2)
-
-PrintRRegisters_1: Read After: 0x4099ed: add rbx, 0x1 => rbx(0x3)
-
-PrintWRegisters_1: Write After: 0x4099ed: add rbx, 0x1 => rbx(0x3)
-
-PrintRRegisters_2: Read Before: 0x4099f1: cmp rbp, rbx => rbp(0x3) rbx(0x3) 
-
-PrintRRegisters_2: Read After: 0x4099f1: cmp rbp, rbx => rbp(0x3) rbx(0x3) 
-
-PrintRRegisters_1: Read Before: 0x4099f6: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x4099f6: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read After: 0x4099f6: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write After: 0x4099f6: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x4099fa: pop rbx => rsp(0x3fd67ffe438)
-
-PrintWRegisters_2: Write Before: 0x4099fa: pop rbx => rbx(0x3) rsp(0x3fd67ffe438) 
-
-PrintRRegisters_1: Read After: 0x4099fa: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write After: 0x4099fa: pop rbx => rbx(0) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read Before: 0x4099fb: pop rbp => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x4099fb: pop rbp => rbp(0x3) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x4099fb: pop rbp => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x4099fb: pop rbp => rbp(0x4099a0) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read Before: 0x4099fc: pop r12 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write Before: 0x4099fc: pop r12 => r12(0x40d9d8) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read After: 0x4099fc: pop r12 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_2: Write After: 0x4099fc: pop r12 => r12(0x403590) rsp(0x3fd67ffe450) 
-
-PrintRRegisters_1: Read Before: 0x4099fe: pop r13 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_2: Write Before: 0x4099fe: pop r13 => r13(0x1) rsp(0x3fd67ffe450) 
-
-PrintRRegisters_1: Read After: 0x4099fe: pop r13 => rsp(0x3fd67ffe458)
-
-PrintWRegisters_2: Write After: 0x4099fe: pop r13 => r13(0x3fd67ffe540) rsp(0x3fd67ffe458) 
-
-PrintRRegisters_1: Read Before: 0x409a00: pop r14 => rsp(0x3fd67ffe458)
-
-PrintWRegisters_2: Write Before: 0x409a00: pop r14 => r14(0x3fd67ffe548) rsp(0x3fd67ffe458) 
-
-PrintRRegisters_1: Read After: 0x409a00: pop r14 => rsp(0x3fd67ffe460)
-
-PrintWRegisters_2: Write After: 0x409a00: pop r14 => r14(0) rsp(0x3fd67ffe460) 
-
-PrintRRegisters_1: Read Before: 0x409a02: pop r15 => rsp(0x3fd67ffe460)
-
-PrintWRegisters_2: Write Before: 0x409a02: pop r15 => r15(0x3fd67ffe558) rsp(0x3fd67ffe460) 
-
-PrintRRegisters_1: Read After: 0x409a02: pop r15 => rsp(0x3fd67ffe468)
-
-PrintWRegisters_2: Write After: 0x409a02: pop r15 => r15(0) rsp(0x3fd67ffe468) 
-
-PrintRRegisters_1: Read Before: 0x409a04: ret  => rsp(0x3fd67ffe468)
-
-PrintWRegisters_1: Write Before: 0x409a04: ret  => rsp(0x3fd67ffe468)
-
-PrintRRegisters_2: Read Before: 0x409890: push r14 => r14(0) rsp(0x3fd67ffe468) 
-
-PrintWRegisters_1: Write Before: 0x409890: push r14 => rsp(0x3fd67ffe468)
-
-PrintRRegisters_2: Read After: 0x409890: push r14 => r14(0) rsp(0x3fd67ffe460) 
-
-PrintWRegisters_1: Write After: 0x409890: push r14 => rsp(0x3fd67ffe460)
-
-PrintRRegisters_2: Read Before: 0x409892: push rbx => rbx(0) rsp(0x3fd67ffe460) 
-
-PrintWRegisters_1: Write Before: 0x409892: push rbx => rsp(0x3fd67ffe460)
-
-PrintRRegisters_2: Read After: 0x409892: push rbx => rbx(0) rsp(0x3fd67ffe458) 
-
-PrintWRegisters_1: Write After: 0x409892: push rbx => rsp(0x3fd67ffe458)
-
-PrintRRegisters_2: Read Before: 0x409893: push rax => rax(0x409890) rsp(0x3fd67ffe458) 
-
-PrintWRegisters_1: Write Before: 0x409893: push rax => rsp(0x3fd67ffe458)
-
-PrintRRegisters_2: Read After: 0x409893: push rax => rax(0x409890) rsp(0x3fd67ffe450) 
-
-PrintWRegisters_1: Write After: 0x409893: push rax => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x409894: mov rsi, 0x40ad60 => rsi(0x3fd67ffe548)
-
-PrintWRegisters_1: Write After: 0x409894: mov rsi, 0x40ad60 => rsi(0x40ad60)
-
-PrintRRegisters_1: Read Before: 0x4098a3: call 0x403bb0 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x4098a3: call 0x403bb0 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_1: Read Before: 0x403476: push 0x22 => rsp(0x3fd67ffe418)
-
-PrintWRegisters_1: Write Before: 0x403476: push 0x22 => rsp(0x3fd67ffe418)
-
-PrintRRegisters_1: Read After: 0x403476: push 0x22 => rsp(0x3fd67ffe410)
-
-PrintWRegisters_1: Write After: 0x403476: push 0x22 => rsp(0x3fd67ffe410)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe410)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe410)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe408)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe408)
-
-PrintWRegisters_1: Write Before: 0x4098a8: movq r14, xmm0 => r14(0)
-
-PrintWRegisters_1: Write After: 0x4098a8: movq r14, xmm0 => r14(0x200fa847e10)
-
-PrintRRegisters_1: Read Before: 0x4098ad: lea rbx, ptr [r14+0x148] => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x4098ad: lea rbx, ptr [r14+0x148] => rbx(0)
-
-PrintRRegisters_1: Read After: 0x4098ad: lea rbx, ptr [r14+0x148] => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x4098ad: lea rbx, ptr [r14+0x148] => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x4098b6: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x4098b6: mov rdi, rbx => rdi(0x3fd67ffbc60)
-
-PrintRRegisters_1: Read After: 0x4098b6: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x4098b6: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x4098b9: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x4098b9: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x409940: push r14 => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x409940: push r14 => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read Before: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x409942: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read After: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write After: 0x409942: push rbx => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read Before: 0x409943: push rax => rax(0x40) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write Before: 0x409943: push rax => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read After: 0x409943: push rax => rax(0x40) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write After: 0x409943: push rax => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409947: movsxd r14, esi => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x409947: movsxd r14, esi => r14(0)
-
-PrintWRegisters_1: Write Before: 0x40994a: mov rsi, 0x40b260 => rsi(0)
-
-PrintWRegisters_1: Write After: 0x40994a: mov rsi, 0x40b260 => rsi(0x40b260)
-
-PrintRRegisters_1: Read Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_2: Read Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0) 
-
-PrintWRegisters_1: Write Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x3fd67ffbc20)
-
-PrintRRegisters_2: Read After: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0) 
-
-PrintWRegisters_1: Write After: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x409968: pop rbx => rsp(0x3fd67ffe438)
-
-PrintWRegisters_2: Write Before: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintRRegisters_1: Read After: 0x409968: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write After: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read Before: 0x409969: pop r14 => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x409969: pop r14 => r14(0) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x409969: pop r14 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x409969: pop r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read Before: 0x4098c3: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x4098c3: mov rdi, rbx => rdi(0x3fd67ffbc50)
-
-PrintRRegisters_1: Read After: 0x4098c3: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x4098c3: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x4098c6: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x4098c6: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x409940: push r14 => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x409940: push r14 => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read Before: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x409942: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read After: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write After: 0x409942: push rbx => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read Before: 0x409943: push rax => rax(0xff) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write Before: 0x409943: push rax => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read After: 0x409943: push rax => rax(0xff) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write After: 0x409943: push rax => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409947: movsxd r14, esi => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x409947: movsxd r14, esi => r14(0x1)
-
-PrintWRegisters_1: Write Before: 0x40994a: mov rsi, 0x40b260 => rsi(0x1)
-
-PrintWRegisters_1: Write After: 0x40994a: mov rsi, 0x40b260 => rsi(0x40b260)
-
-PrintRRegisters_1: Read Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_2: Read Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0x1) 
-
-PrintWRegisters_1: Write Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x3fd67ffbc20)
-
-PrintRRegisters_2: Read After: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0x1) 
-
-PrintWRegisters_1: Write After: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x200fa847f5c)
-
-PrintRRegisters_1: Read Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x409968: pop rbx => rsp(0x3fd67ffe438)
-
-PrintWRegisters_2: Write Before: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintRRegisters_1: Read After: 0x409968: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write After: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read Before: 0x409969: pop r14 => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x409969: pop r14 => r14(0x1) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x409969: pop r14 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x409969: pop r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read Before: 0x4098d0: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x4098d0: mov rdi, rbx => rdi(0x3fd67ffbc50)
-
-PrintRRegisters_1: Read After: 0x4098d0: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x4098d0: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x4098d3: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x4098d3: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x409940: push r14 => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x409940: push r14 => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read Before: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x409942: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read After: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write After: 0x409942: push rbx => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read Before: 0x409943: push rax => rax(0xff) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write Before: 0x409943: push rax => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read After: 0x409943: push rax => rax(0xff) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write After: 0x409943: push rax => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409947: movsxd r14, esi => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x409947: movsxd r14, esi => r14(0x2)
-
-PrintWRegisters_1: Write Before: 0x40994a: mov rsi, 0x40b260 => rsi(0x2)
-
-PrintWRegisters_1: Write After: 0x40994a: mov rsi, 0x40b260 => rsi(0x40b260)
-
-PrintRRegisters_1: Read Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_2: Read Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0x2) 
-
-PrintWRegisters_1: Write Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x3fd67ffbc20)
-
-PrintRRegisters_2: Read After: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0x2) 
-
-PrintWRegisters_1: Write After: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x200fa847f60)
-
-PrintRRegisters_1: Read Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x409968: pop rbx => rsp(0x3fd67ffe438)
-
-PrintWRegisters_2: Write Before: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintRRegisters_1: Read After: 0x409968: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write After: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read Before: 0x409969: pop r14 => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x409969: pop r14 => r14(0x2) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x409969: pop r14 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x409969: pop r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read Before: 0x4098dd: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x4098dd: mov rdi, rbx => rdi(0x3fd67ffbc50)
-
-PrintRRegisters_1: Read After: 0x4098dd: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x4098dd: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x4098e0: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x4098e0: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x409940: push r14 => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x409940: push r14 => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read Before: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x409942: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read After: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write After: 0x409942: push rbx => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read Before: 0x409943: push rax => rax(0xff) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write Before: 0x409943: push rax => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read After: 0x409943: push rax => rax(0xff) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write After: 0x409943: push rax => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409947: movsxd r14, esi => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x409947: movsxd r14, esi => r14(0x3)
-
-PrintWRegisters_1: Write Before: 0x40994a: mov rsi, 0x40b260 => rsi(0x3)
-
-PrintWRegisters_1: Write After: 0x40994a: mov rsi, 0x40b260 => rsi(0x40b260)
-
-PrintRRegisters_1: Read Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_2: Read Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0x3) 
-
-PrintWRegisters_1: Write Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x3fd67ffbc20)
-
-PrintRRegisters_2: Read After: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0x3) 
-
-PrintWRegisters_1: Write After: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x200fa847f64)
-
-PrintRRegisters_1: Read Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x409968: pop rbx => rsp(0x3fd67ffe438)
-
-PrintWRegisters_2: Write Before: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintRRegisters_1: Read After: 0x409968: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write After: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read Before: 0x409969: pop r14 => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x409969: pop r14 => r14(0x3) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x409969: pop r14 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x409969: pop r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read Before: 0x403516: push 0x2c => rsp(0x3fd67ffe2b8)
-
-PrintWRegisters_1: Write Before: 0x403516: push 0x2c => rsp(0x3fd67ffe2b8)
-
-PrintRRegisters_1: Read After: 0x403516: push 0x2c => rsp(0x3fd67ffe2b0)
-
-PrintWRegisters_1: Write After: 0x403516: push 0x2c => rsp(0x3fd67ffe2b0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2b0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2b0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2a8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2a8)
-
-PrintRRegisters_1: Read Before: 0x4034a6: push 0x25 => rsp(0x3fd67ffe2e8)
-
-PrintWRegisters_1: Write Before: 0x4034a6: push 0x25 => rsp(0x3fd67ffe2e8)
-
-PrintRRegisters_1: Read After: 0x4034a6: push 0x25 => rsp(0x3fd67ffe2e0)
-
-PrintWRegisters_1: Write After: 0x4034a6: push 0x25 => rsp(0x3fd67ffe2e0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2e0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2e0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2d8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2d8)
-
-PrintRRegisters_1: Read Before: 0x4034b6: push 0x26 => rsp(0x3fd67ffe2e8)
-
-PrintWRegisters_1: Write Before: 0x4034b6: push 0x26 => rsp(0x3fd67ffe2e8)
-
-PrintRRegisters_1: Read After: 0x4034b6: push 0x26 => rsp(0x3fd67ffe2e0)
-
-PrintWRegisters_1: Write After: 0x4034b6: push 0x26 => rsp(0x3fd67ffe2e0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2e0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2e0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2d8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffe2d8)
-
-PrintRRegisters_1: Read Before: 0x4098ea: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x4098ea: mov rdi, rbx => rdi(0x600013d50b0)
-
-PrintRRegisters_1: Read After: 0x4098ea: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x4098ea: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x4098ed: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x4098ed: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x409940: push r14 => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x409940: push r14 => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read Before: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x409942: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read After: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write After: 0x409942: push rbx => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read Before: 0x409943: push rax => rax(0xffffffffffffffff) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write Before: 0x409943: push rax => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read After: 0x409943: push rax => rax(0xffffffffffffffff) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write After: 0x409943: push rax => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409947: movsxd r14, esi => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x409947: movsxd r14, esi => r14(0xffffffffffffffff)
-
-PrintWRegisters_1: Write Before: 0x40994a: mov rsi, 0x40b260 => rsi(0xffffffff)
-
-PrintWRegisters_1: Write After: 0x40994a: mov rsi, 0x40b260 => rsi(0x40b260)
-
-PrintRRegisters_1: Read Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_2: Read Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0xffffffffffffffff) 
-
-PrintWRegisters_1: Write Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x3fd67ffbc20)
-
-PrintRRegisters_2: Read After: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0xffffffffffffffff) 
-
-PrintWRegisters_1: Write After: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x200fa847f54)
-
-PrintRRegisters_1: Read Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x409968: pop rbx => rsp(0x3fd67ffe438)
-
-PrintWRegisters_2: Write Before: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintRRegisters_1: Read After: 0x409968: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write After: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read Before: 0x409969: pop r14 => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x409969: pop r14 => r14(0xffffffffffffffff) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x409969: pop r14 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x409969: pop r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x4098f2: mov rsi, 0x40b1c0 => rsi(0)
-
-PrintWRegisters_1: Write After: 0x4098f2: mov rsi, 0x40b1c0 => rsi(0x40b1c0)
-
-PrintRRegisters_1: Read Before: 0x4098fc: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x4098fc: mov rdi, rbx => rdi(0x40e360)
-
-PrintRRegisters_1: Read After: 0x4098fc: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x4098fc: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x4098ff: call 0x4036b0 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x4098ff: call 0x4036b0 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_1: Read Before: 0x409908: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409908: mov rdi, rbx => rdi(0x3fd67ffbc40)
-
-PrintRRegisters_1: Read After: 0x409908: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409908: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x40990b: call 0x403ae0 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x40990b: call 0x403ae0 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_1: Read Before: 0x409910: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409910: mov rdi, rbx => rdi(0x3fd67ffbc50)
-
-PrintRRegisters_1: Read After: 0x409910: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409910: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x409913: call 0x409970 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x409913: call 0x409970 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x409970: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x409970: push rbx => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x409970: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x409970: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_1: Read Before: 0x409971: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409971: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x409971: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409971: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409974: mov rsi, 0x40b1c0 => rsi(0)
-
-PrintWRegisters_1: Write After: 0x409974: mov rsi, 0x40b1c0 => rsi(0x40b1c0)
-
-PrintRRegisters_1: Read Before: 0x40997e: call 0x4036b0 => rsp(0x3fd67ffe440)
-
-PrintWRegisters_1: Write Before: 0x40997e: call 0x4036b0 => rsp(0x3fd67ffe440)
-
-PrintRRegisters_1: Read Before: 0x40998a: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x40998a: mov rdi, rbx => rdi(0x3fd67ffbc30)
-
-PrintRRegisters_1: Read After: 0x40998a: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x40998a: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x40998d: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x40998d: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x40998d: pop rbx => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x40998d: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_2: Read Before: 0x409918: test r14, r14 => r14(0x200fa847e10) r14(0x200fa847e10) 
-
-PrintRRegisters_2: Read After: 0x409918: test r14, r14 => r14(0x200fa847e10) r14(0x200fa847e10) 
-
-PrintRRegisters_1: Read Before: 0x40991d: mov rdi, r14 => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x40991d: mov rdi, r14 => rdi(0x3fd67ffbc50)
-
-PrintRRegisters_1: Read After: 0x40991d: mov rdi, r14 => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x40991d: mov rdi, r14 => rdi(0x200fa847e10)
-
-PrintRRegisters_1: Read Before: 0x409920: call 0x403e90 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x409920: call 0x403e90 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x403e90: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x403e90: push rbx => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x403e90: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x403e90: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_1: Read Before: 0x403e91: mov rbx, rdi => rdi(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x403e91: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x403e91: mov rbx, rdi => rdi(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x403e91: mov rbx, rdi => rbx(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x403e94: mov rax, 0x407c70 => rax(0xff)
-
-PrintWRegisters_1: Write After: 0x403e94: mov rax, 0x407c70 => rax(0x407c70)
-
-PrintRRegisters_2: Read Before: 0x403e9e: call rax => rax(0x407c70) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x403e9e: call rax => rsp(0x3fd67ffe440)
-
-PrintWRegisters_1: Write Before: 0x403ea4: mov rax, 0x407c80 => rax(0x407c01)
-
-PrintWRegisters_1: Write After: 0x403ea4: mov rax, 0x407c80 => rax(0x407c80)
-
-PrintRRegisters_1: Read Before: 0x403eae: mov rdi, rbx => rbx(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x403eae: mov rdi, rbx => rdi(0x1f)
-
-PrintRRegisters_1: Read After: 0x403eae: mov rdi, rbx => rbx(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x403eae: mov rdi, rbx => rdi(0x200fa847e10)
-
-PrintRRegisters_2: Read Before: 0x403eb1: call rax => rax(0x407c80) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x403eb1: call rax => rsp(0x3fd67ffe440)
-
-PrintRRegisters_1: Read Before: 0x403eb7: mov rcx, rbx => rbx(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x403eb7: mov rcx, rbx => rcx(0x7ffff0001)
-
-PrintRRegisters_1: Read After: 0x403eb7: mov rcx, rbx => rbx(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x403eb7: mov rcx, rbx => rcx(0x200fa847e10)
-
-PrintRRegisters_1: Read Before: 0x403eba: shr rcx, 0x24 => rcx(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x403eba: shr rcx, 0x24 => rcx(0x200fa847e10)
-
-PrintRRegisters_1: Read After: 0x403eba: shr rcx, 0x24 => rcx(0x20)
-
-PrintWRegisters_1: Write After: 0x403eba: shr rcx, 0x24 => rcx(0x20)
-
-PrintRRegisters_1: Read Before: 0x403ebe: mov rax, rbx => rbx(0x200fa847e10)
-
-PrintWRegisters_1: Write Before: 0x403ebe: mov rax, rbx => rax(0x7057a8101)
-
-PrintRRegisters_1: Read After: 0x403ebe: mov rax, rbx => rbx(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x403ebe: mov rax, rbx => rax(0x200fa847e10)
-
-PrintRRegisters_2: Read Before: 0x403ec1: mul qword ptr [rcx*8+0x300000] => rcx(0x20) rax(0x200fa847e10) 
-
-PrintWRegisters_2: Write Before: 0x403ec1: mul qword ptr [rcx*8+0x300000] => rax(0x200fa847e10) rdx(0x3fd67ffbc50) 
-
-PrintRRegisters_2: Read After: 0x403ec1: mul qword ptr [rcx*8+0x300000] => rcx(0x20) rax(0x12493b78e5ea330) 
-
-PrintWRegisters_2: Write After: 0x403ec1: mul qword ptr [rcx*8+0x300000] => rax(0x12493b78e5ea330) rdx(0x24a42e09) 
-
-PrintRRegisters_1: Read Before: 0x403ec9: mov rdi, rdx => rdx(0x24a42e09)
-
-PrintWRegisters_1: Write Before: 0x403ec9: mov rdi, rdx => rdi(0x200fa847e10)
-
-PrintRRegisters_1: Read After: 0x403ec9: mov rdi, rdx => rdx(0x24a42e09)
-
-PrintWRegisters_1: Write After: 0x403ec9: mov rdi, rdx => rdi(0x24a42e09)
-
-PrintRRegisters_2: Read Before: 0x403ecc: imul rdi, qword ptr [rcx*8+0x200000] => rdi(0x24a42e09) rcx(0x20) 
-
-PrintWRegisters_1: Write Before: 0x403ecc: imul rdi, qword ptr [rcx*8+0x200000] => rdi(0x24a42e09)
-
-PrintRRegisters_2: Read After: 0x403ecc: imul rdi, qword ptr [rcx*8+0x200000] => rdi(0x200fa847e00) rcx(0x20) 
-
-PrintWRegisters_1: Write After: 0x403ecc: imul rdi, qword ptr [rcx*8+0x200000] => rdi(0x200fa847e00)
-
-PrintRRegisters_1: Read Before: 0x403ed5: cmp qword ptr [rdi], 0x0 => rdi(0x200fa847e00)
-
-PrintRRegisters_1: Read After: 0x403ed5: cmp qword ptr [rdi], 0x0 => rdi(0x200fa847e00)
-
-PrintRRegisters_1: Read Before: 0x403edb: mov qword ptr [rdi], 0x0 => rdi(0x200fa847e00)
-
-PrintRRegisters_1: Read After: 0x403edb: mov qword ptr [rdi], 0x0 => rdi(0x200fa847e00)
-
-PrintWRegisters_1: Write Before: 0x403ee2: mov rax, 0x407af0 => rax(0x12493b78e5ea330)
-
-PrintWRegisters_1: Write After: 0x403ee2: mov rax, 0x407af0 => rax(0x407af0)
-
-PrintRRegisters_1: Read Before: 0x403eec: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x403eec: pop rbx => rbx(0x200fa847e10) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x403eec: pop rbx => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x403eec: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read Before: 0x403eed: jmp rax => rax(0x407af0)
-
-PrintRRegisters_1: Read Before: 0x409927: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409927: mov rdi, rbx => rdi(0x40ef70)
-
-PrintRRegisters_1: Read After: 0x409927: mov rdi, rbx => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409927: mov rdi, rbx => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x40992a: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x40992a: call 0x409940 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_2: Read Before: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintWRegisters_1: Write Before: 0x409940: push r14 => rsp(0x3fd67ffe448)
-
-PrintRRegisters_2: Read After: 0x409940: push r14 => r14(0x200fa847e10) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write After: 0x409940: push r14 => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read Before: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintWRegisters_1: Write Before: 0x409942: push rbx => rsp(0x3fd67ffe440)
-
-PrintRRegisters_2: Read After: 0x409942: push rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write After: 0x409942: push rbx => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read Before: 0x409943: push rax => rax(0) rsp(0x3fd67ffe438) 
-
-PrintWRegisters_1: Write Before: 0x409943: push rax => rsp(0x3fd67ffe438)
-
-PrintRRegisters_2: Read After: 0x409943: push rax => rax(0) rsp(0x3fd67ffe430) 
-
-PrintWRegisters_1: Write After: 0x409943: push rax => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read Before: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintRRegisters_1: Read After: 0x409944: mov rbx, rdi => rdi(0x200fa847f58)
-
-PrintWRegisters_1: Write After: 0x409944: mov rbx, rdi => rbx(0x200fa847f58)
-
-PrintWRegisters_1: Write Before: 0x409947: movsxd r14, esi => r14(0x200fa847e10)
-
-PrintWRegisters_1: Write After: 0x409947: movsxd r14, esi => r14(0)
-
-PrintWRegisters_1: Write Before: 0x40994a: mov rsi, 0x40b260 => rsi(0)
-
-PrintWRegisters_1: Write After: 0x40994a: mov rsi, 0x40b260 => rsi(0x40b260)
-
-PrintRRegisters_1: Read Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409954: call 0x4036b0 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_2: Read Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0) 
-
-PrintWRegisters_1: Write Before: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x3fd67ffbc20)
-
-PrintRRegisters_2: Read After: 0x409959: lea rdi, ptr [rbx+r14*4] => rbx(0x200fa847f58) r14(0) 
-
-PrintWRegisters_1: Write After: 0x409959: lea rdi, ptr [rbx+r14*4] => rdi(0x200fa847f58)
-
-PrintRRegisters_1: Read Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintWRegisters_1: Write Before: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe430)
-
-PrintRRegisters_1: Read After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintWRegisters_1: Write After: 0x409964: add rsp, 0x8 => rsp(0x3fd67ffe438)
-
-PrintRRegisters_1: Read Before: 0x409968: pop rbx => rsp(0x3fd67ffe438)
-
-PrintWRegisters_2: Write Before: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe438) 
-
-PrintRRegisters_1: Read After: 0x409968: pop rbx => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write After: 0x409968: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read Before: 0x409969: pop r14 => rsp(0x3fd67ffe440)
-
-PrintWRegisters_2: Write Before: 0x409969: pop r14 => r14(0) rsp(0x3fd67ffe440) 
-
-PrintRRegisters_1: Read After: 0x409969: pop r14 => rsp(0x3fd67ffe448)
-
-PrintWRegisters_2: Write After: 0x409969: pop r14 => r14(0x200fa847e10) rsp(0x3fd67ffe448) 
-
-PrintRRegisters_1: Read Before: 0x409931: add rsp, 0x8 => rsp(0x3fd67ffe450)
-
-PrintWRegisters_1: Write Before: 0x409931: add rsp, 0x8 => rsp(0x3fd67ffe450)
-
-PrintRRegisters_1: Read After: 0x409931: add rsp, 0x8 => rsp(0x3fd67ffe458)
-
-PrintWRegisters_1: Write After: 0x409931: add rsp, 0x8 => rsp(0x3fd67ffe458)
-
-PrintRRegisters_1: Read Before: 0x409935: pop rbx => rsp(0x3fd67ffe458)
-
-PrintWRegisters_2: Write Before: 0x409935: pop rbx => rbx(0x200fa847f58) rsp(0x3fd67ffe458) 
-
-PrintRRegisters_1: Read After: 0x409935: pop rbx => rsp(0x3fd67ffe460)
-
-PrintWRegisters_2: Write After: 0x409935: pop rbx => rbx(0) rsp(0x3fd67ffe460) 
-
-PrintRRegisters_1: Read Before: 0x409936: pop r14 => rsp(0x3fd67ffe460)
-
-PrintWRegisters_2: Write Before: 0x409936: pop r14 => r14(0x200fa847e10) rsp(0x3fd67ffe460) 
-
-PrintRRegisters_1: Read After: 0x409936: pop r14 => rsp(0x3fd67ffe468)
-
-PrintWRegisters_2: Write After: 0x409936: pop r14 => r14(0) rsp(0x3fd67ffe468) 
-
-PrintRRegisters_1: Read Before: 0x409938: ret  => rsp(0x3fd67ffe468)
-
-PrintWRegisters_1: Write Before: 0x409938: ret  => rsp(0x3fd67ffe468)
-
-PrintRRegisters_2: Read Before: 0x403649: push rbp => rbp(0x3fd67ffe400) rsp(0x3fd67ffe348) 
-
-PrintWRegisters_1: Write Before: 0x403649: push rbp => rsp(0x3fd67ffe348)
-
-PrintRRegisters_2: Read After: 0x403649: push rbp => rbp(0x3fd67ffe400) rsp(0x3fd67ffe340) 
-
-PrintWRegisters_1: Write After: 0x403649: push rbp => rsp(0x3fd67ffe340)
-
-PrintRRegisters_1: Read Before: 0x40364a: mov rbp, rsp => rsp(0x3fd67ffe340)
-
-PrintWRegisters_1: Write Before: 0x40364a: mov rbp, rsp => rbp(0x3fd67ffe400)
-
-PrintRRegisters_1: Read After: 0x40364a: mov rbp, rsp => rsp(0x3fd67ffe340)
-
-PrintWRegisters_1: Write After: 0x40364a: mov rbp, rsp => rbp(0x3fd67ffe340)
-
-PrintRRegisters_1: Read Before: 0x40364d: call 0x4035d0 => rsp(0x3fd67ffe340)
-
-PrintWRegisters_1: Write Before: 0x40364d: call 0x4035d0 => rsp(0x3fd67ffe340)
-
-PrintRRegisters_1: Read Before: 0x4035d5: cmp rax, 0x40e2e0 => rax(0x40e2e0)
-
-PrintRRegisters_1: Read After: 0x4035d5: cmp rax, 0x40e2e0 => rax(0x40e2e0)
-
-PrintRRegisters_1: Read Before: 0x4035f0: ret  => rsp(0x3fd67ffe338)
-
-PrintWRegisters_1: Write Before: 0x4035f0: ret  => rsp(0x3fd67ffe338)
-
-PrintRRegisters_1: Read Before: 0x403659: pop rbp => rsp(0x3fd67ffe340)
-
-PrintWRegisters_2: Write Before: 0x403659: pop rbp => rbp(0x3fd67ffe340) rsp(0x3fd67ffe340) 
-
-PrintRRegisters_1: Read After: 0x403659: pop rbp => rsp(0x3fd67ffe348)
-
-PrintWRegisters_2: Write After: 0x403659: pop rbp => rbp(0x3fd67ffe400) rsp(0x3fd67ffe348) 
-
-PrintRRegisters_1: Read Before: 0x40365a: ret  => rsp(0x3fd67ffe348)
-
-PrintWRegisters_1: Write Before: 0x40365a: ret  => rsp(0x3fd67ffe348)
-
-PrintRRegisters_1: Read Before: 0x4032d6: push 0x8 => rsp(0x3fd67ffba28)
-
-PrintWRegisters_1: Write Before: 0x4032d6: push 0x8 => rsp(0x3fd67ffba28)
-
-PrintRRegisters_1: Read After: 0x4032d6: push 0x8 => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write After: 0x4032d6: push 0x8 => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintRRegisters_1: Read Before: 0x403566: push 0x31 => rsp(0x3fd67ffba08)
-
-PrintWRegisters_1: Write Before: 0x403566: push 0x31 => rsp(0x3fd67ffba08)
-
-PrintRRegisters_1: Read After: 0x403566: push 0x31 => rsp(0x3fd67ffba00)
-
-PrintWRegisters_1: Write After: 0x403566: push 0x31 => rsp(0x3fd67ffba00)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba00)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba00)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffb9f8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffb9f8)
-
-PrintRRegisters_1: Read Before: 0x403416: push 0x1c => rsp(0x3fd67ffba28)
-
-PrintWRegisters_1: Write Before: 0x403416: push 0x1c => rsp(0x3fd67ffba28)
-
-PrintRRegisters_1: Read After: 0x403416: push 0x1c => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write After: 0x403416: push 0x1c => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintRRegisters_1: Read Before: 0x403526: push 0x2d => rsp(0x3fd67ffba28)
-
-PrintWRegisters_1: Write Before: 0x403526: push 0x2d => rsp(0x3fd67ffba28)
-
-PrintRRegisters_1: Read After: 0x403526: push 0x2d => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write After: 0x403526: push 0x2d => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintRRegisters_1: Read Before: 0x4032f6: push 0xa => rsp(0x3fd67ffba28)
-
-PrintWRegisters_1: Write Before: 0x4032f6: push 0xa => rsp(0x3fd67ffba28)
-
-PrintRRegisters_1: Read After: 0x4032f6: push 0xa => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write After: 0x4032f6: push 0xa => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintRRegisters_1: Read Before: 0x403466: push 0x21 => rsp(0x3fd67ffb9b8)
-
-PrintWRegisters_1: Write Before: 0x403466: push 0x21 => rsp(0x3fd67ffb9b8)
-
-PrintRRegisters_1: Read After: 0x403466: push 0x21 => rsp(0x3fd67ffb9b0)
-
-PrintWRegisters_1: Write After: 0x403466: push 0x21 => rsp(0x3fd67ffb9b0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffb9b0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffb9b0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffb9a8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffb9a8)
-
-PrintRRegisters_1: Read Before: 0x4032a6: push 0x5 => rsp(0x3fd67ff9168)
-
-PrintWRegisters_1: Write Before: 0x4032a6: push 0x5 => rsp(0x3fd67ff9168)
-
-PrintRRegisters_1: Read After: 0x4032a6: push 0x5 => rsp(0x3fd67ff9160)
-
-PrintWRegisters_1: Write After: 0x4032a6: push 0x5 => rsp(0x3fd67ff9160)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9160)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9160)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9158)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9158)
-
-PrintRRegisters_1: Read Before: 0x4034f6: push 0x2a => rsp(0x3fd67ff90a8)
-
-PrintWRegisters_1: Write Before: 0x4034f6: push 0x2a => rsp(0x3fd67ff90a8)
-
-PrintRRegisters_1: Read After: 0x4034f6: push 0x2a => rsp(0x3fd67ff90a0)
-
-PrintWRegisters_1: Write After: 0x4034f6: push 0x2a => rsp(0x3fd67ff90a0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff90a0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff90a0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9098)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9098)
-
-PrintRRegisters_1: Read Before: 0x403276: push 0x2 => rsp(0x3fd67ff9168)
-
-PrintWRegisters_1: Write Before: 0x403276: push 0x2 => rsp(0x3fd67ff9168)
-
-PrintRRegisters_1: Read After: 0x403276: push 0x2 => rsp(0x3fd67ff9160)
-
-PrintWRegisters_1: Write After: 0x403276: push 0x2 => rsp(0x3fd67ff9160)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9160)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9160)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9158)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff9158)
-
-PrintRRegisters_1: Read Before: 0x403306: push 0xb => rsp(0x3fd67ff91d8)
-
-PrintWRegisters_1: Write Before: 0x403306: push 0xb => rsp(0x3fd67ff91d8)
-
-PrintRRegisters_1: Read After: 0x403306: push 0xb => rsp(0x3fd67ff91d0)
-
-PrintWRegisters_1: Write After: 0x403306: push 0xb => rsp(0x3fd67ff91d0)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff91d0)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff91d0)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff91c8)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ff91c8)
-
-PrintRRegisters_1: Read Before: 0x4033b6: push 0x16 => rsp(0x3fd67ffba28)
-
-PrintWRegisters_1: Write Before: 0x4033b6: push 0x16 => rsp(0x3fd67ffba28)
-
-PrintRRegisters_1: Read After: 0x4033b6: push 0x16 => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write After: 0x4033b6: push 0x16 => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintRRegisters_1: Read Before: 0x4033c6: push 0x17 => rsp(0x3fd67ffba28)
-
-PrintWRegisters_1: Write Before: 0x4033c6: push 0x17 => rsp(0x3fd67ffba28)
-
-PrintRRegisters_1: Read After: 0x4033c6: push 0x17 => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write After: 0x4033c6: push 0x17 => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintWRegisters_1: Write Before: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba20)
-
-PrintRRegisters_1: Read After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintWRegisters_1: Write After: 0x403240: push qword ptr [rip+0xadc2] => rsp(0x3fd67ffba18)
-
-PrintRRegisters_1: Read Before: 0x409a14: sub rsp, 0x8 => rsp(0x3fd67ffe348)
-
-PrintWRegisters_1: Write Before: 0x409a14: sub rsp, 0x8 => rsp(0x3fd67ffe348)
-
-PrintRRegisters_1: Read After: 0x409a14: sub rsp, 0x8 => rsp(0x3fd67ffe340)
-
-PrintWRegisters_1: Write After: 0x409a14: sub rsp, 0x8 => rsp(0x3fd67ffe340)
-
-PrintRRegisters_1: Read Before: 0x409a18: add rsp, 0x8 => rsp(0x3fd67ffe340)
-
-PrintWRegisters_1: Write Before: 0x409a18: add rsp, 0x8 => rsp(0x3fd67ffe340)
-
-PrintRRegisters_1: Read After: 0x409a18: add rsp, 0x8 => rsp(0x3fd67ffe348)
-
-PrintWRegisters_1: Write After: 0x409a18: add rsp, 0x8 => rsp(0x3fd67ffe348)
-
-PrintRRegisters_1: Read Before: 0x409a1c: ret  => rsp(0x3fd67ffe348)
-
-PrintWRegisters_1: Write Before: 0x409a1c: ret  => rsp(0x3fd67ffe348)
-
+Tool loading /lib64/ld-linux-x86-64.so.2 at 0x7fdfe113a000
+Tool loading [vdso] at 0x7ffc36de7000
+Tool loading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7fdfccb5c000
+Tool loading /lib/x86_64-linux-gnu/libm.so.6 at 0x7fdfcc7be000
+Tool loading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7fdfcc59f000
+Tool loading /lib/x86_64-linux-gnu/librt.so.1 at 0x7fdfcc397000
+Tool loading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7fdfcc193000
+Tool loading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7fdfcbf7b000
+Tool loading /lib/x86_64-linux-gnu/libc.so.6 at 0x7fdfcbb8a000
+PrintRegistersVectorized: IPOINT_AFTER: 0x4034c6: push 0x27
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403316: push 0xc
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403536: push 0x2e
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403336: push 0xe
+Reads: 
+rsp(0x007ffc36db5a40) 
+Writes: 
+rsp(0x007ffc36db5a40) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a38) 
+Writes: 
+rsp(0x007ffc36db5a38) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403486: push 0x23
+Reads: 
+rsp(0x007ffc36db5a40) 
+Writes: 
+rsp(0x007ffc36db5a40) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a38) 
+Writes: 
+rsp(0x007ffc36db5a38) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403296: push 0x4
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4032e6: push 0x9
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403456: push 0x20
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403576: push 0x32
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4032b6: push 0x6
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4034e6: push 0x29
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403556: push 0x30
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403426: push 0x1d
+Reads: 
+rsp(0x007ffc36db5a80) 
+Writes: 
+rsp(0x007ffc36db5a80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a78) 
+Writes: 
+rsp(0x007ffc36db5a78) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403286: push 0x3
+Reads: 
+rsp(0x007ffc36db5a38) 
+Writes: 
+rsp(0x007ffc36db5a38) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a30) 
+Writes: 
+rsp(0x007ffc36db5a30) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403496: push 0x24
+Reads: 
+rsp(0x007ffc36db59f8) 
+Writes: 
+rsp(0x007ffc36db59f8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db59f0) 
+Writes: 
+rsp(0x007ffc36db59f0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403356: push 0x10
+Reads: 
+rsp(0x007ffc36db59f8) 
+Writes: 
+rsp(0x007ffc36db59f8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db59f0) 
+Writes: 
+rsp(0x007ffc36db59f0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403366: push 0x11
+Reads: 
+rsp(0x007ffc36db5a38) 
+Writes: 
+rsp(0x007ffc36db5a38) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x007ffc36db5a30) 
+Writes: 
+rsp(0x007ffc36db5a30) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403592: mov r9, rdx
+Reads: 
+rdx(0x007fdfe114a9a0) 
+Writes: 
+r9(0x007fdfe114a9a0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403595: pop rsi
+Reads: 
+rsp(0x003ff3ffcbd8) 
+Writes: 
+rsi(0x00000001) rsp(0x003ff3ffcbd8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403596: mov rdx, rsp
+Reads: 
+rsp(0x003ff3ffcbd8) 
+Writes: 
+rdx(0x003ff3ffcbd8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403599: and rsp, 0xfffffffffffffff0
+Reads: 
+rsp(0x003ff3ffcbd0) 
+Writes: 
+rsp(0x003ff3ffcbd0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40359d: push rax
+Reads: 
+rax(0x00000001c) rsp(0x003ff3ffcbc8) 
+Writes: 
+rsp(0x003ff3ffcbc8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40359e: push rsp
+Reads: 
+rsp(0x003ff3ffcbc0) rsp(0x003ff3ffcbc0) 
+Writes: 
+rsp(0x003ff3ffcbc0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40359f: mov r8, 0x409a10
+Reads: 
+
+Writes: 
+r8(0x00000409a10) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4035a6: mov rcx, 0x4099a0
+Reads: 
+
+Writes: 
+rcx(0x000004099a0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4035ad: mov rdi, 0x409890
+Reads: 
+
+Writes: 
+rdi(0x00000409890) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4035b4: call qword ptr [rip+0xaa36]
+Reads: 
+rsp(0x003ff3ffcbc0) 
+Writes: 
+rsp(0x003ff3ffcbc0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099a0: push r15
+Reads: 
+r15(0x00000000) rsp(0x003ff3ffcaf0) 
+Writes: 
+rsp(0x003ff3ffcaf0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099a2: push r14
+Reads: 
+r14(0x00000000) rsp(0x003ff3ffcae8) 
+Writes: 
+rsp(0x003ff3ffcae8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099a4: mov r15, rdx
+Reads: 
+rdx(0x003ff3ffcbe8) 
+Writes: 
+r15(0x003ff3ffcbe8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099a7: push r13
+Reads: 
+r13(0x003ff3ffcbd0) rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099a9: push r12
+Reads: 
+r12(0x00000403590) rsp(0x003ff3ffcad8) 
+Writes: 
+rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099ab: lea r12, ptr [rip+0x4026]
+Reads: 
+
+Writes: 
+r12(0x0000040d9d8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099b2: push rbp
+Reads: 
+rbp(0x000004099a0) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099b3: lea rbp, ptr [rip+0x4036]
+Reads: 
+
+Writes: 
+rbp(0x0000040d9f0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099ba: push rbx
+Reads: 
+rbx(0x00000000) rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099be: mov r14, rsi
+Reads: 
+rsi(0x003ff3ffcbd8) 
+Writes: 
+r14(0x003ff3ffcbd8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099c1: sub rbp, r12
+Reads: 
+rbp(0x000000018) r12(0x0000040d9d8) 
+Writes: 
+rbp(0x000000018) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099c4: sub rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099c8: sar rbp, 0x3
+Reads: 
+rbp(0x00000003) 
+Writes: 
+rbp(0x00000003) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4099cc: call 0x403228
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403228: sub rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcab0) 
+Writes: 
+rsp(0x003ff3ffcab0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40322c: mov rax, qword ptr [rip+0xadc5]
+Reads: 
+
+Writes: 
+rax(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403233: test rax, rax
+Reads: 
+rax(0x00000000) rax(0x00000000) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x40323a: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcab8) 
+Writes: 
+rsp(0x003ff3ffcab8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x40323e: ret 
+Reads: 
+rsp(0x003ff3ffcab8) 
+Writes: 
+rsp(0x003ff3ffcab8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099d1: test rbp, rbp
+Reads: 
+rbp(0x00000003) rbp(0x00000003) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099d8: nop dword ptr [rax+rax*1], eax
+Reads: 
+rax(0x00000000) rax(0x00000000) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099e0: mov rdx, r15
+Reads: 
+r15(0x003ff3ffcbe8) 
+Writes: 
+rdx(0x003ff3ffcbe8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099e3: mov rsi, r14
+Reads: 
+r14(0x003ff3ffcbd8) 
+Writes: 
+rsi(0x003ff3ffcbd8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4099e9: call qword ptr [r12+rbx*8]
+Reads: 
+r12(0x0000040d9d8) rbx(0x00000000) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099ed: add rbx, 0x1
+Reads: 
+rbx(0x00000001) 
+Writes: 
+rbx(0x00000001) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099f1: cmp rbp, rbx
+Reads: 
+rbp(0x00000003) rbx(0x00000001) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099e0: mov rdx, r15
+Reads: 
+r15(0x003ff3ffcbe8) 
+Writes: 
+rdx(0x003ff3ffcbe8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099e3: mov rsi, r14
+Reads: 
+r14(0x003ff3ffcbd8) 
+Writes: 
+rsi(0x003ff3ffcbd8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4099e9: call qword ptr [r12+rbx*8]
+Reads: 
+r12(0x0000040d9d8) rbx(0x00000001) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403406: push 0x1b
+Reads: 
+rsp(0x003ff3ffc960) 
+Writes: 
+rsp(0x003ff3ffc960) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffc958) 
+Writes: 
+rsp(0x003ff3ffc958) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099ed: add rbx, 0x1
+Reads: 
+rbx(0x00000002) 
+Writes: 
+rbx(0x00000002) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099f1: cmp rbp, rbx
+Reads: 
+rbp(0x00000003) rbx(0x00000002) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099e0: mov rdx, r15
+Reads: 
+r15(0x003ff3ffcbe8) 
+Writes: 
+rdx(0x003ff3ffcbe8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099e3: mov rsi, r14
+Reads: 
+r14(0x003ff3ffcbd8) 
+Writes: 
+rsi(0x003ff3ffcbd8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4099e9: call qword ptr [r12+rbx*8]
+Reads: 
+r12(0x0000040d9d8) rbx(0x00000002) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403605: sub rsi, 0x40e2e0
+Reads: 
+rsi(0x00000000) 
+Writes: 
+rsi(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40360c: sar rsi, 0x3
+Reads: 
+rsi(0x00000000) 
+Writes: 
+rsi(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403610: mov rax, rsi
+Reads: 
+rsi(0x00000000) 
+Writes: 
+rax(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403613: shr rax, 0x3f
+Reads: 
+rax(0x00000000) 
+Writes: 
+rax(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403617: add rsi, rax
+Reads: 
+rsi(0x00000000) rax(0x00000000) 
+Writes: 
+rsi(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40361a: sar rsi, 0x1
+Reads: 
+rsi(0x00000000) 
+Writes: 
+rsi(0x00000000) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x403630: ret 
+Reads: 
+rsp(0x003ff3ffcab8) 
+Writes: 
+rsp(0x003ff3ffcab8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099ed: add rbx, 0x1
+Reads: 
+rbx(0x00000003) 
+Writes: 
+rbx(0x00000003) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099f1: cmp rbp, rbx
+Reads: 
+rbp(0x00000003) rbx(0x00000003) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099f6: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099fa: pop rbx
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rbx(0x00000000) rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099fb: pop rbp
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+rbp(0x000004099a0) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099fc: pop r12
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+r12(0x00000403590) rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4099fe: pop r13
+Reads: 
+rsp(0x003ff3ffcae8) 
+Writes: 
+r13(0x003ff3ffcbd0) rsp(0x003ff3ffcae8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409a00: pop r14
+Reads: 
+rsp(0x003ff3ffcaf0) 
+Writes: 
+r14(0x00000000) rsp(0x003ff3ffcaf0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409a02: pop r15
+Reads: 
+rsp(0x003ff3ffcaf8) 
+Writes: 
+r15(0x00000000) rsp(0x003ff3ffcaf8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409a04: ret 
+Reads: 
+rsp(0x003ff3ffcaf8) 
+Writes: 
+rsp(0x003ff3ffcaf8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409890: push r14
+Reads: 
+r14(0x00000000) rsp(0x003ff3ffcaf0) 
+Writes: 
+rsp(0x003ff3ffcaf0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409892: push rbx
+Reads: 
+rbx(0x00000000) rsp(0x003ff3ffcae8) 
+Writes: 
+rsp(0x003ff3ffcae8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409893: push rax
+Reads: 
+rax(0x00000409890) rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409894: mov rsi, 0x40ad60
+Reads: 
+
+Writes: 
+rsi(0x0000040ad60) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4098a3: call 0x403bb0
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403476: push 0x22
+Reads: 
+rsp(0x003ff3ffcaa0) 
+Writes: 
+rsp(0x003ff3ffcaa0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffca98) 
+Writes: 
+rsp(0x003ff3ffca98) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098a8: movq r14, xmm0
+Reads: 
+
+Writes: 
+r14(0x00203743ca10) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098ad: lea rbx, ptr [r14+0x148]
+Reads: 
+r14(0x00203743ca10) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098b6: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4098b9: call 0x409940
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409940: push r14
+Reads: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409942: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409943: push rax
+Reads: 
+rax(0x000000040) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409944: mov rbx, rdi
+Reads: 
+rdi(0x00203743cb58) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409947: movsxd r14, esi
+Reads: 
+
+Writes: 
+r14(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40994a: mov rsi, 0x40b260
+Reads: 
+
+Writes: 
+rsi(0x0000040b260) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409954: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409959: lea rdi, ptr [rbx+r14*4]
+Reads: 
+rbx(0x00203743cb58) r14(0x00000000) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409964: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409968: pop rbx
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409969: pop r14
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098c3: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4098c6: call 0x409940
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409940: push r14
+Reads: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409942: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409943: push rax
+Reads: 
+rax(0x0000000ff) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409944: mov rbx, rdi
+Reads: 
+rdi(0x00203743cb58) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409947: movsxd r14, esi
+Reads: 
+
+Writes: 
+r14(0x00000001) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40994a: mov rsi, 0x40b260
+Reads: 
+
+Writes: 
+rsi(0x0000040b260) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409954: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409959: lea rdi, ptr [rbx+r14*4]
+Reads: 
+rbx(0x00203743cb58) r14(0x00000001) 
+Writes: 
+rdi(0x00203743cb5c) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409964: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409968: pop rbx
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409969: pop r14
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098d0: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4098d3: call 0x409940
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409940: push r14
+Reads: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409942: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409943: push rax
+Reads: 
+rax(0x0000000ff) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409944: mov rbx, rdi
+Reads: 
+rdi(0x00203743cb58) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409947: movsxd r14, esi
+Reads: 
+
+Writes: 
+r14(0x00000002) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40994a: mov rsi, 0x40b260
+Reads: 
+
+Writes: 
+rsi(0x0000040b260) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409954: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409959: lea rdi, ptr [rbx+r14*4]
+Reads: 
+rbx(0x00203743cb58) r14(0x00000002) 
+Writes: 
+rdi(0x00203743cb60) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409964: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409968: pop rbx
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409969: pop r14
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098dd: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4098e0: call 0x409940
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409940: push r14
+Reads: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409942: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409943: push rax
+Reads: 
+rax(0x0000000ff) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409944: mov rbx, rdi
+Reads: 
+rdi(0x00203743cb58) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409947: movsxd r14, esi
+Reads: 
+
+Writes: 
+r14(0x00000003) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40994a: mov rsi, 0x40b260
+Reads: 
+
+Writes: 
+rsi(0x0000040b260) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409954: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409959: lea rdi, ptr [rbx+r14*4]
+Reads: 
+rbx(0x00203743cb58) r14(0x00000003) 
+Writes: 
+rdi(0x00203743cb64) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409964: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409968: pop rbx
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409969: pop r14
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403516: push 0x2c
+Reads: 
+rsp(0x003ff3ffc940) 
+Writes: 
+rsp(0x003ff3ffc940) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffc938) 
+Writes: 
+rsp(0x003ff3ffc938) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4034a6: push 0x25
+Reads: 
+rsp(0x003ff3ffc970) 
+Writes: 
+rsp(0x003ff3ffc970) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffc968) 
+Writes: 
+rsp(0x003ff3ffc968) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4034b6: push 0x26
+Reads: 
+rsp(0x003ff3ffc970) 
+Writes: 
+rsp(0x003ff3ffc970) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffc968) 
+Writes: 
+rsp(0x003ff3ffc968) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098ea: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4098ed: call 0x409940
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409940: push r14
+Reads: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409942: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409943: push rax
+Reads: 
+rax(0xffffffffffffffff) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409944: mov rbx, rdi
+Reads: 
+rdi(0x00203743cb58) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409947: movsxd r14, esi
+Reads: 
+
+Writes: 
+r14(0xffffffffffffffff) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40994a: mov rsi, 0x40b260
+Reads: 
+
+Writes: 
+rsi(0x0000040b260) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409954: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409959: lea rdi, ptr [rbx+r14*4]
+Reads: 
+rbx(0x00203743cb58) r14(0xffffffffffffffff) 
+Writes: 
+rdi(0x00203743cb54) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409964: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409968: pop rbx
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409969: pop r14
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098f2: mov rsi, 0x40b1c0
+Reads: 
+
+Writes: 
+rsi(0x0000040b1c0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4098fc: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4098ff: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409908: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x40990b: call 0x403ae0
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409910: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409913: call 0x409970
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409970: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409971: mov rbx, rdi
+Reads: 
+rdi(0x00203743cb58) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409974: mov rsi, 0x40b1c0
+Reads: 
+
+Writes: 
+rsi(0x0000040b1c0) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x40997e: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40998a: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40998d: pop rbx
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409918: test r14, r14
+Reads: 
+r14(0x00203743ca10) r14(0x00203743ca10) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x40991d: mov rdi, r14
+Reads: 
+r14(0x00203743ca10) 
+Writes: 
+rdi(0x00203743ca10) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409920: call 0x403e90
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403e90: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403e91: mov rbx, rdi
+Reads: 
+rdi(0x00203743ca10) 
+Writes: 
+rbx(0x00203743ca10) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403e94: mov rax, 0x407c70
+Reads: 
+
+Writes: 
+rax(0x00000407c70) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x403e9e: call rax
+Reads: 
+rax(0x00000407c70) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403ea4: mov rax, 0x407c80
+Reads: 
+
+Writes: 
+rax(0x00000407c80) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403eae: mov rdi, rbx
+Reads: 
+rbx(0x00203743ca10) 
+Writes: 
+rdi(0x00203743ca10) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x403eb1: call rax
+Reads: 
+rax(0x00000407c80) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403eb7: mov rcx, rbx
+Reads: 
+rbx(0x00203743ca10) 
+Writes: 
+rcx(0x00203743ca10) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403eba: shr rcx, 0x24
+Reads: 
+rcx(0x000000020) 
+Writes: 
+rcx(0x000000020) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403ebe: mov rax, rbx
+Reads: 
+rbx(0x00203743ca10) 
+Writes: 
+rax(0x00203743ca10) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403ec1: mul qword ptr [rcx*8+0x300000]
+Reads: 
+rcx(0x000000020) rax(0x12493b72e74730) 
+Writes: 
+rax(0x12493b72e74730) rdx(0x000024963bb3) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403ec9: mov rdi, rdx
+Reads: 
+rdx(0x000024963bb3) 
+Writes: 
+rdi(0x000024963bb3) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403ecc: imul rdi, qword ptr [rcx*8+0x200000]
+Reads: 
+rdi(0x00203743ca0) rcx(0x000000020) 
+Writes: 
+rdi(0x00203743ca0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403ed5: cmp qword ptr [rdi], 0x0
+Reads: 
+rdi(0x00203743ca0) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x403edb: mov qword ptr [rdi], 0x0
+Reads: 
+rdi(0x00203743ca0) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x403ee2: mov rax, 0x407af0
+Reads: 
+
+Writes: 
+rax(0x00000407af0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403eec: pop rbx
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x403eed: jmp rax
+Reads: 
+rax(0x00000407af0) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_AFTER: 0x409927: mov rdi, rbx
+Reads: 
+rbx(0x00203743cb58) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x40992a: call 0x409940
+Reads: 
+rsp(0x003ff3ffcae0) 
+Writes: 
+rsp(0x003ff3ffcae0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409940: push r14
+Reads: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad0) 
+Writes: 
+rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409942: push rbx
+Reads: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409943: push rax
+Reads: 
+rax(0x00000000) rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409944: mov rbx, rdi
+Reads: 
+rdi(0x00203743cb58) 
+Writes: 
+rbx(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409947: movsxd r14, esi
+Reads: 
+
+Writes: 
+r14(0x00000000) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40994a: mov rsi, 0x40b260
+Reads: 
+
+Writes: 
+rsi(0x0000040b260) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409954: call 0x4036b0
+Reads: 
+rsp(0x003ff3ffcac0) 
+Writes: 
+rsp(0x003ff3ffcac0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409959: lea rdi, ptr [rbx+r14*4]
+Reads: 
+rbx(0x00203743cb58) r14(0x00000000) 
+Writes: 
+rdi(0x00203743cb58) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409964: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcac8) 
+Writes: 
+rsp(0x003ff3ffcac8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409968: pop rbx
+Reads: 
+rsp(0x003ff3ffcad0) 
+Writes: 
+rbx(0x00203743cb58) rsp(0x003ff3ffcad0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409969: pop r14
+Reads: 
+rsp(0x003ff3ffcad8) 
+Writes: 
+r14(0x00203743ca10) rsp(0x003ff3ffcad8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409931: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffcae8) 
+Writes: 
+rsp(0x003ff3ffcae8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409935: pop rbx
+Reads: 
+rsp(0x003ff3ffcaf0) 
+Writes: 
+rbx(0x00000000) rsp(0x003ff3ffcaf0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409936: pop r14
+Reads: 
+rsp(0x003ff3ffcaf8) 
+Writes: 
+r14(0x00000000) rsp(0x003ff3ffcaf8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409938: ret 
+Reads: 
+rsp(0x003ff3ffcaf8) 
+Writes: 
+rsp(0x003ff3ffcaf8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403649: push rbp
+Reads: 
+rbp(0x003ff3ffca90) rsp(0x003ff3ffc9d0) 
+Writes: 
+rsp(0x003ff3ffc9d0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x40364a: mov rbp, rsp
+Reads: 
+rsp(0x003ff3ffc9d0) 
+Writes: 
+rbp(0x003ff3ffc9d0) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x40364d: call 0x4035d0
+Reads: 
+rsp(0x003ff3ffc9d0) 
+Writes: 
+rsp(0x003ff3ffc9d0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4035d5: cmp rax, 0x40e2e0
+Reads: 
+rax(0x0000040e2e0) 
+Writes: 
+
+PrintRegistersVectorized: IPOINT_BEFORE: 0x4035f0: ret 
+Reads: 
+rsp(0x003ff3ffc9c8) 
+Writes: 
+rsp(0x003ff3ffc9c8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403659: pop rbp
+Reads: 
+rsp(0x003ff3ffc9d8) 
+Writes: 
+rbp(0x003ff3ffca90) rsp(0x003ff3ffc9d8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x40365a: ret 
+Reads: 
+rsp(0x003ff3ffc9d8) 
+Writes: 
+rsp(0x003ff3ffc9d8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4032d6: push 0x8
+Reads: 
+rsp(0x003ff3ffa0b0) 
+Writes: 
+rsp(0x003ff3ffa0b0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa0a8) 
+Writes: 
+rsp(0x003ff3ffa0a8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403566: push 0x31
+Reads: 
+rsp(0x003ff3ffa090) 
+Writes: 
+rsp(0x003ff3ffa090) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa088) 
+Writes: 
+rsp(0x003ff3ffa088) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403416: push 0x1c
+Reads: 
+rsp(0x003ff3ffa0b0) 
+Writes: 
+rsp(0x003ff3ffa0b0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa0a8) 
+Writes: 
+rsp(0x003ff3ffa0a8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403526: push 0x2d
+Reads: 
+rsp(0x003ff3ffa0b0) 
+Writes: 
+rsp(0x003ff3ffa0b0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa0a8) 
+Writes: 
+rsp(0x003ff3ffa0a8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4032f6: push 0xa
+Reads: 
+rsp(0x003ff3ffa0b0) 
+Writes: 
+rsp(0x003ff3ffa0b0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa0a8) 
+Writes: 
+rsp(0x003ff3ffa0a8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403466: push 0x21
+Reads: 
+rsp(0x003ff3ffa040) 
+Writes: 
+rsp(0x003ff3ffa040) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa038) 
+Writes: 
+rsp(0x003ff3ffa038) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4032a6: push 0x5
+Reads: 
+rsp(0x003ff3ff77f0) 
+Writes: 
+rsp(0x003ff3ff77f0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ff77e8) 
+Writes: 
+rsp(0x003ff3ff77e8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4034f6: push 0x2a
+Reads: 
+rsp(0x003ff3ff7730) 
+Writes: 
+rsp(0x003ff3ff7730) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ff7728) 
+Writes: 
+rsp(0x003ff3ff7728) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403276: push 0x2
+Reads: 
+rsp(0x003ff3ff77f0) 
+Writes: 
+rsp(0x003ff3ff77f0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ff77e8) 
+Writes: 
+rsp(0x003ff3ff77e8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403306: push 0xb
+Reads: 
+rsp(0x003ff3ff7860) 
+Writes: 
+rsp(0x003ff3ff7860) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ff7858) 
+Writes: 
+rsp(0x003ff3ff7858) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4033b6: push 0x16
+Reads: 
+rsp(0x003ff3ffa0b0) 
+Writes: 
+rsp(0x003ff3ffa0b0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa0a8) 
+Writes: 
+rsp(0x003ff3ffa0a8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x4033c6: push 0x17
+Reads: 
+rsp(0x003ff3ffa0b0) 
+Writes: 
+rsp(0x003ff3ffa0b0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x403240: push qword ptr [rip+0xadc2]
+Reads: 
+rsp(0x003ff3ffa0a8) 
+Writes: 
+rsp(0x003ff3ffa0a8) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409a14: sub rsp, 0x8
+Reads: 
+rsp(0x003ff3ffc9d0) 
+Writes: 
+rsp(0x003ff3ffc9d0) 
+PrintRegistersVectorized: IPOINT_AFTER: 0x409a18: add rsp, 0x8
+Reads: 
+rsp(0x003ff3ffc9d8) 
+Writes: 
+rsp(0x003ff3ffc9d8) 
+PrintRegistersVectorized: IPOINT_BEFORE: 0x409a1c: ret 
+Reads: 
+rsp(0x003ff3ffc9d8) 
+Writes: 
+rsp(0x003ff3ffc9d8) 
 Tool unloading /home/dante/EffSan/test/Example.out at 0
-Tool unloading /lib64/ld-linux-x86-64.so.2 at 0x7f23d8e26000
-Tool unloading [vdso] at 0x7ffc7638c000
-Tool unloading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7f23c4848000
-Tool unloading /lib/x86_64-linux-gnu/libm.so.6 at 0x7f23c44aa000
-Tool unloading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7f23c428b000
-Tool unloading /lib/x86_64-linux-gnu/librt.so.1 at 0x7f23c4083000
-Tool unloading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7f23c3e7f000
-Tool unloading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7f23c3c67000
-Tool unloading /lib/x86_64-linux-gnu/libc.so.6 at 0x7f23c3876000
+Tool unloading /lib64/ld-linux-x86-64.so.2 at 0x7fdfe113a000
+Tool unloading [vdso] at 0x7ffc36de7000
+Tool unloading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7fdfccb5c000
+Tool unloading /lib/x86_64-linux-gnu/libm.so.6 at 0x7fdfcc7be000
+Tool unloading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7fdfcc59f000
+Tool unloading /lib/x86_64-linux-gnu/librt.so.1 at 0x7fdfcc397000
+Tool unloading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7fdfcc193000
+Tool unloading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7fdfcbf7b000
+Tool unloading /lib/x86_64-linux-gnu/libc.so.6 at 0x7fdfcbb8a000
