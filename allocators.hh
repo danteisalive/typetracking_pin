@@ -57,6 +57,17 @@ static void PrintWRegisters_1(CHAR* where, string *disass, ADDRINT pc ,  string 
 
 }
 
+static void PrintWRegisters_2(CHAR* where, string *disass, ADDRINT pc ,  
+                            string *reg_name_0, UINT64 val_0, 
+                            string *reg_name_1, UINT64 val_1)
+{
+    *out << "PrintWRegisters_2: " << where << ": " << std::hex << pc << ": "<< *disass << " => "<< 
+            *reg_name_0 << "(" << val_0 << ") " <<  
+            *reg_name_1 << "(" << val_1 << ") " <<  
+            std::endl << std::endl ;
+    
+}
+
 // VOID FreeArgsBefore(CHAR * name, ADDRINT ptr)
 // {
 

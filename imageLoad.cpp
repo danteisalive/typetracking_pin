@@ -514,9 +514,38 @@ VOID Instruction(INS ins, VOID *v)
             
             break;
         }
+        case 2:
+        {
+            std::string * dis = new std::string(INS_Disassemble(ins)); 
+            std::string * reg_name_0 = new std::string(REG_StringShort(INS_RegW(ins, maxNumWRegs[0])));
+            std::string * reg_name_1 = new std::string(REG_StringShort(INS_RegW(ins, maxNumWRegs[1])));
+
+            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintWRegisters_2, 
+                                IARG_ADDRINT, "Write Before",
+                                IARG_PTR, dis, 
+                                IARG_INST_PTR, 
+                                IARG_PTR, reg_name_0,
+                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[0]),
+                                IARG_PTR, reg_name_1,
+                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[1]),
+                                IARG_END);
+            if (INS_IsValidForIpointAfter(ins))
+                INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintWRegisters_2, 
+                                IARG_ADDRINT, "Write After",
+                                IARG_PTR, dis, 
+                                IARG_INST_PTR, 
+                                IARG_PTR, reg_name_0,
+                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[0]),
+                                IARG_PTR, reg_name_1,
+                                IARG_REG_VALUE, INS_RegW(ins, maxNumWRegs[1]),
+                                IARG_END);
+            
+            break;
+        }
         default:
         {
-            break;
+            if (maxNumWRegs.size() >= 3)    {std::cerr << "maxNumWRegs.size() = " << maxNumWRegs.size() << std::endl; assert(0);}
+            else                            break;
         }
     }
 
