@@ -83,7 +83,7 @@ std::map<uint64_t, int>                 HashMapTID;
 VOID Arg1Before(CHAR * name, ADDRINT arg1, ADDRINT arg2)
 {
    
-    
+    *out << "EFFECTIVE_SAN: " << std::hex   << arg1 << std::endl;
     
     void * ptr = (void*)arg1;
     size_t idx = lowfat_index(ptr);

@@ -12,7 +12,12 @@
 #include <dirent.h>
 #include <vector>
 #include <sstream>
+#include <string>
+#include <cstdlib>
+#include <bits/stdc++.h> 
 
+#include "TypeNode.hh"
+#include "lowfat-ptr-info.hh"
 
 using std::stringstream;
 
@@ -33,6 +38,7 @@ extern UINT64 icount;
 
 string Val2Str(const void* value, unsigned int size)
 {
+
     stringstream sstr;
     sstr << hex;
     const unsigned char* cval = (const unsigned char*)value;
@@ -44,6 +50,56 @@ string Val2Str(const void* value, unsigned int size)
     }
     return string("0x")+sstr.str();
 }
+
+
+uint64_t Str2Val (std::string hexStr)
+{
+    
+    uint64_t value;
+    std::stringstream iss;
+    iss << std::hex << hexStr; 
+    iss >> value; 
+    return value;
+}
+
+// uint64_t PinReg2Val (void* value, unsigned int size){
+
+//     unsigned char* raw = ( unsigned char*)value;
+        
+//     switch (size)
+//     {
+//         case 1:
+//         {
+//             uint64_t result = (raw[0]);
+//             return result;
+//         }
+//         case 2:
+//         {
+//             uint64_t result = (raw[0] << 8 | raw[1]);
+//             return result;
+//         }
+//         case 4:
+//         {
+//             uint64_t result = (raw[0] << 24 | raw[1] << 16 | raw[2] << 8 | raw[3]);
+//             return result;    
+//         }
+//         case 8:
+//         {
+//             uint64_t result = (raw[0] << 56 | raw[1] << 48 | raw[2] << 40 | raw[3] << 32 | raw[4] << 24 | raw[5] << 16 | raw[6] << 8 | raw[7]);
+//             return result;
+//         }
+//         default:
+//         {
+//             assert(0);
+//             break;
+//         }
+//     }
+
+//     return 0;
+    
+
+// }
+
 
 // This function is called before every instruction is executed
 VOID docount() 
@@ -66,58 +122,7 @@ VOID docount()
     }
 }
 
-// static void PrintRRegisters_1(CHAR* where, string *disass, ADDRINT pc ,  string *reg_name, UINT64 val)
-// {
-//     *out << "PrintRRegisters_1: " << where << ": " << std::hex << pc << ": "<< *disass << 
-//             " => "<< *reg_name << "(" << val << ")" <<  
-//             std::endl << std::endl ;
-    
 
-// }
-
-// static void PrintRRegisters_2(CHAR* where, string *disass, ADDRINT pc ,  
-//                             string *reg_name_0, UINT64 val_0, 
-//                             string *reg_name_1, UINT64 val_1)
-// {
-//     *out << "PrintRRegisters_2: " << where << ": " << std::hex << pc << ": "<< *disass << " => "<< 
-//             *reg_name_0 << "(" << val_0 << ") " <<  
-//             *reg_name_1 << "(" << val_1 << ") " <<  
-//             std::endl << std::endl ;
-    
-// }
-
-// static void PrintRRegisters_3(CHAR* where, string *disass, ADDRINT pc ,  
-//                             string *reg_name_0, UINT64 val_0, 
-//                             string *reg_name_1, UINT64 val_1,
-//                             string *reg_name_2, UINT64 val_2)
-// {
-//     *out << "PrintRRegisters_3: " << where << ": " << std::hex << pc << ": "<< *disass << " => "<< 
-//             *reg_name_0 << "(" << val_0 << ") " <<  
-//             *reg_name_1 << "(" << val_1 << ") " <<  
-//             *reg_name_2 << "(" << val_2 << ") " <<  
-//             std::endl << std::endl ;
-    
-// }
-
-// static void PrintWRegisters_1(CHAR* where, string *disass, ADDRINT pc ,  string *reg_name, UINT64 val)
-// {
-//     *out << "PrintWRegisters_1: "  << where << ": " << std::hex << pc << ": "<< *disass << 
-//             " => "<< *reg_name << "(" << val << ")" <<  
-//             std::endl << std::endl ;
-    
-
-// }
-
-// static void PrintWRegisters_2(CHAR* where, string *disass, ADDRINT pc ,  
-//                             string *reg_name_0, UINT64 val_0, 
-//                             string *reg_name_1, UINT64 val_1)
-// {
-//     *out << "PrintWRegisters_2: " << where << ": " << std::hex << pc << ": "<< *disass << " => "<< 
-//             *reg_name_0 << "(" << val_0 << ") " <<  
-//             *reg_name_1 << "(" << val_1 << ") " <<  
-//             std::endl << std::endl ;
-    
-// }
 
 static void PrintRegistersVectorized(CHAR* where, string *disass, 
                                     ADDRINT pc,
@@ -135,7 +140,62 @@ static void PrintRegistersVectorized(CHAR* where, string *disass,
         PIN_REGISTER val;
         PIN_GetContextRegval(ctx, (REG)(*RRegs)[i], reinterpret_cast<UINT8*>(&val));
 
-        *out << REG_StringShort((REG)(*RRegs)[i])  << "(" << Val2Str(&val, grRegSize) << ") ";
+        // uint64_t addr = Str2Val(Val2Str(&val, grRegSize));
+        // void * ptr = (void *)addr;
+        // std::string ptr_type = "";
+        // ptr_type += "(HEAP)";
+
+        // if (lowfat_is_heap_ptr(ptr))
+        // {
+        //     size_t idx = lowfat_index(ptr);
+        //     if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT || _LOWFAT_MAGICS[idx] == 0)
+        //     {
+        //         ;
+        //     }
+        //     else 
+        //     {
+                
+        //         void *base = lowfat_base(ptr);
+        //         // Get the object meta-data and calculate the allocation bounds.
+        //         EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+        //         *out << "ADDR: " << addr << " " << ptr << " " << base << " " << meta->size<< std::endl;
+        //         base = (void *)(meta + 1);
+        //         const EFFECTIVE_TYPE *t = meta->type;
+
+        //         if (t == NULL)
+        //         {
+        //              *out  << "HERE ";
+        //             ;
+        //         }
+        //         else
+        //         {
+        //             // std::string name(t->info->name); ptr_type += name;
+        //            *out  << "HERE " << std::dec   << t->info->name << "(" << t->info->tid_info->tid << ")";
+        //        } 
+
+                
+        //     }
+        // }
+        // else if (lowfat_is_global_ptr(ptr))
+        // {
+        //     ptr_type += "(GLOBAL)";
+        // }
+        // else if (lowfat_is_stack_ptr(ptr))
+        // {
+        //     size_t idx = lowfat_index(ptr);
+        //     if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT || _LOWFAT_MAGICS[idx] == 0)
+        //     {
+        //         ;
+        //     }
+        //     else 
+        //     {
+        //         ptr_type += "(STACK)";
+        //     }
+                
+        // }
+    
+
+        *out << REG_StringShort((REG)(*RRegs)[i]) << "(" << grRegSize << ")" << "(" << Val2Str(&val, grRegSize) << ") " << " ";
     }
 
     *out << std::endl << "Writes: " << std::endl;
@@ -144,7 +204,7 @@ static void PrintRegistersVectorized(CHAR* where, string *disass,
         const UINT grRegSize = REG_Size((REG)(*WRegs)[i]);
         PIN_REGISTER val;
         PIN_GetContextRegval(ctx, (REG)(*WRegs)[i], reinterpret_cast<UINT8*>(&val));
-        *out << REG_StringShort((REG)(*WRegs)[i])  << "(" << Val2Str(&val, grRegSize) << ") ";
+        *out << REG_StringShort((REG)(*WRegs)[i]) << "(" << grRegSize << ")" << "(" << Val2Str(&val, grRegSize) << ") ";
     }
     
     *out << std::endl ;
@@ -216,6 +276,7 @@ VOID Instruction(INS ins, VOID *v)
     if (!RTN_Valid(INS_Rtn(ins)))
         return; 
 
+    // sanetize instructions from shared libraries
     if ((!IMG_Valid(SEC_Img(RTN_Sec(INS_Rtn(ins))))
                 || !IMG_IsMainExecutable(SEC_Img(RTN_Sec(INS_Rtn(ins)))) ))
         return;
@@ -225,8 +286,8 @@ VOID Instruction(INS ins, VOID *v)
     std::string rtn_name = RTN_Name(INS_Rtn(ins));
     if (
         (rtn_name.find("lowfat_") != std::string::npos)     || 
-        (rtn_name.find("effective_") != std::string::npos)  || 
-        (rtn_name.find("EFFECTIVE_") != std::string::npos)  ||
+        // (rtn_name.find("effective_") != std::string::npos)  || 
+        // (rtn_name.find("EFFECTIVE_") != std::string::npos)  ||
         (rtn_name.find("LOWFAT_") != std::string::npos) 
     )
     {
@@ -286,6 +347,8 @@ VOID Instruction(INS ins, VOID *v)
                                 IARG_PTR, maxNumWRegs,
                                 IARG_END);
         }
+
+
     }
 
     
