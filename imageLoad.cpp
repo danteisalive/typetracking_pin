@@ -83,7 +83,7 @@ std::map<uint64_t, int>                 HashMapTID;
 VOID Arg1Before(CHAR * name, ADDRINT arg1, ADDRINT arg2)
 {
    
-    *out << "EFFECTIVE_SAN: " << std::hex   << arg1 << std::endl;
+    *out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 << std::endl;
     
     void * ptr = (void*)arg1;
     size_t idx = lowfat_index(ptr);
@@ -100,20 +100,20 @@ VOID Arg1Before(CHAR * name, ADDRINT arg1, ADDRINT arg2)
     base = (void *)(meta + 1);
     const EFFECTIVE_TYPE *t = meta->type;
     
-    if (lowfat_is_heap_ptr(ptr))
-    {
-        //*out << std::dec << "HEAP PTR: " << meta->size << "\n";
-    }
-    else if (lowfat_is_global_ptr(ptr))
-    {
-        //*out << std::dec << "GLOBAL PTR: " << meta->size << "\n";
-    }
-    else if (lowfat_is_stack_ptr(ptr))
-    {
-        //*out << std::dec << "STACK PTR: " << meta->size << "\n";
-    }
-    else 
-        assert(0);
+    // if (lowfat_is_heap_ptr(ptr))
+    // {
+    //     //*out << std::dec << "HEAP PTR: " << meta->size << "\n";
+    // }
+    // else if (lowfat_is_global_ptr(ptr))
+    // {
+    //     //*out << std::dec << "GLOBAL PTR: " << meta->size << "\n";
+    // }
+    // else if (lowfat_is_stack_ptr(ptr))
+    // {
+    //     //*out << std::dec << "STACK PTR: " << meta->size << "\n";
+    // }
+    // else 
+    //     assert(0);
 
     //*out << std::dec << "PTR: " << meta->size << "\n";
 
