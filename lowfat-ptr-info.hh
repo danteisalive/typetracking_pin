@@ -140,6 +140,7 @@ void *lowfat_region(const void *ptr)
     return (void *)(lowfat_index(ptr) * LOWFAT_REGION_SIZE);
 }
 
+
 bool lowfat_is_ptr(const void *ptr)
 {
     size_t idx = lowfat_index(ptr);

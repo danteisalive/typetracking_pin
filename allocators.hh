@@ -34,6 +34,7 @@ extern UINT64 NumOfCalls;
 extern UINT64 icount;
 
 uint64_t Val2Str2(const PIN_REGISTER &value, const UINT size) {
+    *out << "Called Val2Str2 with size=" << size << "\n" << std::flush;
     switch (size) {
         case 1:
             // *out<< "PINT_REGISTER val = " << hex
@@ -192,7 +193,7 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
         std::string ptr_type = "";
         ptr_type += "(HEAP)";
 
-        if (lowfat_is_ptr(ptr)) {
+        if (!lowfat_is_ptr(ptr)) {
             if (lowfat_is_heap_ptr(ptr)) {
                 *out << "11111111111111111111\n" << std::flush;
                 size_t idx = lowfat_index(ptr);
@@ -229,64 +230,64 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                              << t->info->tid_info->tid << ")" << std::flush;
                     }
                 }
-            // } else if (lowfat_is_stack_ptr(ptr)) {
-            //     *out << "3333333333333333333\n" << std::flush;
-            //     size_t idx = lowfat_index(ptr);
-            //     *out << "999999999999999999\n" << std::flush;
-            //     ;
-            //     if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-            //         _LOWFAT_MAGICS[idx] == 0) {
-            //         *out << "8888888888888888888\n" << std::flush;
-            //         ;
-            //     } else {
-            //         *out << "AAAAAAAAAAAAAAAAAAAAA\n" << std::flush;
-            //         std::cerr << "AAAAAAAAAAAAAAAAAAAAA\n";
-            //         void *base = lowfat_base(ptr);
-            //         *out << "BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n" << std::flush;
-            //         std::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n";
-            //         // Get the object meta-data and calculate the allocation
-            //         // bounds.
-            //         EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
-            //         assert(meta != NULL);
-            //         *out << "CCCCCCCCCCCCCCCCCCCCCCCCCCC\n" << std::flush;
-            //         std::cerr << "CCCCCCCCCCCCCCCCCCCCCCCCCCC\n";
-            //         *out << meta->size << std::flush;
-            //         *out << "DDDDDDDDDDDDDDDDDDDDDDDDDDD\n" << std::flush;
-            //         std::cerr << "DDDDDDDDDDDDDDDDDDDDDDDDDD\n";
-            //         assert(meta != NULL);
-            //         *out << "ADDR: " << addr2 << " " << ptr << " " << base
-            //              << " " << meta->size << '\n'
-            //              << std::flush;
+            } else if (lowfat_is_stack_ptr(ptr)) {
+                *out << "3333333333333333333\n" << std::flush;
+                size_t idx = lowfat_index(ptr);
+                *out << "999999999999999999\n" << std::flush;
+                ;
+                if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+                    _LOWFAT_MAGICS[idx] == 0) {
+                    *out << "8888888888888888888\n" << std::flush;
+                    ;
+                } else {
+                    *out << "AAAAAAAAAAAAAAAAAAAAA\n" << std::flush;
+                    std::cerr << "AAAAAAAAAAAAAAAAAAAAA\n";
+                    void *base = lowfat_base(ptr);
+                    *out << "BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n" << std::flush;
+                    std::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n";
+                    // Get the object meta-data and calculate the allocation
+                    // bounds.
+                    EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+                    assert(meta != NULL);
+                    *out << "CCCCCCCCCCCCCCCCCCCCCCCCCCC\n" << std::flush;
+                    std::cerr << "CCCCCCCCCCCCCCCCCCCCCCCCCCC\n";
+                    *out << meta->size << std::flush;
+                    *out << "DDDDDDDDDDDDDDDDDDDDDDDDDDD\n" << std::flush;
+                    std::cerr << "DDDDDDDDDDDDDDDDDDDDDDDDDD\n";
+                    assert(meta != NULL);
+                    *out << "ADDR: " << addr2 << " " << ptr << " " << base
+                         << " " << meta->size << '\n'
+                         << std::flush;
 
-            //         *out << "RRRRRRRRRRRRRRRRRRRRRRRRrrr\n" << std::flush;
-            //         std::cerr << "RRRRRRRRRRRRRRRRRRRRRRRRRR\n";
-            //         base = (void *)(meta + 1);
-            //         *out << "444444444444444444\n" << std::flush;
-            //         std::cerr << "444444444444444444\n";
-            //         assert(meta != NULL);
-            //         *out << "55555555555555555\n" << std::flush;
-            //         std::cerr << "555555555555555555\n";
-            //         // assert(meta->type != NULL);
-            //         if (meta->size == 0) {
-            //             ;
-            //         } else {
-            //             const EFFECTIVE_TYPE *t = meta->type;
-            //             // *out << "666666666666666\n" << std::flush;
-            //             // *out << "HERE3\n" << std::flush;
-            //             // std::string name(t->info->name); ptr_type += name;
-            //             *out << "HERE4: \n" << std::flush;
-            //             assert(t->hash != NULL);
-            //             *out << "HERE5: \n" << std::flush;
-            //             if (t->info->tid_info == NULL) {
-            //                 assert(0);
-            //             }
-            //             *out << "HERE6: \n" << std::flush;
-            //             *out << "HERE2 " << std::dec << t->info->size << "("
-            //                  << std::flush;
-            //             *out << "HERE7: \n" << std::flush;
-            //             *out << t->info->tid_info->tid << ")" << std::flush;
-            //         }
-            //     }
+                    *out << "RRRRRRRRRRRRRRRRRRRRRRRRrrr\n" << std::flush;
+                    std::cerr << "RRRRRRRRRRRRRRRRRRRRRRRRRR\n";
+                    base = (void *)(meta + 1);
+                    *out << "444444444444444444\n" << std::flush;
+                    std::cerr << "444444444444444444\n";
+                    assert(meta != NULL);
+                    *out << "55555555555555555\n" << std::flush;
+                    std::cerr << "555555555555555555\n";
+                    // assert(meta->type != NULL);
+                    if (meta->size == 0) {
+                        ;
+                    } else {
+                        const EFFECTIVE_TYPE *t = meta->type;
+                        // *out << "666666666666666\n" << std::flush;
+                        // *out << "HERE3\n" << std::flush;
+                        // std::string name(t->info->name); ptr_type += name;
+                        *out << "HERE4: \n" << std::flush;
+                        assert(t->hash != NULL);
+                        *out << "HERE5: \n" << std::flush;
+                        if (t->info->tid_info == NULL) {
+                            assert(0);
+                        }
+                        *out << "HERE6: \n" << std::flush;
+                        *out << "HERE2 " << std::dec << t->info->size << "("
+                             << std::flush;
+                        *out << "HERE7: \n" << std::flush;
+                        *out << t->info->tid_info->tid << ")" << std::flush;
+                    }
+                }
                 // } else if (lowfat_is_stack_ptr(ptr)) {
                 //     *out<< "3333333333333333333333333333\n";
                 //     size_t idx = lowfat_index(ptr);
