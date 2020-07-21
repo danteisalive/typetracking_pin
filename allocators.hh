@@ -16,6 +16,7 @@
 
 #include "TypeNode.hh"
 #include "lowfat-ptr-info.hh"
+#include "predictor.hh"
 #include "pin.H"
 
 using std::stringstream;
