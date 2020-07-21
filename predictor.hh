@@ -278,7 +278,11 @@ class DefaultLVPT
     DefaultLVPT(unsigned numEntries, unsigned tagBits,
                unsigned instShiftAmt, unsigned numThreads)
     {
-
+        std::cout << "creating LVPT " << numEntries << std::endl;
+        this->numEntries = numEntries;
+        this->tagBits = tagBits;
+        this->instShiftAmt = instShiftAmt;
+        this->log2NumThreads = floorLog2(numThreads);
         
         if (!isPowerOf2(numEntries)) {
             assert(0);
@@ -290,11 +294,11 @@ class DefaultLVPT
             lvpt[i].valid = false;
         }
 
-        idxMask = numEntries - 1;
+        this->idxMask = numEntries - 1;
 
-        tagMask = (1 << tagBits) - 1;
+        this->tagMask = (1 << tagBits) - 1;
 
-        tagShiftAmt = instShiftAmt + floorLog2(numEntries); // 12 + 2
+        this->tagShiftAmt = instShiftAmt + floorLog2(numEntries); // 12 + 2
 
         //Setup the array of counters for the local predictor
         localBiases.resize(numEntries);
@@ -331,7 +335,8 @@ class DefaultLVPT
         }
         blackList.resize(numEntries);
 
-
+        this->LVPTMissprediction = 0;
+        this->LVPTNumOfAccesses = 0;
     }
 
     void reset()
@@ -343,7 +348,7 @@ class DefaultLVPT
     }
 
     
-    unsigned getIndex(uint64_t instPC, ThreadID tid)
+    uint64_t getIndex(uint64_t instPC, ThreadID tid)
     {
         // Need to shift PC over by the word offset.
         return ((instPC >> instShiftAmt)
@@ -358,7 +363,7 @@ class DefaultLVPT
 
     bool valid(uint64_t instPC, ThreadID tid)
     {
-        unsigned lvpt_idx = getIndex(instPC, tid);
+        uint64_t lvpt_idx = getIndex(instPC, tid);
 
         uint64_t inst_tag = getTag(instPC);
 
@@ -379,7 +384,7 @@ class DefaultLVPT
     {
 
 
-        unsigned lvpt_idx = getIndex(instPC, tid);
+        uint64_t lvpt_idx = getIndex(instPC, tid);
 
         // if the instPC is in the banList then just return zero;
         // if (banList[lvpt_idx].find(instPC) != banList[lvpt_idx].end()){
@@ -394,28 +399,25 @@ class DefaultLVPT
         {
 
             PointerID pred_pid = PointerID(0);
-            if (inst_tag == lvpt[lvpt_idx].tag
-                && lvpt[lvpt_idx].tid == tid)
+            if (inst_tag == lvpt[lvpt_idx].tag)
             {
                 switch (localCtrs[lvpt_idx].read()) {
                     case 0x0:
-                        pred_pid = PointerID(lvpt[lvpt_idx].target.getPID() +
-                                                localBiases[lvpt_idx]);
-                        
-                        LVPTStridePredictions++;
+                        //pred_pid = PointerID(lvpt[lvpt_idx].target.getPID());
+                        pred_pid = PointerID(0);
+                        //LVPTStridePredictions++;
                     
                         break;
                     
                     case 0x1:
-                        pred_pid = PointerID(lvpt[lvpt_idx].target.getPID() +
-                                                localBiases[lvpt_idx]);
-                        
-                        LVPTStridePredictions++;
+                        //pred_pid = PointerID(lvpt[lvpt_idx].target.getPID());
+                        pred_pid = PointerID(0);
+                        //LVPTStridePredictions++;
                         
                         break;
                     case 0x2:
                     case 0x3:
-                        LVPTConstantPredictions++;
+                        //LVPTConstantPredictions++;
                         
                         pred_pid = lvpt[lvpt_idx].target;
                         break;
@@ -444,7 +446,7 @@ class DefaultLVPT
         else
         {
             
-            LVPTConstantPredictions++;
+            //LVPTConstantPredictions++;
             return PointerID(0);
         }
     }
@@ -453,7 +455,40 @@ class DefaultLVPT
     void update(uint64_t instPC,
                 const PointerID &target,
                 ThreadID tid, bool predict
-               );
+               )
+    {
+        uint64_t lvpt_idx = getIndex(instPC, tid);
+
+        assert(lvpt_idx < numEntries);
+
+        // if prediction is true, we just update the localCtrs
+        // std::cout << std::hex << "Update localCtrs: " <<
+        // localCtrs[lvpt_idx].read() << std::endl;
+        switch (localCtrs[lvpt_idx].read())
+        {
+            case 0x0:
+            case 0x1:
+            case 0x2:
+            case 0x3:
+                if (predict){ localCtrs[lvpt_idx].increment(); }
+                else        { localCtrs[lvpt_idx].decrement(); }
+                break;
+
+            default:
+                assert(0);
+        }
+
+
+
+        // std::cout << std::hex << "Inst. " << instPC << " updated the LVPT." <<
+        // " Before: " <<   lvpt[lvpt_idx].target << " After: " << target << "\n";
+
+        localBiases[lvpt_idx] = target.getPID() - lvpt[lvpt_idx].target.getPID();
+        lvpt[lvpt_idx].tid = tid;
+        lvpt[lvpt_idx].valid = true;
+        lvpt[lvpt_idx].target = target;
+        lvpt[lvpt_idx].tag = getTag(instPC);
+    }
 
 
 
@@ -514,9 +549,9 @@ class DefaultLVPT
     /** Log2 NumThreads used for hashing threadid */
     unsigned log2NumThreads;
 
-
-    uint64_t LVPTStridePredictions;
-    uint64_t LVPTConstantPredictions;
+    public:
+        uint64_t LVPTMissprediction;
+        uint64_t LVPTNumOfAccesses;
 };
 
 

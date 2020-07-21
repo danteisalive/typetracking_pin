@@ -34,6 +34,8 @@ extern std::map<int, std::vector<int> > TypeTreeTID;
 extern std::map<uint64_t, int> HashMapTID;
 extern UINT64 NumOfCalls;
 
+extern DefaultLVPT* lvpt;
+
 // The running count of instructions is kept here
 // make it static to help the compiler optimize docount
 extern UINT64 icount;
@@ -72,29 +74,31 @@ uint64_t Val2Str(const PIN_REGISTER &value, const UINT size) {
 // This function is called before every instruction is executed
 VOID docount() {
     icount++;
-    uint64_t nonzero_tid = 0;
+    uint64_t nonzero_tid = 0; nonzero_tid = nonzero_tid;
     if (icount % 100000000 == 0) {
         //*out << std::dec << icount/100000000 << " " << NumOfCalls << endl;
 
-        for (TypesCount::iterator it = TC.begin(); it != TC.end(); it++) {
-            if (it->second.second != 0) {
-                *out << std::dec << it->second.second << " " << std::flush;
-                it->second.second = 0;
-                nonzero_tid++;
-            }
-        }
-        *out << nonzero_tid << '\n' << std::flush;
+        // for (TypesCount::iterator it = TC.begin(); it != TC.end(); it++) {
+        //     if (it->second.second != 0) {
+        //         *out << std::dec << it->second.second << " " << std::flush;
+        //         it->second.second = 0;
+        //         nonzero_tid++;
+        //     }
+        // }
+        // *out << nonzero_tid << '\n' << std::flush;
         NumOfCalls = 0;
 
+        int numOfRulesUsedDuringThisPeriod = 0;
         for (InsTypeCount::iterator it = ITC.begin(); it != ITC.end(); it++) {
             if (it->second != 0)
             {
-                *out << std::dec << it->first << "(" << it->second <<  ")\n";
+                //*out << std::dec << it->first << "(" << it->second <<  ")\n";
                 it->second = 0;
+                numOfRulesUsedDuringThisPeriod++;
             }
         }
-        *out << '\n' << std::flush;
-        *out << "------------------------------------------------------------------------\n" << std::flush;
+        *out << std::dec <<  numOfRulesUsedDuringThisPeriod << " "<< (double)lvpt->LVPTMissprediction/lvpt->LVPTNumOfAccesses  << '\n' << std::flush;
+        //*out << "------------------------------------------------------------------------\n" << std::flush;
     }
     
 }
@@ -301,6 +305,18 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                         destTypeIds += "_";
                         destTypeIds += std::string(t->info->name);
                         isDestPointer = true;
+
+                        //predict and update LVPT
+                        PointerID tid = lvpt->lookup((uint64_t)pc, 0);
+                        
+                        bool prediction = false;
+                        prediction = (t->info->tid_info->tid == tid.getPID());
+
+                        lvpt->update((uint64_t)pc, PointerID(t->info->tid_info->tid) , 0, prediction);
+
+                        lvpt->LVPTNumOfAccesses++;
+                        if (!prediction) lvpt->LVPTMissprediction++;
+                        
                     }
 
                     

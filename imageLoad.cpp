@@ -31,6 +31,7 @@
 #include "TypeNode.hh"
 #include "lowfat-ptr-info.hh"
 #include "allocators.hh"
+#include "predictor.hh"
 
 using std::dec;
 using std::string;
@@ -78,7 +79,7 @@ InsTypeCount                            ITC;
 std::map<int, std::vector<int> >        TypeTreeTID;
 std::map<uint64_t, int>                 HashMapTID;
 
-
+DefaultLVPT* lvpt;
 
 
 
@@ -325,6 +326,8 @@ int main(INT32 argc, CHAR **argv)
     out = new ofstream(KnobOutputFile.Value().c_str());
     *out << hex << showbase;
     
+
+    lvpt = new DefaultLVPT(1024, 16, 0, 1);
 
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);
