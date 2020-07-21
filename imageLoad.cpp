@@ -74,8 +74,10 @@ KNOB<BOOL> KnobImageOnly(KNOB_MODE_WRITEONCE, "pintool",
 
 
 TypesCount                              TC;
+InsTypeCount                            ITC;
 std::map<int, std::vector<int> >        TypeTreeTID;
 std::map<uint64_t, int>                 HashMapTID;
+
 
 
 
@@ -83,7 +85,7 @@ std::map<uint64_t, int>                 HashMapTID;
 VOID Arg1Before(CHAR * name, ADDRINT arg1, ADDRINT arg2)
 {
    
-    *out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 << std::endl;
+    //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 << std::endl;
     
     void * ptr = (void*)arg1;
     size_t idx = lowfat_index(ptr);
@@ -287,29 +289,7 @@ VOID Trace(TRACE trace, VOID *v)
         {
             
             INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRegisters, IARG_INST_PTR , IARG_CONST_CONTEXT, IARG_END);
-            // if(INS_IsMemoryRead(ins) && INS_IsStandardMemop(ins))
-            // {
-            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
-            //                          IARG_MEMORYREAD_EA, offsetof(struct MEMREF, ea),
-            //                          IARG_END);
-            // }
-
-            // if (INS_HasMemoryRead2(ins) && INS_IsStandardMemop(ins))
-            // {
-            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
-            //                          IARG_MEMORYREAD2_EA, offsetof(struct MEMREF, ea),
-            //                          IARG_END);
-            // }
-
-            // if(INS_IsMemoryWrite(ins) && INS_IsStandardMemop(ins))
-            // {
-            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
-            //                          IARG_MEMORYWRITE_EA, offsetof(struct MEMREF, ea),
-            //                          IARG_END);
-            // }
+            
         }
     }
 }
@@ -320,6 +300,17 @@ VOID Fini(INT32 code, VOID *v)
     // Write to a file since cout and cerr maybe closed by the application
     //out->setf(ios::showbase);
     //*out << "Count " << std::dec << NumOfCalls << endl;
+
+    for (InsTypeCount::iterator it = ITC.begin(); it != ITC.end(); it++) {
+            if (it->second != 0)
+            {
+                *out << std::dec << it->first << "(" << it->second <<  ")\n";
+                it->second = 0;
+            }
+        }
+    *out << '\n' << std::flush;
+    *out << "------------------------------------------------------------------------\n" << std::flush;
+
     out->close();
 }
 
@@ -447,24 +438,93 @@ VOID Instruction(INS ins, VOID *v)
 */
 
 /*
-static void PrintRegisters(const CONTEXT * ctxt)
+
+VOID RecordMemRead(VOID * ip, VOID * addr,VOID * size)
 {
-    if (!printRegsNow) return;
-    static const UINT stRegSize = REG_Size(REG_ST_BASE);
-    for (int reg = (int)REG_GR_BASE; reg <= (int)REG_GR_LAST; ++reg)
-    {
-        // For the integer registers, it is safe to use ADDRINT. But make sure to pass a pointer to it.
-        ADDRINT val;
-        PIN_GetContextRegval(ctxt, (REG)reg, reinterpret_cast<UINT8*>(&val));
-        OutFile << REG_StringShort((REG)reg) << ": 0x" << hex << val << endl;
-    }
-    for (int reg = (int)REG_ST_BASE; reg <= (int)REG_ST_LAST; ++reg)
-    {
-        // For the x87 FPU stack registers, using PIN_REGISTER ensures a large enough buffer.
-        PIN_REGISTER val;
-        PIN_GetContextRegval(ctxt, (REG)reg, reinterpret_cast<UINT8*>(&val));
-        OutFile << REG_StringShort((REG)reg) << ": " << Val2Str(&val, stRegSize) << endl;
-    }
+    auto elapsed = (std::chrono::high_resolution_clock::now()) - start;
+    nanoseconds ns= std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed);
+
+//sprintf(buffer,trace,"%p: R %p Time,ns %lld \n", ip, addr,ns);
+
+    //std::string fout = fout + std::to_string("%p: R %p Time,ns %lld \n", ip, addr,ns);
+
+    fprintf(trace,"%p: R,bytes %p Size,bytes %lld \n", ip, addr,size);
 }
 
+// Print a memory write record
+VOID RecordMemWrite(VOID * ip, VOID * addr, VOID * size)
+{
+    auto elapsed = (std::chrono::high_resolution_clock::now()) - start;
+    nanoseconds ns= std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed);
+
+    fprintf(trace,"%p: W,bytes %p Size,bytes %lld \n", ip, addr,size);
+}
+
+VOID Instruction(INS ins, VOID *v)
+{
+    // Instruments memory accesses using a predicated call, i.e.
+    // the instrumentation is called iff the instruction will actually be executed.
+    //
+    // On the IA-32 and Intel(R) 64 architectures conditional moves and REP 
+    // prefixed instructions appear as predicated instructions in Pin.
+    UINT32 memOperands = INS_MemoryOperandCount(ins);
+
+    // Iterate over each memory operand of the instruction.
+    for (UINT32 memOp = 0; memOp < memOperands; memOp++)
+    {
+        if (INS_MemoryOperandIsRead(ins, memOp))
+        {
+            INS_InsertCall(
+            //INS_InsertIfCall(
+            ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead,
+                IARG_INST_PTR,
+                IARG_MEMORYOP_EA,
+                IARG_MEMORYREAD_SIZE, memOp,
+                IARG_END);
+        }
+        // Note that in some architectures a single memory operand can be 
+        // both read and written (for instance incl (%eax) on IA-32)
+        // In that case we instrument it once for read and once for write.
+        //IARG_MEMORYREAD_SIZE  Type: UINT32. Size in bytes of memory read.
+        //IARG_MEMORYOP_EA
+        //IARG_MEMORYWRITE_SIZE     Type: UINT32. Size in bytes of memory write. 
+        if (INS_MemoryOperandIsWritten(ins, memOp))
+        {
+            INS_InsertCall(
+           //INS_InsertPredicatedCall(
+                ins, IPOINT_BEFORE, (AFUNPTR)RecordMemWrite,
+                IARG_INST_PTR,
+                IARG_MEMORYOP_EA,
+                IARG_MEMORYWRITE_SIZE, memOp,
+                IARG_END);
+        }
+    }
+}
+*/
+
+
+/*
+// if(INS_IsMemoryRead(ins) && INS_IsStandardMemop(ins))
+            // {
+            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
+            //                          IARG_MEMORYREAD_EA, offsetof(struct MEMREF, ea),
+            //                          IARG_END);
+            // }
+
+            // if (INS_HasMemoryRead2(ins) && INS_IsStandardMemop(ins))
+            // {
+            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
+            //                          IARG_MEMORYREAD2_EA, offsetof(struct MEMREF, ea),
+            //                          IARG_END);
+            // }
+
+            // if(INS_IsMemoryWrite(ins) && INS_IsStandardMemop(ins))
+            // {
+            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+            //                          IARG_INST_PTR, offsetof(struct MEMREF, pc),
+            //                          IARG_MEMORYWRITE_EA, offsetof(struct MEMREF, ea),
+            //                          IARG_END);
+            // }
 */

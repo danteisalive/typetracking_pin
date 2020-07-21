@@ -23,8 +23,12 @@ using std::stringstream;
 typedef std::map<uint64_t, std::pair<const char *, uint64_t> > TypesCount;
 typedef TypesCount TypesCount;
 
+typedef std::map<std::string, uint64_t> InsTypeCount;
+typedef InsTypeCount InsTypeCount; 
+
 extern ofstream *out;
 extern TypesCount TC;
+extern InsTypeCount ITC;
 extern std::map<int, std::vector<int> > TypeTreeTID;
 extern std::map<uint64_t, int> HashMapTID;
 extern UINT64 NumOfCalls;
@@ -33,8 +37,8 @@ extern UINT64 NumOfCalls;
 // make it static to help the compiler optimize docount
 extern UINT64 icount;
 
-uint64_t Val2Str2(const PIN_REGISTER &value, const UINT size) {
-    *out << "Called Val2Str2 with size=" << size << "\n" << std::flush;
+uint64_t Val2Str(const PIN_REGISTER &value, const UINT size) {
+    //*out << "Called Val2Str2 with size=" << size << "\n" << std::flush;
     switch (size) {
         case 1:
             // *out<< "PINT_REGISTER val = " << hex
@@ -61,92 +65,8 @@ uint64_t Val2Str2(const PIN_REGISTER &value, const UINT size) {
     }
 }
 
-string Val2Str(const void *value, UINT size) {
-    unsigned int size_tmp = size;
-    stringstream sstr;
-    sstr << hex;
-    const unsigned char *cval = (const unsigned char *)value;
-    // Traverse cval from end to beginning since the MSB is in the last block of
-    // cval.
-    while (size) {
-        --size;
-        sstr << (unsigned int)cval[size];
-    }
 
-    switch (size_tmp) {
-        case 1:
-            *out << "(uint8_t) Val2Str is loaded with value = "
-                 << *((uint8_t *)value) << ", size= " << size_tmp
-                 << " and return value=" << string("0x") + sstr.str() << '\n'
-                 << std::flush;
-            break;
-        case 2:
-            *out << "(uint16_t) Val2Str is loaded with value = "
-                 << *((uint16_t *)value) << ", size= " << size_tmp
-                 << " and return value=" << string("0x") + sstr.str() << '\n'
-                 << std::flush;
-            break;
-        case 4:
-            *out << "(uint32_t) Val2Str is loaded with value = "
-                 << *((uint32_t *)value) << ", size= " << size_tmp
-                 << " and return value=" << string("0x") + sstr.str() << '\n'
-                 << std::flush;
-            break;
-        case 8:
-            *out << "(uint64_t) Val2Str is loaded with value = "
-                 << *((uint64_t *)value) << ", size= " << size_tmp
-                 << " and return value=" << string("0x") + sstr.str() << '\n'
-                 << std::flush;
-            break;
-    }
-    return string("0x") + sstr.str();
-}
 
-uint64_t Str2Val(std::string hexStr) {
-    uint64_t value;
-    std::stringstream iss;
-    iss << std::hex << hexStr;
-    iss >> value;
-    return value;
-}
-
-// uint64_t PinReg2Val (void* value, unsigned int size){
-
-//     unsigned char* raw = ( unsigned char*)value;
-
-//     switch (size)
-//     {
-//         case 1:
-//         {
-//             uint64_t result = (raw[0]);
-//             return result;
-//         }
-//         case 2:
-//         {
-//             uint64_t result = (raw[0] << 8 | raw[1]);
-//             return result;
-//         }
-//         case 4:
-//         {
-//             uint64_t result = (raw[0] << 24 | raw[1] << 16 | raw[2] << 8 |
-//             raw[3]); return result;
-//         }
-//         case 8:
-//         {
-//             uint64_t result = (raw[0] << 56 | raw[1] << 48 | raw[2] << 40 |
-//             raw[3] << 32 | raw[4] << 24 | raw[5] << 16 | raw[6] << 8 |
-//             raw[7]); return result;
-//         }
-//         default:
-//         {
-//             assert(0);
-//             break;
-//         }
-//     }
-
-//     return 0;
-
-// }
 
 // This function is called before every instruction is executed
 VOID docount() {
@@ -164,18 +84,58 @@ VOID docount() {
         }
         *out << nonzero_tid << '\n' << std::flush;
         NumOfCalls = 0;
+
+        for (InsTypeCount::iterator it = ITC.begin(); it != ITC.end(); it++) {
+            if (it->second != 0)
+            {
+                *out << std::dec << it->first << "(" << it->second <<  ")\n";
+                it->second = 0;
+            }
+        }
+        *out << '\n' << std::flush;
+        *out << "------------------------------------------------------------------------\n" << std::flush;
     }
+    
 }
+
+bool findPtrType(const EFFECTIVE_INFO* info)
+{
+
+    assert(info->num_entries >= 0);
+
+    if (info->num_entries == 0)
+    {
+        *out << std::dec << info->name << "\n" << std::flush;;
+        //*out << std::dec << info->hash << "\n" << std::flush;;
+        // *out << std::hex << info->entries[0].lb << "\n" << std::flush;;
+        // *out << std::hex << info->entries[0].ub << "\n" << std::flush;;
+    }
+    else 
+    {
+        for (uint32_t i = 0; i < info->num_entries; i++)
+        {
+            findPtrType(info->entries[i].type);
+        }
+        
+    }
+
+    return false;
+}
+
 
 static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                                      const CONTEXT *ctx,
+                                     ADDRINT   opcode,
                                      std::vector<UINT32> *RRegs,
                                      std::vector<UINT32> *WRegs) {
-    *out << "PrintRegistersVectorized: " << where << ": " << std::hex << pc
-         << ": " << *disass << '\n'
-         << std::flush;
 
-    *out << "Reads: " << '\n' << std::flush;
+    bool isSrcPointer = false; isSrcPointer = isSrcPointer;
+    bool isDestPointer = false; isDestPointer = isDestPointer;
+    std::string srcTypeIds = ""; std::string destTypeIds = "";
+    // *out << "PrintRegistersVectorized: " << where << ": (" << std::hex << pc << 
+    //     std::dec << ") Opcode: (" << (UINT32)opcode << ") (" << std::hex << OPCODE_StringShort (opcode) << ") (" << *disass << ")\n" << std::flush;
+
+    // *out << "Reads: " << '\n' << std::flush;
     for (uint64_t i = 0; i < RRegs->size(); i++) {
         const UINT grRegSize = REG_Size((REG)(*RRegs)[i]);
         PIN_REGISTER val;
@@ -183,39 +143,46 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                              reinterpret_cast<UINT8 *>(&val));
 
         // uint64_t addr = Str2Val(Val2Str(&val, grRegSize));
-        uint64_t addr2 = Val2Str2(val, grRegSize);
-        *out << "PINT_REGISTER val = " << hex << addr2 << '\n' << std::flush;
-        // uint64_t addr = Val2Str2(val, grRegSize);
-        // *out << "//Ahmad: " <<
+        uint64_t addr2 = Val2Str(val, grRegSize); addr2 = addr2;
+        
+        //*out << "PINT_REGISTER val = " << hex << addr2 << '\n' << std::flush;
+
 
         void *ptr = (void *)addr2;
 
-        std::string ptr_type = "";
-        ptr_type += "(HEAP)";
-
-        if (!lowfat_is_ptr(ptr)) {
+        if (lowfat_is_ptr(ptr)) {
             if (lowfat_is_heap_ptr(ptr)) {
-                *out << "11111111111111111111\n" << std::flush;
+                //*out << "11111111111111111111\n" << std::flush;
                 size_t idx = lowfat_index(ptr);
-                *out << "222222222222222222222\n" << std::flush;
+                //*out << "222222222222222222222\n" << std::flush;
                 if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
                     _LOWFAT_MAGICS[idx] == 0) {
-                    *out << "JJJJJJJJJJJJJJJJJJJJJ\n" << std::flush;
+                    //*out << "JJJJJJJJJJJJJJJJJJJJJ\n" << std::flush;
                     ;
                 } else {
                     void *base = lowfat_base(ptr);
                     // Get the object meta-data and calculate the allocation
                     // bounds.
                     EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
-                    *out << "ADDR: " << addr2 << " " << ptr << " " << base
-                         << " " << meta->size << '\n'
-                         << std::flush;
+                    // *out << "ADDR: " << addr2 << " " << ptr << " " << base
+                    //      << " " << meta->size << '\n'
+                    //      << std::flush;
                     base = (void *)(meta + 1);
-                    *out << "AAAAAAAAAAAAAAAAAAAAAAAAaa\n" << std::flush;
+                    
+                    // *out << "AAAAAAAAAAAAAAAAAAAAAAAAaa\n" << std::flush;
                     const EFFECTIVE_TYPE *t = meta->type;
-                    *out << "PPPPPPPPPPPPPPPPPPPPPPPPPPP\n" << std::flush;
-                    if (t == NULL) {
-                        *out << "HERE \n" << std::flush;
+
+                    //if (EFFECTIVE_UNLIKELY(t->size == 0)) return;
+
+                    EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+                    EFFECTIVE_BOUNDS sizes = {0, (intptr_t)meta->size};
+                    EFFECTIVE_BOUNDS bounds = bases + sizes;
+                    bounds = bounds;
+                    // *out << "PPPPPPPPPPPPPPPPPPPPPPPPPPP\n" << std::flush;
+                    
+
+                    if (EFFECTIVE_UNLIKELY(t == NULL)){
+                        // *out << "HERE \n" << std::flush;
                         ;
                     } else {
                         // std::string name(t->info->name); ptr_type += name;
@@ -223,146 +190,179 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                         if (EFFECTIVE_UNLIKELY(t->info == NULL)) {
                             assert(0);
                         }
-                        if (EFFECTIVE_UNLIKELY(t->info == NULL)) {
-                            assert(0);
+                        
+                        size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+                        if (offset >= t->size)
+                        {
+                            // The `offset' is >= sizeof(T).  Thus `ptr' may be pointing to an
+                            // element in an array of T.  Alternatively, `ptr' may be pointing to
+                            // a FAM at the end of T.  Either way, the offset is normalized here.
+                            EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
+                            offset -= t->size;
+                            unsigned __int128 tmp = (unsigned __int128)offset;
+                            tmp *= (unsigned __int128)t->magic;
+                            idx = (size_t)(tmp >> EFFECTIVE_RADIX);
+                            offset -= idx * t->size_fam;
+                            bounds += adjust;
+                            offset += t->offset_fam;
                         }
-                        *out << "HERE2 " << std::dec << t->info->name << "("
-                             << t->info->tid_info->tid << ")" << std::flush;
-                    }
-                }
-            } else if (lowfat_is_stack_ptr(ptr)) {
-                *out << "3333333333333333333\n" << std::flush;
-                size_t idx = lowfat_index(ptr);
-                *out << "999999999999999999\n" << std::flush;
-                ;
-                if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-                    _LOWFAT_MAGICS[idx] == 0) {
-                    *out << "8888888888888888888\n" << std::flush;
-                    ;
-                } else {
-                    *out << "AAAAAAAAAAAAAAAAAAAAA\n" << std::flush;
-                    std::cerr << "AAAAAAAAAAAAAAAAAAAAA\n";
-                    void *base = lowfat_base(ptr);
-                    *out << "BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n" << std::flush;
-                    std::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n";
-                    // Get the object meta-data and calculate the allocation
-                    // bounds.
-                    EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
-                    assert(meta != NULL);
-                    *out << "CCCCCCCCCCCCCCCCCCCCCCCCCCC\n" << std::flush;
-                    std::cerr << "CCCCCCCCCCCCCCCCCCCCCCCCCCC\n";
-                    *out << meta->size << std::flush;
-                    *out << "DDDDDDDDDDDDDDDDDDDDDDDDDDD\n" << std::flush;
-                    std::cerr << "DDDDDDDDDDDDDDDDDDDDDDDDDD\n";
-                    assert(meta != NULL);
-                    *out << "ADDR: " << addr2 << " " << ptr << " " << base
-                         << " " << meta->size << '\n'
-                         << std::flush;
 
-                    *out << "RRRRRRRRRRRRRRRRRRRRRRRRrrr\n" << std::flush;
-                    std::cerr << "RRRRRRRRRRRRRRRRRRRRRRRRRR\n";
-                    base = (void *)(meta + 1);
-                    *out << "444444444444444444\n" << std::flush;
-                    std::cerr << "444444444444444444\n";
-                    assert(meta != NULL);
-                    *out << "55555555555555555\n" << std::flush;
-                    std::cerr << "555555555555555555\n";
-                    // assert(meta->type != NULL);
-                    if (meta->size == 0) {
-                        ;
-                    } else {
-                        const EFFECTIVE_TYPE *t = meta->type;
-                        // *out << "666666666666666\n" << std::flush;
-                        // *out << "HERE3\n" << std::flush;
-                        // std::string name(t->info->name); ptr_type += name;
-                        *out << "HERE4: \n" << std::flush;
-                        assert(t->hash != NULL);
-                        *out << "HERE5: \n" << std::flush;
-                        if (t->info->tid_info == NULL) {
-                            assert(0);
-                        }
-                        *out << "HERE6: \n" << std::flush;
-                        *out << "HERE2 " << std::dec << t->info->size << "("
-                             << std::flush;
-                        *out << "HERE7: \n" << std::flush;
-                        *out << t->info->tid_info->tid << ")" << std::flush;
-                    }
-                }
-                // } else if (lowfat_is_stack_ptr(ptr)) {
-                //     *out<< "3333333333333333333333333333\n";
-                //     size_t idx = lowfat_index(ptr);
-                //     if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-                //         _LOWFAT_MAGICS[idx] == 0) {
-                //         ;
-                //     } else {
-                //         void *base = lowfat_base(ptr);
-                //         // Get the object meta-data and calculate the
-                //         allocation bounds. EFFECTIVE_META *meta =
-                //         (EFFECTIVE_META *)base; *out << "ADDR: " << addr2 <<
-                //         " " << ptr << " " << base << " "
-                //              << meta->size << '\n' << std::flush;
-                //         base = (void *)(meta + 1);
-                //         const EFFECTIVE_TYPE *t = meta->type;
-                //         if (t == NULL) {
-                //             *out << "HERE ";
-                //             ;
-                //         } else {
-                //             // std::string name(t->info->name); ptr_type +=
-                //             name;
+                        offset  = offset;
 
-                //             if (EFFECTIVE_UNLIKELY(t->info == NULL)) {
-                //                 assert(0);
-                //             }
-                //             if (EFFECTIVE_UNLIKELY(t->info == NULL)) {
-                //                 assert(0);
-                //             }
-                //             *out << "HERE2 " << std::dec << t->info->name <<
-                //             "("
-                //                  << t->info->tid_info->tid << ")";
-                //         }
-                //     }
-            }
+                       
+
+                        
+
+                        // uint64_t layout_idx = 0;
+                        // while(t->layout[layout_idx].hash != EFFECTIVE_ENTRY_EMPTY_HASH)
+                        // {
+                        //     *out <<  std::dec  << "(" << t->info->name << ")"
+                        //                         " (" << layout_idx << ")"
+                        //                         " (" << t->layout[layout_idx].hash << ")"
+                        //                         " B0(" << t->layout[layout_idx].bounds[0] << ")" 
+                        //                         " B1(" << t->layout[layout_idx].bounds[1] << ")"
+                        //                         "\n" << std::flush;
+                        //     layout_idx++;
+                        // }
+                        //  *out <<  std::dec  << "(" << t->info->name << ")"
+                        //                         " (" << layout_idx << ")"
+                        //                         " (" << t->layout[layout_idx].hash << ")"
+                        //                         " B0(" << t->layout[layout_idx].bounds[0] << ")" 
+                        //                         " B1(" << t->layout[layout_idx].bounds[1] << ")"
+                        //                         "\n" << std::flush;
+                            
+                        // findPtrType(t->info);
+
+                        srcTypeIds += "_";
+                        srcTypeIds += std::string(t->info->name);
+                        //ITC[(UINT32)opcode]++;
+                        isSrcPointer = true;
+                    }
+
+                    
+                }
+            } 
+           
         }
 
-        *out << REG_StringShort((REG)(*RRegs)[i]) << "(" << grRegSize
-             << ")"
-             //  << "(" << Val2Str(&val, grRegSize)
-             //  << ") "
-             << "(" << hex << addr2 << ") "
-             << " " << std::flush;
+    
     }
 
-    *out << '\n' << std::flush << "Writes: " << '\n' << std::flush;
+    //*out << '\n' << std::flush << "Writes: " << '\n' << std::flush;
     for (uint64_t i = 0; i < WRegs->size(); i++) {
         const UINT grRegSize = REG_Size((REG)(*WRegs)[i]);
         PIN_REGISTER val;
         PIN_GetContextRegval(ctx, (REG)(*WRegs)[i],
                              reinterpret_cast<UINT8 *>(&val));
-        uint64_t addr2 = Val2Str2(val, grRegSize);
-        *out << "PIN_REGISTER val = " << hex << addr2 << '\n' << std::flush;
-        *out << REG_StringShort((REG)(*WRegs)[i]) << "(" << grRegSize
-             << ")"
-             //  << "(" << Val2Str(&val, grRegSize) << ") ";
-             << "(" << hex << addr2 << ") " << std::flush;
+        uint64_t addr2 = Val2Str(val, grRegSize); addr2 = addr2;
+        // *out << "PIN_REGISTER val = " << hex << addr2 << '\n' << std::flush;
+        // *out << REG_StringShort((REG)(*WRegs)[i]) << "(" << grRegSize
+        //      << ")"
+        //      //  << "(" << Val2Str(&val, grRegSize) << ") ";
+        //      << "(" << hex << addr2 << ") " << std::flush;
+         void *ptr = (void *)addr2;
+        if (lowfat_is_ptr(ptr)) {
+            if (lowfat_is_heap_ptr(ptr)) {
+                //*out << "11111111111111111111\n" << std::flush;
+                size_t idx = lowfat_index(ptr);
+                //*out << "222222222222222222222\n" << std::flush;
+                if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+                    _LOWFAT_MAGICS[idx] == 0) {
+                    //*out << "JJJJJJJJJJJJJJJJJJJJJ\n" << std::flush;
+                    ;
+                } else {
+                    void *base = lowfat_base(ptr);
+                    // Get the object meta-data and calculate the allocation
+                    // bounds.
+                    EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+                    // *out << "ADDR: " << addr2 << " " << ptr << " " << base
+                    //      << " " << meta->size << '\n'
+                    //      << std::flush;
+                    base = (void *)(meta + 1);
+                    // *out << "AAAAAAAAAAAAAAAAAAAAAAAAaa\n" << std::flush;
+                    const EFFECTIVE_TYPE *t = meta->type;
+                    // *out << "PPPPPPPPPPPPPPPPPPPPPPPPPPP\n" << std::flush;
+                    if (t == NULL) {
+                        // *out << "HERE \n" << std::flush;
+                        ;
+                    } else {
+                        // std::string name(t->info->name); ptr_type += name;
+
+                        if (EFFECTIVE_UNLIKELY(t->info == NULL)) {
+                            assert(0);
+                        }
+                        // if (EFFECTIVE_UNLIKELY(t->info == NULL)) {
+                        //     assert(0);
+                        // }
+                        // *out << "HERE2 " << std::dec << t->info->name << "("
+                        //      << t->info->tid_info->tid << ")" << std::flush;
+                        //ITC[(UINT32)opcode]++;
+                        destTypeIds += "_";
+                        destTypeIds += std::string(t->info->name);
+                        isDestPointer = true;
+                    }
+
+                    
+                }
+            } 
+        }
+        
     }
 
-    *out << '\n' << std::flush;
+
+
+
+    if (isDestPointer && isSrcPointer)
+    {
+        
+        for (uint64_t i = 0; i < RRegs->size(); i++) {
+            const UINT grRegSize = REG_Size((REG)(*RRegs)[i]);
+            PIN_REGISTER val;
+            PIN_GetContextRegval(ctx, (REG)(*RRegs)[i],
+                                reinterpret_cast<UINT8 *>(&val));
+
+            // uint64_t addr = Str2Val(Val2Str(&val, grRegSize));
+            uint64_t addr2 = Val2Str(val, grRegSize); addr2 = addr2;
+            // *out << REG_StringShort((REG)(*RRegs)[i]) << "(" << grRegSize
+            //  << ")"
+            //  //  << "(" << Val2Str(&val, grRegSize)
+            //  //  << ") "
+            //  << "(" << hex << addr2 << ") "
+            //  << " \n" << std::flush;
+        }
+
+        for (uint64_t i = 0; i < WRegs->size(); i++) {
+            const UINT grRegSize = REG_Size((REG)(*WRegs)[i]);
+            PIN_REGISTER val;
+            PIN_GetContextRegval(ctx, (REG)(*WRegs)[i],
+                                reinterpret_cast<UINT8 *>(&val));
+
+            // uint64_t addr = Str2Val(Val2Str(&val, grRegSize));
+            uint64_t addr2 = Val2Str(val, grRegSize); addr2 = addr2;
+            // *out << REG_StringShort((REG)(*WRegs)[i]) << "(" << grRegSize
+            //  << ")"
+            //  //  << "(" << Val2Str(&val, grRegSize)
+            //  //  << ") "
+            //  << "(" << hex << addr2 << ") "
+            //  << " \n" << std::flush;
+        }
+
+        std::string key = OPCODE_StringShort (opcode)  + srcTypeIds + destTypeIds;
+
+        // *out << "PrintRegistersVectorized: " << where << ": (" << std::hex << pc << 
+        // std::dec << ") Opcode: (" << (UINT32)opcode << ") (" << 
+        // std::hex << OPCODE_StringShort (opcode) << ") (" << *disass << ") " <<
+        // " (" << key << ")\n" <<  
+        // std::flush;
+
+        ITC[key]++;
+
+        
+    }
+
+    //*out << '\n' << std::flush;
 }
 
-// VOID FreeArgsBefore(CHAR * name, ADDRINT ptr)
-// {
-
-// }
-
-// VOID MallocArgsBefore(CHAR * name, ADDRINT size, ADDRINT type)
-// {
-
-// }
-
-// VOID MallocRetAfter(CHAR * name, ADDRINT ptr)
-// {
-
-// }
 
 static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
     *out << "-------------------- " << std::hex << pc << std::dec
@@ -452,17 +452,34 @@ VOID Instruction(INS ins, VOID *v) {
     }
 
     if (maxNumRRegs->size() != 0 || maxNumWRegs->size() != 0) {
+        // INS_InsertCall(ins, IPOINT_BEFORE,
+        //                    (AFUNPTR)PrintRegistersVectorized, IARG_ADDRINT,
+        //                    "IPOINT_BEFORE", IARG_PTR, dis, IARG_INST_PTR,
+        //                    IARG_CONST_CONTEXT, IARG_PTR, maxNumRRegs, IARG_PTR,
+        //                    maxNumWRegs, IARG_END);
+
         if (INS_IsValidForIpointAfter(ins)) {
             INS_InsertCall(ins, IPOINT_AFTER, (AFUNPTR)PrintRegistersVectorized,
-                           IARG_ADDRINT, "IPOINT_AFTER", IARG_PTR, dis,
-                           IARG_INST_PTR, IARG_CONST_CONTEXT, IARG_PTR,
-                           maxNumRRegs, IARG_PTR, maxNumWRegs, IARG_END);
-        } else {
-            INS_InsertCall(ins, IPOINT_BEFORE,
-                           (AFUNPTR)PrintRegistersVectorized, IARG_ADDRINT,
-                           "IPOINT_BEFORE", IARG_PTR, dis, IARG_INST_PTR,
-                           IARG_CONST_CONTEXT, IARG_PTR, maxNumRRegs, IARG_PTR,
-                           maxNumWRegs, IARG_END);
+                           IARG_ADDRINT, "IPOINT_AFTER", 
+                           IARG_PTR, dis,
+                           IARG_INST_PTR, 
+                           IARG_CONST_CONTEXT, 
+                           IARG_ADDRINT, INS_Opcode(ins),
+                           IARG_PTR, maxNumRRegs, 
+                           IARG_PTR, maxNumWRegs, 
+                           IARG_END);
+        } 
+        else 
+        {
+            INS_InsertCall(ins, IPOINT_BEFORE,(AFUNPTR)PrintRegistersVectorized, 
+                           IARG_ADDRINT, "IPOINT_BEFORE", 
+                           IARG_PTR, dis, 
+                           IARG_INST_PTR,
+                           IARG_CONST_CONTEXT, 
+                           IARG_ADDRINT, INS_Opcode(ins),
+                           IARG_PTR, maxNumRRegs, IARG_PTR,
+                           maxNumWRegs, 
+                           IARG_END);
         }
     }
 }
