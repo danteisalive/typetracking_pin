@@ -245,6 +245,30 @@ class DefaultLVPT
     };
 
   public:
+    unsigned leastSigBit(unsigned n)
+    {
+        return n & ~(n - 1);
+    }
+
+    int floorLog2(unsigned x)
+    {
+            assert(x > 0);
+
+            int y = 0;
+
+            if (x & 0xffff0000) { y += 16; x >>= 16; }
+            if (x & 0x0000ff00) { y +=  8; x >>=  8; }
+            if (x & 0x000000f0) { y +=  4; x >>=  4; }
+            if (x & 0x0000000c) { y +=  2; x >>=  2; }
+            if (x & 0x00000002) { y +=  1; }
+
+            return y;
+    }
+
+    bool isPowerOf2(unsigned n)
+    {
+        return n != 0 && leastSigBit(n) == n;
+    }
     /** Creates a LVPT with the given number of entries, number of bits per
      *  tag, and instruction offset amount.
      *  @param numEntries Number of entries for the LVPT.
@@ -252,23 +276,179 @@ class DefaultLVPT
      *  @param instShiftAmt Offset amount for instructions to ignore alignment.
      */
     DefaultLVPT(unsigned numEntries, unsigned tagBits,
-               unsigned instShiftAmt, unsigned numThreads);
+               unsigned instShiftAmt, unsigned numThreads)
+    {
 
-    void reset();
+        
+        if (!isPowerOf2(numEntries)) {
+            assert(0);
+        }
 
-/** Looks up an address in the LVPT. Must call valid() first on the address.
-     *  @param inst_PC The address of the branch to look up.
-     *  @param tid The thread id.
-     *  @return Returns the target of the branch.
-     */
-    PointerID lookup( uint64_t instPC, ThreadID tid);
+        lvpt.resize(numEntries);
 
-    /** Checks if a branch is in the LVPT.
-     *  @param inst_PC The address of the branch to look up.
-     *  @param tid The thread id.
-     *  @return Whether or not the branch exists in the LVPT.
-     */
-    bool valid(uint64_t instPC, ThreadID tid);
+        for (unsigned i = 0; i < numEntries; ++i) {
+            lvpt[i].valid = false;
+        }
+
+        idxMask = numEntries - 1;
+
+        tagMask = (1 << tagBits) - 1;
+
+        tagShiftAmt = instShiftAmt + floorLog2(numEntries); // 12 + 2
+
+        //Setup the array of counters for the local predictor
+        localBiases.resize(numEntries);
+
+        for (unsigned i = 0; i < numEntries; ++i){
+            localBiases[i] = 0;
+        }
+
+        localCtrs.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+            localCtrs[i].setBits(2);
+            localCtrs[i].setInitial(0x3); // initial value is 0x11
+            localCtrs[i].reset();
+        }
+
+        confLevel.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+            confLevel[i].setBits(4);
+            confLevel[i].setInitial(0); // initial value is 0
+            confLevel[i].reset();
+        }
+
+        localPointerPredictor.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+            localPointerPredictor[i].setBits(4);
+            localPointerPredictor[i].setInitial(0); // initial value is 0
+            localPointerPredictor[i].reset();
+        }
+
+     
+        predictorMissCount.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+        predictorMissCount[i] = 0;
+        }
+        blackList.resize(numEntries);
+
+
+    }
+
+    void reset()
+    {
+        for (unsigned i = 0; i < numEntries; ++i) {
+            lvpt[i].valid = false;
+        }
+        
+    }
+
+    
+    unsigned getIndex(uint64_t instPC, ThreadID tid)
+    {
+        // Need to shift PC over by the word offset.
+        return ((instPC >> instShiftAmt)
+                ^ (tid << (tagShiftAmt - instShiftAmt - log2NumThreads)))
+                & idxMask;
+    }
+
+    uint64_t getTag(uint64_t instPC)
+    {
+        return (instPC >> tagShiftAmt) & tagMask;
+    }
+
+    bool valid(uint64_t instPC, ThreadID tid)
+    {
+        unsigned lvpt_idx = getIndex(instPC, tid);
+
+        uint64_t inst_tag = getTag(instPC);
+
+        assert(lvpt_idx < numEntries);
+
+        if (lvpt[lvpt_idx].valid
+            && inst_tag == lvpt[lvpt_idx].tag
+            && lvpt[lvpt_idx].tid == tid) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    PointerID lookup( uint64_t instPC, ThreadID tid)
+    {
+
+
+        unsigned lvpt_idx = getIndex(instPC, tid);
+
+        // if the instPC is in the banList then just return zero;
+        // if (banList[lvpt_idx].find(instPC) != banList[lvpt_idx].end()){
+        //     return TheISA::PointerID(0);
+        // }
+
+        uint64_t inst_tag = getTag(instPC);
+
+        assert(lvpt_idx < numEntries);
+
+        if (lvpt[lvpt_idx].valid)
+        {
+
+            PointerID pred_pid = PointerID(0);
+            if (inst_tag == lvpt[lvpt_idx].tag
+                && lvpt[lvpt_idx].tid == tid)
+            {
+                switch (localCtrs[lvpt_idx].read()) {
+                    case 0x0:
+                        pred_pid = PointerID(lvpt[lvpt_idx].target.getPID() +
+                                                localBiases[lvpt_idx]);
+                        
+                        LVPTStridePredictions++;
+                    
+                        break;
+                    
+                    case 0x1:
+                        pred_pid = PointerID(lvpt[lvpt_idx].target.getPID() +
+                                                localBiases[lvpt_idx]);
+                        
+                        LVPTStridePredictions++;
+                        
+                        break;
+                    case 0x2:
+                    case 0x3:
+                        LVPTConstantPredictions++;
+                        
+                        pred_pid = lvpt[lvpt_idx].target;
+                        break;
+
+                    default:
+                        assert(0);
+                   
+                }
+            }
+            // else {
+            //     return TheISA::PointerID(0);
+            // }
+            // if (localPointerPredictor[lvpt_idx].read() > 0 &&
+            //     pred_pid == TheISA::PointerID(0) &&
+            //     confLevel[lvpt_idx].read() > 1)
+            // {
+            //     return TheISA::PointerID(0x1000000000000-1);
+            // }
+
+            // set the confidence level of this prediction
+
+          
+            return pred_pid;
+
+        }
+        else
+        {
+            
+            LVPTConstantPredictions++;
+            return PointerID(0);
+        }
+    }
+
 
     void update(uint64_t instPC,
                 const PointerID &target,
@@ -289,47 +469,14 @@ class DefaultLVPT
         return avg/numEntries;
     }
 
-    void dumpStat(){
-    //   auto v = predictorMissCount;
-    //   std::vector<std::size_t> result(v.size());
-    //   std::iota(std::begin(result), std::end(result), 0);
-    //   std::sort(std::begin(result), std::end(result),
-    //           [&v](const uint64_t & lhs, const uint64_t & rhs)
-    //           {
-    //               return v[lhs] > v[rhs];
-    //           }
-    //   );
-
-    //   for (auto &idx : result) {
-    //         std::cout << std::dec << "INDEX[" << idx << "]: " << std::endl;
-    //         for (auto& elem1 : predictorMissHistory[idx]){
-    //             std::cout << "FUNCTION[" <<elem1.first << "]: " << std::endl;
-    //             for (auto& elem2 : elem1.second) {
-    //                 std::cout << std::hex <<"["<< elem2.first << "] => ";
-    //                 for (auto& elem3 : elem2.second)
-    //                     std::cout << std::dec << elem3 << ",";
-    //                 std::cout << std::endl;
-    //             }
-    //         }
-    //   }
-
+    void dumpStat()
+    {
     }
 
 
   private:
 
 
-    /** Returns the index into the LVPT, based on the branch's PC.
-     *  @param inst_PC The branch to look up.
-     *  @return Returns the index into the LVPT.
-     */
-    inline unsigned getIndex(uint64_t instPC, ThreadID tid);
-
-    /** Returns the tag bits of a given address.
-     *  @param inst_PC The branch's address.
-     *  @return Returns the tag bits.
-     */
-    inline uint64_t getTag(uint64_t instPC);
 
     /** The actual LVPT. */
     std::vector<LVPTEntry>  lvpt;
