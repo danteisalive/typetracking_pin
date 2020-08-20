@@ -80,6 +80,28 @@ using std::atoi;
 #define EFFECTIVE_COERCED_INT32_HASH    0x51A0B9BF4F692902ull   // Random
 #define EFFECTIVE_COERCED_INT8_PTR_HASH 0x2317E969C295951Dull   // Random
 
+struct my_effective_info_entry {
+    std::string global_name;
+    uint32_t flags;
+    size_t lb;
+    size_t ub;
+};
+typedef struct my_effective_info_entry my_effective_info_entry;
+
+struct my_effective_info {
+    std::string global_name;
+    uint64_t tid;
+    uint64_t num_access;
+    const std::string name;
+    uint32_t size;
+    uint32_t num_entries;
+    uint32_t flags;
+    std::string next;
+    std::vector<my_effective_info_entry> entries;
+};
+
+typedef struct my_effective_info my_effective_info;
+
 
 typedef struct EFFECTIVE_INFO EFFECTIVE_INFO;
 typedef struct EFFECTIVE_TID EFFECTIVE_TID;
