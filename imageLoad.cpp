@@ -19,12 +19,12 @@
 #include <sys/types.h>
 
 #include <boost/algorithm/string.hpp>
+#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <set>
 #include <vector>
-#include <cstdlib>
 
 #include "pin.H"
 //#include <bits/stdc++.h>
@@ -72,8 +72,12 @@ TypesCount TC;
 InsTypeCount ITC;
 std::map<int, std::vector<int> > TypeTreeTID;
 std::map<uint64_t, int> HashMapTID;
-std::map<int, std::set<int> > typeTree;
-std::map<std::string, my_effective_info> myEffectiveInfos;
+
+std::map<std::string, my_effective_info> effInfos;
+
+std::map<std::string, int> mapGlobalname2ID;
+
+std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 
 DefaultLVPT *lvpt;
 
@@ -285,9 +289,7 @@ VOID Fini(INT32 code, VOID *v) {
 
     out->close();
 }
-
-void buildTypeTree(const std::string hashFileName,
-                   std::map<int, std::set<int> > &map) {
+void retreiveEffInfosFromFile(const std::string hashFileName) {
     std::ifstream afile;
     afile.open(hashFileName.c_str());
     std::string line;
@@ -307,38 +309,59 @@ void buildTypeTree(const std::string hashFileName,
         boost::split(strs, line, boost::is_any_of("#"),
                      boost::token_compress_on);
         eff_info_global_name = strs[0];
-        if (myEffectiveInfos.find(eff_info_global_name) !=
-            myEffectiveInfos.end()) {
-            std::cerr << "Found redundant effective_gloabl_name\n";
-        } else {
-            // To-change
-            std::cerr << "Ahmad\n";
-            tid = atoi(strs[1].c_str());
-            access = atol(strs[2].c_str());
-            name = strs[3];
-            size = atoi(strs[4].c_str());
-            num_entries = atoi(strs[5].c_str());
-            flags = atoi(strs[6].c_str());
-            next = strs[7];
+        // To-change
+        std::cerr << "Ahmad\n";
+        tid = atoi(strs[1].c_str());
+        access = atol(strs[2].c_str());
+        name = strs[3];
+        size = atoi(strs[4].c_str());
+        num_entries = atoi(strs[5].c_str());
+        flags = atoi(strs[6].c_str());
+        next = strs[7];
 
-            for (unsigned int i = 0; i < num_entries; i++) {
-                int idx = 8 + i * 4;
-                std::string global_name = strs[idx];
-                uint32_t flags = atoi(strs[idx + 1].c_str());
-                size_t lb = (size_t) atoi(strs[idx + 2].c_str());
-                size_t ub = (size_t) atoi(strs[idx + 3].c_str());
-                my_effective_info_entry e_i_entry = {global_name, flags, lb,
-                                                     ub};
-                entries.push_back(e_i_entry);
-            }
-            my_effective_info eff_info = {
-                eff_info_global_name, tid,   access, name,   size,
-                num_entries,          flags, next,   entries};
-            myEffectiveInfos.insert(
-                std::make_pair(eff_info_global_name, eff_info));
+        for (unsigned int i = 0; i < num_entries; i++) {
+            int idx = 8 + i * 4;
+            std::string global_name = strs[idx];
+            uint32_t flags = atoi(strs[idx + 1].c_str());
+            size_t lb = (size_t)atoi(strs[idx + 2].c_str());
+            size_t ub = (size_t)atoi(strs[idx + 3].c_str());
+            my_effective_info_entry e_i_entry = {global_name, flags, lb, ub};
+            entries.push_back(e_i_entry);
         }
+        my_effective_info eff_info = {
+            eff_info_global_name, tid,   access, name,   size,
+            num_entries,          flags, next,   entries};
+        effInfos.insert(std::pair<std::string, my_effective_info>(
+            eff_info_global_name, eff_info));
+    }
+    afile.close();
+}
 
-        afile.close();
+void buildTypeTree(my_effective_info ei) {
+    typeTree[ei.tid][0].insert(std::pair<int, int>(ei.tid, ei.size));
+
+    // std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
+    for (size_t i = 0; i < ei.entries.size(); i++) {
+        my_effective_info_entry eie = ei.entries[i];
+        uint64_t entryID = effInfos[eie.global_name].tid;
+        size_t eie_lb = eie.lb;
+
+        if (typeTree.find(entryID) == typeTree.end()) {
+            my_effective_info ei_new = effInfos[eie.global_name];
+            buildTypeTree(ei_new);
+        }
+        std::map<int, std::set<std::pair<int, int> > > entryMap =
+            typeTree[entryID];
+        std::map<int, std::set<std::pair<int, int> > >::iterator itr;
+        for (itr = entryMap.begin(); itr != entryMap.end(); itr++) {
+            size_t offset_new = itr->first;
+            std::set<std::pair<int, int> > p_new = itr->second;
+            std::set<std::pair<int, int> >::iterator setItr = p_new.begin();
+            while (setItr != p_new.end()) {
+                typeTree[ei.tid][eie_lb + offset_new].insert(*(setItr));
+                setItr++;
+            }
+        }
     }
 }
 
@@ -365,7 +388,11 @@ int main(INT32 argc, CHAR **argv) {
     std::string TIDFileName("merged.hash");
     // std::string HashMapFileName("final.hash");
 
-    buildTypeTree(TIDFileName, typeTree);
+    retreiveEffInfosFromFile(TIDFileName);
+    std::map<std::string, my_effective_info>::iterator itr; 
+    for (itr = effInfos.begin(); itr != effInfos.end(); ++itr) {
+        buildTypeTree(itr->second);
+    }
 
     // Replace 'Plop' with your file name.
     // std::ifstream           TIDFile(TIDFileName.c_str());
