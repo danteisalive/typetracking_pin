@@ -290,12 +290,14 @@ VOID Fini(INT32 code, VOID *v) {
     out->close();
 }
 void retreiveEffInfosFromFile(const std::string hashFileName) {
-    std::ifstream afile;
-    afile.open(hashFileName.c_str());
+
+    *out << hashFileName << "\n";
+    std::ifstream afile(hashFileName.c_str());
     std::string line;
     std::vector<std::string> strs;
 
-    while (getline(afile, line)) {
+    while (std::getline(afile, line)) {
+        *out << line << "\n";
         std::string eff_info_global_name;
         uint64_t tid;
         uint64_t access;
@@ -305,12 +307,12 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
         uint32_t flags;
         std::string next;
         std::vector<my_effective_info_entry> entries;
-        std::cerr << line << '\n';
+        // std::cerr << line << '\n';
         boost::split(strs, line, boost::is_any_of("#"),
                      boost::token_compress_on);
         eff_info_global_name = strs[0];
         // To-change
-        std::cerr << "Ahmad\n";
+        //std::cerr << "Ahmad\n";
         tid = atoi(strs[1].c_str());
         access = atol(strs[2].c_str());
         name = strs[3];
@@ -334,6 +336,7 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
         effInfos.insert(std::pair<std::string, my_effective_info>(
             eff_info_global_name, eff_info));
     }
+    *out << "Exited " << "\n";
     afile.close();
 }
 
@@ -364,6 +367,32 @@ void buildTypeTree(my_effective_info ei) {
         }
     }
 }
+void printTypeTree() {
+    // std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree
+    std::map<int, std::map<int, std::set<std::pair<int, int> > > >::iterator
+        itr;
+    for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
+        int tid = itr->first;
+        *out << "TypeID = " << tid << ": \n";
+        std::map<int, std::set<std::pair<int, int> > > mp = itr->second;
+        std::map<int, std::set<std::pair<int, int> > >::iterator mpItr =
+            mp.begin();
+        while (mpItr != mp.end()) {
+            int offset = mpItr->first;
+            *out << "Offset = " << offset;
+            std::set<std::pair<int, int> > set = mpItr->second;
+            std::set<std::pair<int, int> >::iterator setItr = set.begin();
+            while (setItr != set.end()) {
+                *out << ", Subobject TypeID = " << (*setItr).first
+                          << ", Subobject Size = " << (*setItr).second;
+                *out << "\n";
+                setItr++;
+            }
+
+            mpItr++;
+        }
+    }
+}
 
 int main(INT32 argc, CHAR **argv) {
     PIN_InitSymbols();
@@ -385,7 +414,7 @@ int main(INT32 argc, CHAR **argv) {
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
 
-    std::string TIDFileName("merged.hash");
+    std::string TIDFileName("final.hash");
     // std::string HashMapFileName("final.hash");
 
     retreiveEffInfosFromFile(TIDFileName);
@@ -393,7 +422,7 @@ int main(INT32 argc, CHAR **argv) {
     for (itr = effInfos.begin(); itr != effInfos.end(); ++itr) {
         buildTypeTree(itr->second);
     }
-
+    printTypeTree();
     // Replace 'Plop' with your file name.
     // std::ifstream           TIDFile(TIDFileName.c_str());
     // std::ifstream           HashMapFile(HashMapFileName.c_str());
