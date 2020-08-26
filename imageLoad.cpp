@@ -514,103 +514,31 @@ reinterpret_cast<UINT8*>(&regval));
 }
 */
 
-/*
 
-VOID RecordMemRead(VOID * ip, VOID * addr,VOID * size)
-{
-    auto elapsed = (std::chrono::high_resolution_clock::now()) - start;
-    nanoseconds ns=
-std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed);
 
-//sprintf(buffer,trace,"%p: R %p Time,ns %lld \n", ip, addr,ns);
 
-    //std::string fout = fout + std::to_string("%p: R %p Time,ns %lld \n",
-ip, addr,ns);
 
-    fprintf(trace,"%p: R,bytes %p Size,bytes %lld \n", ip, addr,size);
-}
 
-// Print a memory write record
-VOID RecordMemWrite(VOID * ip, VOID * addr, VOID * size)
-{
-    auto elapsed = (std::chrono::high_resolution_clock::now()) - start;
-    nanoseconds ns=
-std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed);
-
-    fprintf(trace,"%p: W,bytes %p Size,bytes %lld \n", ip, addr,size);
-}
-
-VOID Instruction(INS ins, VOID *v)
-{
-    // Instruments memory accesses using a predicated call, i.e.
-    // the instrumentation is called iff the instruction will actually be
-executed.
-    //
-    // On the IA-32 and Intel(R) 64 architectures conditional moves and REP
-    // prefixed instructions appear as predicated instructions in Pin.
-    UINT32 memOperands = INS_MemoryOperandCount(ins);
-
-    // Iterate over each memory operand of the instruction.
-    for (UINT32 memOp = 0; memOp < memOperands; memOp++)
-    {
-        if (INS_MemoryOperandIsRead(ins, memOp))
-        {
-            INS_InsertCall(
-            //INS_InsertIfCall(
-            ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead,
-                IARG_INST_PTR,
-                IARG_MEMORYOP_EA,
-                IARG_MEMORYREAD_SIZE, memOp,
-                IARG_END);
-        }
-        // Note that in some architectures a single memory operand can be
-        // both read and written (for instance incl (%eax) on IA-32)
-        // In that case we instrument it once for read and once for write.
-        //IARG_MEMORYREAD_SIZE  Type: UINT32. Size in bytes of memory read.
-        //IARG_MEMORYOP_EA
-        //IARG_MEMORYWRITE_SIZE     Type: UINT32. Size in bytes of memory
-write. if (INS_MemoryOperandIsWritten(ins, memOp))
-        {
-            INS_InsertCall(
-           //INS_InsertPredicatedCall(
-                ins, IPOINT_BEFORE, (AFUNPTR)RecordMemWrite,
-                IARG_INST_PTR,
-                IARG_MEMORYOP_EA,
-                IARG_MEMORYWRITE_SIZE, memOp,
-                IARG_END);
-        }
-    }
-}
-*/
-
-/*
 // if(INS_IsMemoryRead(ins) && INS_IsStandardMemop(ins))
-            // {
-            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                          IARG_INST_PTR, offsetof(struct
-MEMREF, pc),
-            //                          IARG_MEMORYREAD_EA, offsetof(struct
-MEMREF, ea),
-            //                          IARG_END);
-            // }
+//             {
+//                 INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+//                                      IARG_INST_PTR, offsetof(struct MEMREF, pc),
+//                                      IARG_MEMORYREAD_EA, offsetof(struct MEMREF, ea),
+//                                      IARG_END);
+//             }
 
-            // if (INS_HasMemoryRead2(ins) && INS_IsStandardMemop(ins))
-            // {
-            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                          IARG_INST_PTR, offsetof(struct
-MEMREF, pc),
-            //                          IARG_MEMORYREAD2_EA, offsetof(struct
-MEMREF, ea),
-            //                          IARG_END);
-            // }
+// if (INS_HasMemoryRead2(ins) && INS_IsStandardMemop(ins))
+//             {
+//                 INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+//                                      IARG_INST_PTR, offsetof(struct MEMREF, pc),
+//                                      IARG_MEMORYREAD2_EA, offsetof(struct MEMREF, ea),
+//                                      IARG_END);
+//             }
 
-            // if(INS_IsMemoryWrite(ins) && INS_IsStandardMemop(ins))
-            // {
-            //     INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                          IARG_INST_PTR, offsetof(struct
-MEMREF, pc),
-            //                          IARG_MEMORYWRITE_EA, offsetof(struct
-MEMREF, ea),
-            //                          IARG_END);
-            // }
-*/
+// if(INS_IsMemoryWrite(ins) && INS_IsStandardMemop(ins))
+//             {
+//                 INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
+//                                      IARG_INST_PTR, offsetof(struct MEMREF, pc),
+//                                      IARG_MEMORYWRITE_EA, offsetof(struct MEMREF, ea),
+//                                      IARG_END);
+//             }

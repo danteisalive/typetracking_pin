@@ -126,6 +126,40 @@ bool findPtrType(const EFFECTIVE_INFO *info) {
     return false;
 }
 
+static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
+    *out << "-------------------- " << std::hex << pc << std::dec
+         << " ------------------" << '\n'
+         << std::flush;
+    for (int reg = (int)REG_GR_BASE; reg <= (int)REG_GR_LAST; ++reg) {
+        // For the integer registers, it is safe to use ADDRINT. But make sure
+        // to pass a pointer to it.
+        ADDRINT val;
+        PIN_GetContextRegval(ctxt, (REG)reg, reinterpret_cast<UINT8 *>(&val));
+
+        void *ptr = (void *)val;
+        std::string ptr_type = "";
+
+        if (lowfat_is_heap_ptr(ptr)) {
+            ptr_type += "(HEAP)";
+        } else if (lowfat_is_global_ptr(ptr)) {
+            ptr_type += "(GLOBAL)";
+        } else if (lowfat_is_stack_ptr(ptr)) {
+            size_t idx = lowfat_index(ptr);
+            if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+                _LOWFAT_MAGICS[idx] == 0) {
+                ;
+            } else {
+                ptr_type += "(STACK)";
+            }
+        }
+
+        *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
+             << '\n'
+             << std::flush;
+    }
+}
+
+/*
 static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                                      const CONTEXT *ctx, ADDRINT opcode,
                                      std::vector<UINT32> *RRegs,
@@ -153,18 +187,18 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
         uint64_t addr2 = Val2Str(val, grRegSize);
         addr2 = addr2;
 
-        //*out << "PINT_REGISTER val = " << hex << addr2 << '\n' << std::flush;
+        // *out << "PINT_REGISTER val = " << hex << addr2 << '\n' << std::flush;
 
         void *ptr = (void *)addr2;
 
         if (lowfat_is_ptr(ptr)) {
             if (lowfat_is_heap_ptr(ptr)) {
-                //*out << "11111111111111111111\n" << std::flush;
+                // *out << "11111111111111111111\n" << std::flush;
                 size_t idx = lowfat_index(ptr);
-                //*out << "222222222222222222222\n" << std::flush;
+                // *out << "222222222222222222222\n" << std::flush;
                 if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
                     _LOWFAT_MAGICS[idx] == 0) {
-                    //*out << "JJJJJJJJJJJJJJJJJJJJJ\n" << std::flush;
+                    // *out << "JJJJJJJJJJJJJJJJJJJJJ\n" << std::flush;
                     ;
                 } else {
                     void *base = lowfat_base(ptr);
@@ -275,7 +309,7 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
         }
     }
 
-    //*out << '\n' << std::flush << "Writes: " << '\n' << std::flush;
+    // *out << '\n' << std::flush << "Writes: " << '\n' << std::flush;
     for (uint64_t i = 0; i < WRegs->size(); i++) {
         const UINT grRegSize = REG_Size((REG)(*WRegs)[i]);
         PIN_REGISTER val;
@@ -291,12 +325,12 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
         void *ptr = (void *)addr2;
         if (lowfat_is_ptr(ptr)) {
             if (lowfat_is_heap_ptr(ptr)) {
-                //*out << "11111111111111111111\n" << std::flush;
+                // *out << "11111111111111111111\n" << std::flush;
                 size_t idx = lowfat_index(ptr);
-                //*out << "222222222222222222222\n" << std::flush;
+                // *out << "222222222222222222222\n" << std::flush;
                 if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
                     _LOWFAT_MAGICS[idx] == 0) {
-                    //*out << "JJJJJJJJJJJJJJJJJJJJJ\n" << std::flush;
+                    // *out << "JJJJJJJJJJJJJJJJJJJJJ\n" << std::flush;
                     ;
                 } else {
                     void *base = lowfat_base(ptr);
@@ -392,43 +426,12 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
         ITC[key]++;
     }
 
-    //*out << '\n' << std::flush;
+    // *out << '\n' << std::flush;
 }
 
-static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
-    *out << "-------------------- " << std::hex << pc << std::dec
-         << " ------------------" << '\n'
-         << std::flush;
-    for (int reg = (int)REG_GR_BASE; reg <= (int)REG_GR_LAST; ++reg) {
-        // For the integer registers, it is safe to use ADDRINT. But make sure
-        // to pass a pointer to it.
-        ADDRINT val;
-        PIN_GetContextRegval(ctxt, (REG)reg, reinterpret_cast<UINT8 *>(&val));
 
-        void *ptr = (void *)val;
-        std::string ptr_type = "";
 
-        if (lowfat_is_heap_ptr(ptr)) {
-            ptr_type += "(HEAP)";
-        } else if (lowfat_is_global_ptr(ptr)) {
-            ptr_type += "(GLOBAL)";
-        } else if (lowfat_is_stack_ptr(ptr)) {
-            size_t idx = lowfat_index(ptr);
-            if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-                _LOWFAT_MAGICS[idx] == 0) {
-                ;
-            } else {
-                ptr_type += "(STACK)";
-            }
-        }
 
-        *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
-             << '\n'
-             << std::flush;
-    }
-}
-
-// Pin calls this function every time a new instruction is encountered
 VOID Instruction(INS ins, VOID *v) {
     // Insert a call to docount before every instruction, no arguments are
     // passed
@@ -447,10 +450,10 @@ VOID Instruction(INS ins, VOID *v) {
         (rtn_name.find("effective_") != std::string::npos) ||
         (rtn_name.find("EFFECTIVE_") != std::string::npos) ||
         (rtn_name.find("LOWFAT_") != std::string::npos)) {
-        //*out << "Function Name: " << rtn_name << '\n' << std::flush;
+        // *out << "Function Name: " << rtn_name << '\n' << std::flush;
         return;
     } else {
-        //*out << "Function Name: " << rtn_name << '\n' << std::flush;
+        // *out << "Function Name: " << rtn_name << '\n' << std::flush;
     }
 
     // IN CASE WE NEED THE WHOLE CONTEXT
@@ -504,5 +507,149 @@ VOID Instruction(INS ins, VOID *v) {
         }
     }
 }
+*/
+
+
+VOID RecordMemRead(ADDRINT pc,
+                            ADDRINT addr,
+                            ADDRINT size ,
+                            string *disass, 
+                            const CONTEXT *ctx, 
+                            ADDRINT opcode,
+                            std::vector<UINT32> *RRegs,
+                            std::vector<UINT32> *WRegs
+                            )
+{
+     *out << "RecordMemRead: " << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " <<
+        std::dec << "Size(" << size << ") " <<
+        std::dec << "Opcode: (" << (UINT32)opcode << ") (" << std::hex <<
+        OPCODE_StringShort(opcode) << ") (" << *disass << ")\n" <<
+        std::flush; 
+}
+
+// Print a memory write record
+VOID RecordMemWrite(ADDRINT pc ,
+                                ADDRINT addr, 
+                                ADDRINT size,
+                                string *disass,
+                                const CONTEXT *ctx, 
+                                ADDRINT opcode,
+                                std::vector<UINT32> *RRegs,
+                                std::vector<UINT32> *WRegs
+                                )
+{
+      *out << "RecordMemWrite: " << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " <<
+        std::dec << "Size(" << size << ") " << 
+        std::dec << "Opcode: (" << (UINT32)opcode << ") (" << std::hex <<
+        OPCODE_StringShort(opcode) << ") (" << *disass << ")\n" <<
+        std::flush; 
+}
+
+VOID Instruction(INS ins, VOID *v)
+{
+
+
+    // Insert a call to docount before every instruction, no arguments are
+    // passed
+    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
+
+    if (!RTN_Valid(INS_Rtn(ins))) return;
+
+    // sanetize instructions from shared libraries
+    if ((!IMG_Valid(SEC_Img(RTN_Sec(INS_Rtn(ins)))) ||
+         !IMG_IsMainExecutable(SEC_Img(RTN_Sec(INS_Rtn(ins))))))
+        return;
+
+    // SANITIZING SOME OF THE EFFECTIVE AND LOWFAT FUNCTIONS
+    std::string rtn_name = RTN_Name(INS_Rtn(ins));
+    if ((rtn_name.find("lowfat_") != std::string::npos) ||
+        (rtn_name.find("effective_") != std::string::npos) ||
+        (rtn_name.find("EFFECTIVE_") != std::string::npos) ||
+        (rtn_name.find("LOWFAT_") != std::string::npos)) {
+        //*out << "Function Name: " << rtn_name << '\n' << std::flush;
+        return;
+    } else {
+        //*out << "Function Name: " << rtn_name << '\n' << std::flush;
+    }
+
+    // IN CASE WE NEED THE WHOLE CONTEXT
+    // INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)PrintRegisters, IARG_INST_PTR
+    // , IARG_CONST_CONTEXT, IARG_END);
+
+    std::string *dis = new std::string(INS_Disassemble(ins));
+    dis = dis;
+    std::vector<UINT32> *maxNumRRegs = new std::vector<UINT32>();
+    std::vector<UINT32> *maxNumWRegs = new std::vector<UINT32>();
+
+    for (UINT32 i = 0; i < INS_MaxNumRRegs(ins); i++) {
+        if (REG_is_gr64(INS_RegR(ins, i)))
+            maxNumRRegs->push_back(INS_RegR(ins, i));
+        else if (REG_is_gr32(INS_RegR(ins, i)))
+            maxNumRRegs->push_back(INS_RegR(ins, i));
+        else if (REG_is_gr16(INS_RegR(ins, i)))
+            maxNumRRegs->push_back(INS_RegR(ins, i));
+        else if (REG_is_gr8(INS_RegR(ins, i)))
+            maxNumRRegs->push_back(INS_RegR(ins, i));
+    }
+    for (UINT32 i = 0; i < INS_MaxNumWRegs(ins); i++) {
+        if (REG_is_gr64(INS_RegW(ins, i)))
+            maxNumWRegs->push_back(INS_RegW(ins, i));
+        else if (REG_is_gr32(INS_RegW(ins, i)))
+            maxNumWRegs->push_back(INS_RegW(ins, i));
+        else if (REG_is_gr16(INS_RegW(ins, i)))
+            maxNumWRegs->push_back(INS_RegW(ins, i));
+        else if (REG_is_gr8(INS_RegW(ins, i)))
+            maxNumWRegs->push_back(INS_RegW(ins, i));
+    }
+
+    // Instruments memory accesses using a predicated call, i.e.
+    // the instrumentation is called iff the instruction will actually be executed.
+    //
+    // On the IA-32 and Intel(R) 64 architectures conditional moves and REP
+    // prefixed instructions appear as predicated instructions in Pin.
+    UINT32 memOperands = INS_MemoryOperandCount(ins);
+
+    // Iterate over each memory operand of the instruction.
+    for (UINT32 memOp = 0; memOp < memOperands; memOp++)
+    {
+        if (INS_MemoryOperandIsRead(ins, memOp))
+        {
+            INS_InsertCall(
+            //INS_InsertIfCall(
+            ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead,
+                IARG_INST_PTR,
+                IARG_MEMORYOP_EA, memOp,
+                IARG_MEMORYREAD_SIZE, 
+                IARG_PTR, dis,
+                IARG_CONST_CONTEXT, 
+                IARG_ADDRINT, INS_Opcode(ins), 
+                IARG_PTR, maxNumRRegs, 
+                IARG_PTR, maxNumWRegs,
+                IARG_END);
+        }
+        // Note that in some architectures a single memory operand can be
+        // both read and written (for instance incl (%eax) on IA-32)
+        // In that case we instrument it once for read and once for write.
+        //IARG_MEMORYREAD_SIZE  Type: UINT32. Size in bytes of memory read.
+        //IARG_MEMORYOP_EA
+        //IARG_MEMORYWRITE_SIZE     Type: UINT32. Size in bytes of memory write. 
+        if (INS_MemoryOperandIsWritten(ins, memOp))
+        {
+            INS_InsertCall(
+           //INS_InsertPredicatedCall(
+                ins, IPOINT_BEFORE, (AFUNPTR)RecordMemWrite,
+                IARG_INST_PTR,
+                IARG_MEMORYOP_EA, memOp,
+                IARG_MEMORYWRITE_SIZE,
+                IARG_PTR, dis,
+                IARG_CONST_CONTEXT, 
+                IARG_ADDRINT, INS_Opcode(ins), 
+                IARG_PTR, maxNumRRegs, 
+                IARG_PTR, maxNumWRegs,
+                IARG_END);
+        }
+    }
+}
+
 
 #endif

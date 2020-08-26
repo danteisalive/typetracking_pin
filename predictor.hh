@@ -278,7 +278,6 @@ class DefaultLVPT
     DefaultLVPT(unsigned numEntries, unsigned tagBits,
                unsigned instShiftAmt, unsigned numThreads)
     {
-        std::cout << "creating LVPT " << numEntries << std::endl;
         this->numEntries = numEntries;
         this->tagBits = tagBits;
         this->instShiftAmt = instShiftAmt;
