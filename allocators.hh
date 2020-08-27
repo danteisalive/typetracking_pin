@@ -141,6 +141,68 @@ static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
 
         if (lowfat_is_heap_ptr(ptr)) {
             ptr_type += "(HEAP)";
+            size_t idx = lowfat_index(ptr);
+            if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+                _LOWFAT_MAGICS[idx] == 0) {
+                *out << "`ptr' is a non-fat-pointer\n";
+            } else {
+                void *base = lowfat_base(ptr);
+
+                // Get the object meta-data and calculate the allocation bounds.
+                EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+                base = (void *)(meta + 1);
+                const EFFECTIVE_TYPE *t = meta->type;
+
+                // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+                // EFFECTIVE_BOUNDS sizes = {0, meta->size};
+                // EFFECTIVE_BOUNDS bounds = bases + sizes;
+
+                if (EFFECTIVE_UNLIKELY(t == NULL)) {
+                    *out << "Effective type free!!!\n";
+                } else {
+                    size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+
+                    *out << "offset = " << offset << ", t->size = " << t->size
+                         << '\n';
+
+                    if (offset >= t->size) {
+                        // The `offset' is >= sizeof(T).  Thus `ptr' may be
+                        // pointing to an element in an array of T.
+                        // Alternatively, `ptr' may be pointing to a FAM at the
+                        // end of T.  Either way, the offset is normalized here.
+                        // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
+                        offset -= t->size;
+                        unsigned __int128 tmp = (unsigned __int128)offset;
+                        tmp *= (unsigned __int128)t->magic;
+                        idx = (size_t)(tmp >> EFFECTIVE_RADIX);
+                        offset -= idx * t->size_fam;
+                        // bounds += adjust;
+                        offset += t->offset_fam;
+
+                        *out << "FAM or Array. Offset is adjusted. Offset = "
+                             << offset << ", t->size = " << t->size << '\n';
+                    }
+
+                    if (typeTree.find(t->info->tid_info->tid) ==
+                        typeTree.end()) {
+                        *out << "Could not find effective_info\n";
+                    } else {
+                        if (typeTree[t->info->tid_info->tid].find(offset) ==
+                            typeTree[t->info->tid_info->tid].end()) {
+                            *out << "Could not find offset: " << offset << "\n";
+                        } else {
+                            std::set<std::pair<int, int> > pairs =
+                                typeTree[t->info->tid_info->tid][offset];
+                            std::set<std::pair<int, int> >::iterator it;
+                            for (it = pairs.begin(); it != pairs.end(); it++) {
+                                *out << "offset typeID = " << it->first << '\n';
+                            }
+                        }
+                    }
+                }
+
+                // Calculate and normalize the `offset'.
+            }
         } else if (lowfat_is_global_ptr(ptr)) {
             ptr_type += "(GLOBAL)";
         } else if (lowfat_is_stack_ptr(ptr)) {
@@ -236,16 +298,14 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
 // std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 
                         size_t offset = (uint8_t *)ptr - (uint8_t *)base;
-                        if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
-                            *out << "Could not find effective_info\n";
-                        } else {
-                            if (typeTree[t->info->tid_info->tid].find(offset) == typeTree[t->info->tid_info->tid].end()) {
-                                *out << "Could not find offset: " << offset << "\n";
-                            } else {
-                                std::set<std::pair<int, int> > pairs = typeTree[t->info->tid_info->tid][offset];
-                                std::set<std::pair<int, int> >::iterator it;
-                                for (it = pairs.begin(); it != pairs.end(); it++) {
-                                    *out << "offset typeID = " << it->first << '\n';
+                        if (typeTree.find(t->info->tid_info->tid) ==
+typeTree.end()) { *out << "Could not find effective_info\n"; } else { if
+(typeTree[t->info->tid_info->tid].find(offset) ==
+typeTree[t->info->tid_info->tid].end()) { *out << "Could not find offset: " <<
+offset << "\n"; } else { std::set<std::pair<int, int> > pairs =
+typeTree[t->info->tid_info->tid][offset]; std::set<std::pair<int, int>
+>::iterator it; for (it = pairs.begin(); it != pairs.end(); it++) { *out <<
+"offset typeID = " << it->first << '\n';
                                 }
                             }
                         }
@@ -279,9 +339,9 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                         //                         " (" <<
                         //                         t->layout[layout_idx].hash <<
                         //                         ")" " B0(" <<
-                        //                         t->layout[layout_idx].bounds[0]
+                        // t->layout[layout_idx].bounds[0]
                         //                         << ")" " B1(" <<
-                        //                         t->layout[layout_idx].bounds[1]
+                        // t->layout[layout_idx].bounds[1]
                         //                         << ")"
                         //                         "\n" << std::flush;
                         //     layout_idx++;
@@ -291,9 +351,9 @@ static void PrintRegistersVectorized(CHAR *where, string *disass, ADDRINT pc,
                         //                         " (" <<
                         //                         t->layout[layout_idx].hash <<
                         //                         ")" " B0(" <<
-                        //                         t->layout[layout_idx].bounds[0]
+                        // t->layout[layout_idx].bounds[0]
                         //                         << ")" " B1(" <<
-                        //                         t->layout[layout_idx].bounds[1]
+                        // t->layout[layout_idx].bounds[1]
                         //                         << ")"
                         //                         "\n" << std::flush;
 
@@ -509,46 +569,30 @@ VOID Instruction(INS ins, VOID *v) {
 }
 */
 
-
-VOID RecordMemRead(ADDRINT pc,
-                            ADDRINT addr,
-                            ADDRINT size ,
-                            string *disass, 
-                            const CONTEXT *ctx, 
-                            ADDRINT opcode,
-                            std::vector<UINT32> *RRegs,
-                            std::vector<UINT32> *WRegs
-                            )
-{
-     *out << "RecordMemRead: " << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " <<
-        std::dec << "Size(" << size << ") " <<
-        std::dec << "Opcode: (" << (UINT32)opcode << ") (" << std::hex <<
-        OPCODE_StringShort(opcode) << ") (" << *disass << ")\n" <<
-        std::flush; 
+VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
+                   const CONTEXT *ctx, ADDRINT opcode,
+                   std::vector<UINT32> *RRegs, std::vector<UINT32> *WRegs) {
+    *out << "RecordMemRead: "
+         << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+         << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+         << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+         << ")\n"
+         << std::flush;
 }
 
 // Print a memory write record
-VOID RecordMemWrite(ADDRINT pc ,
-                                ADDRINT addr, 
-                                ADDRINT size,
-                                string *disass,
-                                const CONTEXT *ctx, 
-                                ADDRINT opcode,
-                                std::vector<UINT32> *RRegs,
-                                std::vector<UINT32> *WRegs
-                                )
-{
-      *out << "RecordMemWrite: " << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " <<
-        std::dec << "Size(" << size << ") " << 
-        std::dec << "Opcode: (" << (UINT32)opcode << ") (" << std::hex <<
-        OPCODE_StringShort(opcode) << ") (" << *disass << ")\n" <<
-        std::flush; 
+VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
+                    const CONTEXT *ctx, ADDRINT opcode,
+                    std::vector<UINT32> *RRegs, std::vector<UINT32> *WRegs) {
+    *out << "RecordMemWrite: "
+         << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+         << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+         << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+         << ")\n"
+         << std::flush;
 }
 
-VOID Instruction(INS ins, VOID *v)
-{
-
-
+VOID Instruction(INS ins, VOID *v) {
     // Insert a call to docount before every instruction, no arguments are
     // passed
     INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
@@ -603,53 +647,39 @@ VOID Instruction(INS ins, VOID *v)
     }
 
     // Instruments memory accesses using a predicated call, i.e.
-    // the instrumentation is called iff the instruction will actually be executed.
+    // the instrumentation is called iff the instruction will actually be
+    // executed.
     //
     // On the IA-32 and Intel(R) 64 architectures conditional moves and REP
     // prefixed instructions appear as predicated instructions in Pin.
     UINT32 memOperands = INS_MemoryOperandCount(ins);
 
     // Iterate over each memory operand of the instruction.
-    for (UINT32 memOp = 0; memOp < memOperands; memOp++)
-    {
-        if (INS_MemoryOperandIsRead(ins, memOp))
-        {
+    for (UINT32 memOp = 0; memOp < memOperands; memOp++) {
+        if (INS_MemoryOperandIsRead(ins, memOp)) {
             INS_InsertCall(
-            //INS_InsertIfCall(
-            ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead,
-                IARG_INST_PTR,
-                IARG_MEMORYOP_EA, memOp,
-                IARG_MEMORYREAD_SIZE, 
-                IARG_PTR, dis,
-                IARG_CONST_CONTEXT, 
-                IARG_ADDRINT, INS_Opcode(ins), 
-                IARG_PTR, maxNumRRegs, 
-                IARG_PTR, maxNumWRegs,
-                IARG_END);
+                // INS_InsertIfCall(
+                ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead, IARG_INST_PTR,
+                IARG_MEMORYOP_EA, memOp, IARG_MEMORYREAD_SIZE, IARG_PTR, dis,
+                IARG_CONST_CONTEXT, IARG_ADDRINT, INS_Opcode(ins), IARG_PTR,
+                maxNumRRegs, IARG_PTR, maxNumWRegs, IARG_END);
         }
         // Note that in some architectures a single memory operand can be
         // both read and written (for instance incl (%eax) on IA-32)
         // In that case we instrument it once for read and once for write.
-        //IARG_MEMORYREAD_SIZE  Type: UINT32. Size in bytes of memory read.
-        //IARG_MEMORYOP_EA
-        //IARG_MEMORYWRITE_SIZE     Type: UINT32. Size in bytes of memory write. 
-        if (INS_MemoryOperandIsWritten(ins, memOp))
-        {
+        // IARG_MEMORYREAD_SIZE  Type: UINT32. Size in bytes of memory read.
+        // IARG_MEMORYOP_EA
+        // IARG_MEMORYWRITE_SIZE     Type: UINT32. Size in bytes of memory
+        // write.
+        if (INS_MemoryOperandIsWritten(ins, memOp)) {
             INS_InsertCall(
-           //INS_InsertPredicatedCall(
-                ins, IPOINT_BEFORE, (AFUNPTR)RecordMemWrite,
-                IARG_INST_PTR,
-                IARG_MEMORYOP_EA, memOp,
-                IARG_MEMORYWRITE_SIZE,
-                IARG_PTR, dis,
-                IARG_CONST_CONTEXT, 
-                IARG_ADDRINT, INS_Opcode(ins), 
-                IARG_PTR, maxNumRRegs, 
-                IARG_PTR, maxNumWRegs,
-                IARG_END);
+                // INS_InsertPredicatedCall(
+                ins, IPOINT_BEFORE, (AFUNPTR)RecordMemWrite, IARG_INST_PTR,
+                IARG_MEMORYOP_EA, memOp, IARG_MEMORYWRITE_SIZE, IARG_PTR, dis,
+                IARG_CONST_CONTEXT, IARG_ADDRINT, INS_Opcode(ins), IARG_PTR,
+                maxNumRRegs, IARG_PTR, maxNumWRegs, IARG_END);
         }
     }
 }
-
 
 #endif

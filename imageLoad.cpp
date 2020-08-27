@@ -125,7 +125,7 @@ VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     uint64_t *effective_info = effective_type + 6;  //
     EFFECTIVE_INFO *effective_tid = (EFFECTIVE_INFO *)(*effective_info);
 
-    if (effective_tid->tid_info->num_accesses == 12345) {
+    if (effective_tid->tid_info->num_accesses == 12) {
         //  *out << std::dec   << t->info->name << "(" << t->info->tid_info->tid
         //  << ")" <<
         //                     " " << effective_tid->name << "(" <<
