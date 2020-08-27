@@ -414,7 +414,7 @@ int main(INT32 argc, CHAR **argv) {
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
 
-    std::string TIDFileName("final.hash");
+    std::string TIDFileName("1.hash");
     // std::string HashMapFileName("final.hash");
 
     retreiveEffInfosFromFile(TIDFileName);
