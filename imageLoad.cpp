@@ -175,22 +175,22 @@ VOID ImageLoad(IMG img, VOID *v) {
     *out << "Tool loading " << IMG_Name(img) << " at " << IMG_LoadOffset(img)
          << endl;
 
-    RTN effective_type_check = RTN_FindByName(img, EFFECTIVETYPECHECK);
-    if (RTN_Valid(effective_type_check)) {
-        //   *out << "FOUND IT! " << RTN_Address(effective_type_check) << endl;
-        RTN_Open(effective_type_check);
+    // RTN effective_type_check = RTN_FindByName(img, EFFECTIVETYPECHECK);
+    // if (RTN_Valid(effective_type_check)) {
+    //     //   *out << "FOUND IT! " << RTN_Address(effective_type_check) << endl;
+    //     RTN_Open(effective_type_check);
 
-        RTN_InsertCall(effective_type_check, IPOINT_BEFORE, (AFUNPTR)Arg1Before,
-                       IARG_ADDRINT, EFFECTIVETYPECHECK,
-                       IARG_FUNCARG_ENTRYPOINT_VALUE, 0,
-                       IARG_FUNCARG_ENTRYPOINT_VALUE, 1, IARG_END);
+    //     RTN_InsertCall(effective_type_check, IPOINT_BEFORE, (AFUNPTR)Arg1Before,
+    //                    IARG_ADDRINT, EFFECTIVETYPECHECK,
+    //                    IARG_FUNCARG_ENTRYPOINT_VALUE, 0,
+    //                    IARG_FUNCARG_ENTRYPOINT_VALUE, 1, IARG_END);
 
-        // RTN_InsertCall(effective_type_check, IPOINT_AFTER,
-        // (AFUNPTR)MallocAfter,
-        //                IARG_FUNCRET_EXITPOINT_VALUE, IARG_END);
+    //     // RTN_InsertCall(effective_type_check, IPOINT_AFTER,
+    //     // (AFUNPTR)MallocAfter,
+    //     //                IARG_FUNCRET_EXITPOINT_VALUE, IARG_END);
 
-        RTN_Close(effective_type_check);
-    }
+    //     RTN_Close(effective_type_check);
+    // }
 
     //     for (SEC sec = IMG_SecHead(img); SEC_Valid(sec); sec = SEC_Next(sec))
     //     {
