@@ -177,10 +177,11 @@ VOID ImageLoad(IMG img, VOID *v) {
 
     // RTN effective_type_check = RTN_FindByName(img, EFFECTIVETYPECHECK);
     // if (RTN_Valid(effective_type_check)) {
-    //     //   *out << "FOUND IT! " << RTN_Address(effective_type_check) << endl;
-    //     RTN_Open(effective_type_check);
+    //     //   *out << "FOUND IT! " << RTN_Address(effective_type_check) <<
+    //     endl; RTN_Open(effective_type_check);
 
-    //     RTN_InsertCall(effective_type_check, IPOINT_BEFORE, (AFUNPTR)Arg1Before,
+    //     RTN_InsertCall(effective_type_check, IPOINT_BEFORE,
+    //     (AFUNPTR)Arg1Before,
     //                    IARG_ADDRINT, EFFECTIVETYPECHECK,
     //                    IARG_FUNCARG_ENTRYPOINT_VALUE, 0,
     //                    IARG_FUNCARG_ENTRYPOINT_VALUE, 1, IARG_END);
@@ -290,7 +291,6 @@ VOID Fini(INT32 code, VOID *v) {
     out->close();
 }
 void retreiveEffInfosFromFile(const std::string hashFileName) {
-
     *out << hashFileName << "\n";
     std::ifstream afile(hashFileName.c_str());
     std::string line;
@@ -312,7 +312,7 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
                      boost::token_compress_on);
         eff_info_global_name = strs[0];
         // To-change
-        //std::cerr << "Ahmad\n";
+        // std::cerr << "Ahmad\n";
         tid = atoi(strs[1].c_str());
         access = atol(strs[2].c_str());
         name = strs[3];
@@ -327,8 +327,29 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
             uint32_t flags = atoi(strs[idx + 1].c_str());
             size_t lb = (size_t)atoi(strs[idx + 2].c_str());
             size_t ub = (size_t)atoi(strs[idx + 3].c_str());
-            my_effective_info_entry e_i_entry = {global_name, flags, lb, ub};
-            entries.push_back(e_i_entry);
+
+            if (effInfos[global_name].size != (ub - lb)) {
+                if (ub - lb > 0) {
+                    if ((ub - lb) % effInfos[global_name].size == 0) {
+                        uint32_t array_length =
+                            (ub - lb) / effInfos[global_name].size;
+                        uint32_t entry_size = effInfos[global_name].size;
+                        for (uint32_t i = 0; i < array_length; i++) {
+                            size_t new_lb = lb + i*entry_size;
+                            size_t new_ub =  lb + (i+1)*entry_size;
+                            my_effective_info_entry e_i_entry = {global_name,
+                                                                 flags, new_lb, new_ub};
+                            entries.push_back(e_i_entry);
+                        }
+                    } else {
+                        *out << "strage size of entry\n";
+                    }
+                }
+            } else {
+                my_effective_info_entry e_i_entry = {global_name, flags, lb,
+                                                     ub};
+                entries.push_back(e_i_entry);
+            }
         }
         my_effective_info eff_info = {
             eff_info_global_name, tid,   access, name,   size,
@@ -336,7 +357,8 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
         effInfos.insert(std::pair<std::string, my_effective_info>(
             eff_info_global_name, eff_info));
     }
-    *out << "Exited " << "\n";
+    *out << "Exited "
+         << "\n";
     afile.close();
 }
 
@@ -384,7 +406,7 @@ void printTypeTree() {
             std::set<std::pair<int, int> >::iterator setItr = set.begin();
             while (setItr != set.end()) {
                 *out << ", Subobject TypeID = " << (*setItr).first
-                          << ", Subobject Size = " << (*setItr).second;
+                     << ", Subobject Size = " << (*setItr).second;
                 *out << "\n";
                 setItr++;
             }
@@ -418,7 +440,7 @@ int main(INT32 argc, CHAR **argv) {
     // std::string HashMapFileName("final.hash");
 
     retreiveEffInfosFromFile(TIDFileName);
-    std::map<std::string, my_effective_info>::iterator itr; 
+    std::map<std::string, my_effective_info>::iterator itr;
     for (itr = effInfos.begin(); itr != effInfos.end(); ++itr) {
         buildTypeTree(itr->second);
     }
@@ -514,31 +536,26 @@ reinterpret_cast<UINT8*>(&regval));
 }
 */
 
-
-
-
-
-
 // if(INS_IsMemoryRead(ins) && INS_IsStandardMemop(ins))
 //             {
 //                 INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-//                                      IARG_INST_PTR, offsetof(struct MEMREF, pc),
-//                                      IARG_MEMORYREAD_EA, offsetof(struct MEMREF, ea),
-//                                      IARG_END);
+//                                      IARG_INST_PTR, offsetof(struct MEMREF,
+//                                      pc), IARG_MEMORYREAD_EA, offsetof(struct
+//                                      MEMREF, ea), IARG_END);
 //             }
 
 // if (INS_HasMemoryRead2(ins) && INS_IsStandardMemop(ins))
 //             {
 //                 INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-//                                      IARG_INST_PTR, offsetof(struct MEMREF, pc),
-//                                      IARG_MEMORYREAD2_EA, offsetof(struct MEMREF, ea),
-//                                      IARG_END);
+//                                      IARG_INST_PTR, offsetof(struct MEMREF,
+//                                      pc), IARG_MEMORYREAD2_EA,
+//                                      offsetof(struct MEMREF, ea), IARG_END);
 //             }
 
 // if(INS_IsMemoryWrite(ins) && INS_IsStandardMemop(ins))
 //             {
 //                 INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-//                                      IARG_INST_PTR, offsetof(struct MEMREF, pc),
-//                                      IARG_MEMORYWRITE_EA, offsetof(struct MEMREF, ea),
-//                                      IARG_END);
+//                                      IARG_INST_PTR, offsetof(struct MEMREF,
+//                                      pc), IARG_MEMORYWRITE_EA,
+//                                      offsetof(struct MEMREF, ea), IARG_END);
 //             }

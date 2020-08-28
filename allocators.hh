@@ -140,69 +140,6 @@ static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
         std::string ptr_type = "";
 
         if (lowfat_is_heap_ptr(ptr)) {
-            ptr_type += "(HEAP)";
-            size_t idx = lowfat_index(ptr);
-            if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-                _LOWFAT_MAGICS[idx] == 0) {
-                *out << "`ptr' is a non-fat-pointer\n";
-            } else {
-                void *base = lowfat_base(ptr);
-
-                // Get the object meta-data and calculate the allocation bounds.
-                EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
-                base = (void *)(meta + 1);
-                const EFFECTIVE_TYPE *t = meta->type;
-
-                // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-                // EFFECTIVE_BOUNDS sizes = {0, meta->size};
-                // EFFECTIVE_BOUNDS bounds = bases + sizes;
-
-                if (EFFECTIVE_UNLIKELY(t == NULL)) {
-                    *out << "Effective type free!!!\n";
-                } else {
-                    size_t offset = (uint8_t *)ptr - (uint8_t *)base;
-
-                    *out << "offset = " << offset << ", t->size = " << t->size
-                         << '\n';
-
-                    if (offset >= t->size) {
-                        // The `offset' is >= sizeof(T).  Thus `ptr' may be
-                        // pointing to an element in an array of T.
-                        // Alternatively, `ptr' may be pointing to a FAM at the
-                        // end of T.  Either way, the offset is normalized here.
-                        // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
-                        offset -= t->size;
-                        unsigned __int128 tmp = (unsigned __int128)offset;
-                        tmp *= (unsigned __int128)t->magic;
-                        idx = (size_t)(tmp >> EFFECTIVE_RADIX);
-                        offset -= idx * t->size_fam;
-                        // bounds += adjust;
-                        offset += t->offset_fam;
-
-                        *out << "FAM or Array. Offset is adjusted. Offset = "
-                             << offset << ", t->size = " << t->size << '\n';
-                    }
-
-                    if (typeTree.find(t->info->tid_info->tid) ==
-                        typeTree.end()) {
-                        *out << "Could not find effective_info\n";
-                    } else {
-                        if (typeTree[t->info->tid_info->tid].find(offset) ==
-                            typeTree[t->info->tid_info->tid].end()) {
-                            *out << "Could not find offset: " << offset << "\n";
-                        } else {
-                            std::set<std::pair<int, int> > pairs =
-                                typeTree[t->info->tid_info->tid][offset];
-                            std::set<std::pair<int, int> >::iterator it;
-                            for (it = pairs.begin(); it != pairs.end(); it++) {
-                                *out << "offset typeID = " << it->first << '\n';
-                            }
-                        }
-                    }
-                }
-
-                // Calculate and normalize the `offset'.
-            }
         } else if (lowfat_is_global_ptr(ptr)) {
             ptr_type += "(GLOBAL)";
         } else if (lowfat_is_stack_ptr(ptr)) {
@@ -578,6 +515,92 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
          << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
          << ")\n"
          << std::flush;
+
+    void *ptr = (void *)addr;
+
+    if (lowfat_is_heap_ptr(ptr)) {
+        *out << "\n";
+        size_t idx = lowfat_index(ptr);
+        if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+            _LOWFAT_MAGICS[idx] == 0) {
+            *out << "`ptr' is a non-fat-pointer\n";
+        } else {
+            void *base = lowfat_base(ptr);
+
+            // Get the object meta-data and calculate the allocation bounds.
+            EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+            base = (void *)(meta + 1);
+            const EFFECTIVE_TYPE *t = meta->type;
+
+            // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+            // EFFECTIVE_BOUNDS sizes = {0, meta->size};
+            // EFFECTIVE_BOUNDS bounds = bases + sizes;
+
+            if (EFFECTIVE_UNLIKELY(t == NULL)) {
+                *out << "Effective type free!!!\n";
+            } else {
+                size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+                size_t offset_unadjusted = offset;
+                *out << "offset = " << offset << ", t->size = " << t->size
+                     << '\n';
+
+                if (offset >= t->size) {
+                    // The `offset' is >= sizeof(T).  Thus `ptr' may be
+                    // pointing to an element in an array of T.
+                    // Alternatively, `ptr' may be pointing to a FAM at the
+                    // end of T.  Either way, the offset is normalized here.
+                    // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
+                    offset -= t->size;
+                    unsigned __int128 tmp = (unsigned __int128)offset;
+                    tmp *= (unsigned __int128)t->magic;
+                    idx = (size_t)(tmp >> EFFECTIVE_RADIX);
+                    offset -= idx * t->size_fam;
+                    // bounds += adjust;
+                    offset += t->offset_fam;
+
+                    *out << "FAM or Array. Offset is adjusted. Offset = "
+                         << offset << ", t->size = " << t->size << '\n';
+                }
+
+                if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
+                    *out << "Could not find effective_info\n";
+                } else {
+                    if (typeTree[t->info->tid_info->tid].find(offset) ==
+                        typeTree[t->info->tid_info->tid].end()) {
+                        *out << "Could not find offset: " << offset << "\n";
+                    } else {
+                        std::set<std::pair<int, int> > pairs =
+                            typeTree[t->info->tid_info->tid][offset];
+                        std::set<std::pair<int, int> >::iterator it;
+                        for (it = pairs.begin(); it != pairs.end(); it++) {
+                            *out << "offset typeID = " << it->first << '\n';
+                        }
+                    }
+                }
+                if (offset_unadjusted > meta->size) {
+                    *out << "out of bound error";
+                }
+            }
+
+            // Calculate and normalize the `offset'.
+        }
+
+        *out << "\n";
+    } else if (lowfat_is_global_ptr(ptr)) {
+        // ptr_type += "(GLOBAL)";
+    } else if (lowfat_is_stack_ptr(ptr)) {
+        // size_t idx = lowfat_index(ptr);
+        // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+        //     _LOWFAT_MAGICS[idx] == 0) {
+        //     ;
+        // } else {
+        //     ptr_type += "(STACK)";
+        // }
+    }
+
+    // *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
+    //      << '\n'
+    //      << std::flush;
 }
 
 // Print a memory write record
@@ -590,6 +613,89 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
          << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
          << ")\n"
          << std::flush;
+
+    void *ptr = (void *)addr;
+
+    if (lowfat_is_heap_ptr(ptr)) {
+        *out << "\n";
+        size_t idx = lowfat_index(ptr);
+        if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+            _LOWFAT_MAGICS[idx] == 0) {
+            *out << "`ptr' is a non-fat-pointer\n";
+        } else {
+            void *base = lowfat_base(ptr);
+
+            // Get the object meta-data and calculate the allocation bounds.
+            EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+            base = (void *)(meta + 1);
+            const EFFECTIVE_TYPE *t = meta->type;
+
+            // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+            // EFFECTIVE_BOUNDS sizes = {0, meta->size};
+            // EFFECTIVE_BOUNDS bounds = bases + sizes;
+
+            if (EFFECTIVE_UNLIKELY(t == NULL)) {
+                *out << "Effective type free!!!\n";
+            } else {
+                size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+                size_t offset_unadjusted = offset;
+
+                *out << "offset = " << offset << ", t->size = " << t->size
+                     << '\n';
+
+                if (offset >= t->size) {
+                    // The `offset' is >= sizeof(T).  Thus `ptr' may be
+                    // pointing to an element in an array of T.
+                    // Alternatively, `ptr' may be pointing to a FAM at the
+                    // end of T.  Either way, the offset is normalized here.
+                    // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
+                    offset -= t->size;
+                    unsigned __int128 tmp = (unsigned __int128)offset;
+                    tmp *= (unsigned __int128)t->magic;
+                    idx = (size_t)(tmp >> EFFECTIVE_RADIX);
+                    offset -= idx * t->size_fam;
+                    // bounds += adjust;
+                    offset += t->offset_fam;
+
+                    *out << "FAM or Array. Offset is adjusted. Offset = "
+                         << offset << ", t->size = " << t->size << '\n';
+                }
+
+                if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
+                    *out << "Could not find effective_info\n";
+                } else {
+                    if (typeTree[t->info->tid_info->tid].find(offset) ==
+                        typeTree[t->info->tid_info->tid].end()) {
+                        *out << "Could not find offset: " << offset << "\n";
+                    } else {
+                        std::set<std::pair<int, int> > pairs =
+                            typeTree[t->info->tid_info->tid][offset];
+                        std::set<std::pair<int, int> >::iterator it;
+                        for (it = pairs.begin(); it != pairs.end(); it++) {
+                            *out << "offset typeID = " << it->first << '\n';
+                        }
+                    }
+                }
+                if (offset_unadjusted > meta->size) {
+                    *out << "out of bound error";
+                }
+            }
+
+            // Calculate and normalize the `offset'.
+        }
+
+        *out << "\n";
+    } else if (lowfat_is_global_ptr(ptr)) {
+        // ptr_type += "(GLOBAL)";
+    } else if (lowfat_is_stack_ptr(ptr)) {
+        // size_t idx = lowfat_index(ptr);
+        // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+        //     _LOWFAT_MAGICS[idx] == 0) {
+        //     ;
+        // } else {
+        //     ptr_type += "(STACK)";
+        // }
+    }
 }
 
 VOID Instruction(INS ins, VOID *v) {
