@@ -140,6 +140,26 @@ typedef struct EFFECTIVE_INFO_ENTRY EFFECTIVE_INFO_ENTRY;
 #define EFFECTIVE_INFO_ENTRY_FLAG_INHERITANCE   0x1
 #define EFFECTIVE_INFO_ENTRY_FLAG_VIRTUAL       0x2
 
+/** If a meta type capability needs more than 32 bits, we can use multiple entry in the cacheline. 
+ * It is still better than having 64 bits type capabilities which is too much for most type. */
+struct TYCHE_METADATA_CACHELINE {
+    uint32_t CacheLine_0;
+    uint32_t CacheLine_1;
+    uint32_t CacheLine_2;
+    uint32_t CacheLine_3;
+    uint32_t CacheLine_4;
+    uint32_t CacheLine_5;
+    uint32_t CacheLine_6;
+    uint32_t CacheLine_7;
+    uint32_t CacheLine_8;
+    uint32_t CacheLine_9;
+    uint32_t CacheLine_10;
+    uint32_t CacheLine_11;
+    uint32_t CacheLine_12;
+    uint32_t CacheLine_13;
+    struct TYCHE_METADATA_CACHELINE * next_cacheline;
+};
+
 /*
  * Type info (for human readable type information).
  */
@@ -154,8 +174,11 @@ struct EFFECTIVE_INFO
     EFFECTIVE_INFO_ENTRY entries[];
 };
 
+typedef struct TYCHE_METADATA_CACHELINE TYCHE_METADATA_CACHELINE;
+
 struct EFFECTIVE_TYPE
 {   
+    TYCHE_METADATA_CACHELINE* tyche_meta;
     uint64_t hash;              // Type-specific hash value.
     uint64_t hash2;             // 2nd type-specific hash value.
     uint32_t size;              // sizeof(T)

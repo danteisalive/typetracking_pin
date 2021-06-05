@@ -290,131 +290,7 @@ VOID Fini(INT32 code, VOID *v) {
 
     out->close();
 }
-void retreiveEffInfosFromFile(const std::string hashFileName) {
-    *out << hashFileName << "\n";
-    std::ifstream afile(hashFileName.c_str());
-    std::string line;
-    std::vector<std::string> strs;
 
-    while (std::getline(afile, line)) {
-        *out << line << "\n";
-        std::string eff_info_global_name;
-        uint64_t tid;
-        uint64_t access;
-        std::string name;
-        uint32_t size;
-        uint32_t num_entries;
-        uint32_t flags;
-        std::string next;
-        std::vector<my_effective_info_entry> entries;
-        // std::cerr << line << '\n';
-        boost::split(strs, line, boost::is_any_of("#"),
-                     boost::token_compress_on);
-        eff_info_global_name = strs[0];
-        // To-change
-        // std::cerr << "Ahmad\n";
-        tid = atoi(strs[1].c_str());
-        access = atol(strs[2].c_str());
-        name = strs[3];
-        size = atoi(strs[4].c_str());
-        num_entries = atoi(strs[5].c_str());
-        flags = atoi(strs[6].c_str());
-        next = strs[7];
-
-        for (unsigned int i = 0; i < num_entries; i++) {
-            int idx = 8 + i * 4;
-            std::string global_name = strs[idx];
-            uint32_t flags = atoi(strs[idx + 1].c_str());
-            size_t lb = (size_t)atoi(strs[idx + 2].c_str());
-            size_t ub = (size_t)atoi(strs[idx + 3].c_str());
-
-            if (effInfos[global_name].size != (ub - lb)) {
-                if (ub - lb > 0) {
-                    if ((ub - lb) % effInfos[global_name].size == 0) {
-                        uint32_t array_length =
-                            (ub - lb) / effInfos[global_name].size;
-                        uint32_t entry_size = effInfos[global_name].size;
-                        for (uint32_t i = 0; i < array_length; i++) {
-                            size_t new_lb = lb + i*entry_size;
-                            size_t new_ub =  lb + (i+1)*entry_size;
-                            my_effective_info_entry e_i_entry = {global_name,
-                                                                 flags, new_lb, new_ub};
-                            entries.push_back(e_i_entry);
-                        }
-                    } else {
-                        *out << "strage size of entry\n";
-                    }
-                }
-            } else {
-                my_effective_info_entry e_i_entry = {global_name, flags, lb,
-                                                     ub};
-                entries.push_back(e_i_entry);
-            }
-        }
-        my_effective_info eff_info = {
-            eff_info_global_name, tid,   access, name,   size,
-            num_entries,          flags, next,   entries};
-        effInfos.insert(std::pair<std::string, my_effective_info>(
-            eff_info_global_name, eff_info));
-    }
-    *out << "Exited "
-         << "\n";
-    afile.close();
-}
-
-void buildTypeTree(my_effective_info ei) {
-    typeTree[ei.tid][0].insert(std::pair<int, int>(ei.tid, ei.size));
-
-    // std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
-    for (size_t i = 0; i < ei.entries.size(); i++) {
-        my_effective_info_entry eie = ei.entries[i];
-        uint64_t entryID = effInfos[eie.global_name].tid;
-        size_t eie_lb = eie.lb;
-
-        if (typeTree.find(entryID) == typeTree.end()) {
-            my_effective_info ei_new = effInfos[eie.global_name];
-            buildTypeTree(ei_new);
-        }
-        std::map<int, std::set<std::pair<int, int> > > entryMap =
-            typeTree[entryID];
-        std::map<int, std::set<std::pair<int, int> > >::iterator itr;
-        for (itr = entryMap.begin(); itr != entryMap.end(); itr++) {
-            size_t offset_new = itr->first;
-            std::set<std::pair<int, int> > p_new = itr->second;
-            std::set<std::pair<int, int> >::iterator setItr = p_new.begin();
-            while (setItr != p_new.end()) {
-                typeTree[ei.tid][eie_lb + offset_new].insert(*(setItr));
-                setItr++;
-            }
-        }
-    }
-}
-void printTypeTree() {
-    // std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree
-    std::map<int, std::map<int, std::set<std::pair<int, int> > > >::iterator
-        itr;
-    for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
-        int tid = itr->first;
-        *out << "TypeID = " << tid << ": \n";
-        std::map<int, std::set<std::pair<int, int> > > mp = itr->second;
-        std::map<int, std::set<std::pair<int, int> > >::iterator mpItr =
-            mp.begin();
-        while (mpItr != mp.end()) {
-            int offset = mpItr->first;
-            *out << "Offset = " << offset;
-            std::set<std::pair<int, int> > set = mpItr->second;
-            std::set<std::pair<int, int> >::iterator setItr = set.begin();
-            while (setItr != set.end()) {
-                *out << ", Subobject TypeID = " << (*setItr).first
-                     << ", Subobject Size = " << (*setItr).second;
-                *out << "\n";
-                setItr++;
-            }
-
-            mpItr++;
-        }
-    }
-}
 
 int main(INT32 argc, CHAR **argv) {
     PIN_InitSymbols();
@@ -436,15 +312,9 @@ int main(INT32 argc, CHAR **argv) {
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
 
-    std::string TIDFileName("1.hash");
+    //std::string TIDFileName("1.hash");
     // std::string HashMapFileName("final.hash");
 
-    retreiveEffInfosFromFile(TIDFileName);
-    std::map<std::string, my_effective_info>::iterator itr;
-    for (itr = effInfos.begin(); itr != effInfos.end(); ++itr) {
-        buildTypeTree(itr->second);
-    }
-    printTypeTree();
     // Replace 'Plop' with your file name.
     // std::ifstream           TIDFile(TIDFileName.c_str());
     // std::ifstream           HashMapFile(HashMapFileName.c_str());
