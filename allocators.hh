@@ -160,16 +160,16 @@ static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
 VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                    const CONTEXT *ctx, ADDRINT opcode,
                    std::vector<UINT32> *RRegs, std::vector<UINT32> *WRegs) {
-    *out << "RecordMemRead: "
-         << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-         << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-         << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-         << ")\n"
-         << std::flush;
+    // *out << "RecordMemRead: "
+    //      << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+    //      << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+    //      << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+    //      << ")\n"
+    //      << std::flush;
 
     void *ptr = (void *)addr;
 
-    if (false && lowfat_is_heap_ptr(ptr)) {
+    if (lowfat_is_heap_ptr(ptr)) {
         *out << "\n";
         size_t idx = lowfat_index(ptr);
         if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
@@ -182,7 +182,9 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
             base = (void *)(meta + 1);
             const EFFECTIVE_TYPE *t = meta->type;
-
+            // TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
+            // *out << "tm = " << tm->CacheLine_0 << ", t->size = " << t->size
+            //          << '\n';
             // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
             // EFFECTIVE_BOUNDS sizes = {0, meta->size};
             // EFFECTIVE_BOUNDS bounds = bases + sizes;
@@ -190,10 +192,16 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
-                //size_t offset = (uint8_t *)ptr - (uint8_t *)base;
-                //size_t offset_unadjusted = offset;
-                //*out << "offset = " << offset << ", t->size = " << t->size
-                //     << '\n';
+                TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
+                // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+                // EFFECTIVE_BOUNDS sizes = {0, meta->size};
+                // EFFECTIVE_BOUNDS bounds = bases + sizes;
+            *out << "tm = " << tm->CacheLine_0 << ", t->size = " << t->size
+                     << '\n';
+                // size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+                // size_t offset_unadjusted = offset;
+                // *out << "offset = " << offset << ", t->size = " << t->size
+                //      << '\n';
 
                 // if (offset >= t->size) {
                 //     // The `offset' is >= sizeof(T).  Thus `ptr' may be
@@ -223,15 +231,9 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 
         *out << "\n";
     } else if (lowfat_is_global_ptr(ptr)) {
-        // ptr_type += "(GLOBAL)";
+        *out << "GLOBAL ADDRESS\n";
     } else if (lowfat_is_stack_ptr(ptr)) {
-        // size_t idx = lowfat_index(ptr);
-        // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-        //     _LOWFAT_MAGICS[idx] == 0) {
-        //     ;
-        // } else {
-        //     ptr_type += "(STACK)";
-        // }
+        *out << "STACK ADDRESS\n";
     }
 
     // *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
@@ -243,16 +245,16 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     const CONTEXT *ctx, ADDRINT opcode,
                     std::vector<UINT32> *RRegs, std::vector<UINT32> *WRegs) {
-    *out << "RecordMemWrite: "
-         << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-         << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-         << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-         << ")\n"
-         << std::flush;
+    // *out << "RecordMemWrite: "
+    //      << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+    //      << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+    //      << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+    //      << ")\n"
+    //      << std::flush;
 
     void *ptr = (void *)addr;
 
-    if (false && lowfat_is_heap_ptr(ptr)) {
+    if (lowfat_is_heap_ptr(ptr)) {
         *out << "\n";
         size_t idx = lowfat_index(ptr);
         if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
@@ -266,13 +268,69 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             base = (void *)(meta + 1);
             const EFFECTIVE_TYPE *t = meta->type;
 
-            // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-            // EFFECTIVE_BOUNDS sizes = {0, meta->size};
-            // EFFECTIVE_BOUNDS bounds = bases + sizes;
-
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
+                TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
+                *out << tm << "\n";
+                *out << 
+                "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
+                "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
+                "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
+                "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
+                "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
+                "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
+                "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
+                "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
+                "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
+                "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
+                "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
+                "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
+                "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
+                "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
+                "tm_p = "  << std::hex << tm->next_cacheline << " " <<
+                '\n';
+
+                TYCHE_METADATA_CACHELINE* tm_1 = (TYCHE_METADATA_CACHELINE*)((void*)tm + 64);
+                *out << 
+                "tm_0 = " << std::dec << tm_1->CacheLine_0 << " " <<
+                "tm_1 = " << std::dec << tm_1->CacheLine_1 << " " <<
+                "tm_2 = " << std::dec << tm_1->CacheLine_2 << " " <<
+                "tm_3 = " << std::dec << tm_1->CacheLine_3 << " " <<
+                "tm_4 = " << std::dec << tm_1->CacheLine_4 << " " <<
+                "tm_5 = " << std::dec << tm_1->CacheLine_5 << " " <<
+                "tm_6 = " << std::dec << tm_1->CacheLine_6 << " " <<
+                "tm_7 = " << std::dec << tm_1->CacheLine_7 << " " <<
+                "tm_8 = " << std::dec << tm_1->CacheLine_8 << " " <<
+                "tm_9 = " << std::dec << tm_1->CacheLine_9 << " " <<
+                "tm_10 = " << std::dec << tm_1->CacheLine_10 << " " <<
+                "tm_11 = " << std::dec << tm_1->CacheLine_11 << " " <<
+                "tm_12 = " << std::dec << tm_1->CacheLine_12 << " " <<
+                "tm_13 = " << std::dec << tm_1->CacheLine_13 << " " <<
+                "tm_p = "  << std::hex << tm_1->next_cacheline << " " <<
+                '\n';
+
+                 tm_1 = (TYCHE_METADATA_CACHELINE*)((void*)tm_1->next_cacheline + 64);
+                *out << 
+                "tm_0 = " << std::dec << tm_1->CacheLine_0 << " " <<
+                "tm_1 = " << std::dec << tm_1->CacheLine_1 << " " <<
+                "tm_2 = " << std::dec << tm_1->CacheLine_2 << " " <<
+                "tm_3 = " << std::dec << tm_1->CacheLine_3 << " " <<
+                "tm_4 = " << std::dec << tm_1->CacheLine_4 << " " <<
+                "tm_5 = " << std::dec << tm_1->CacheLine_5 << " " <<
+                "tm_6 = " << std::dec << tm_1->CacheLine_6 << " " <<
+                "tm_7 = " << std::dec << tm_1->CacheLine_7 << " " <<
+                "tm_8 = " << std::dec << tm_1->CacheLine_8 << " " <<
+                "tm_9 = " << std::dec << tm_1->CacheLine_9 << " " <<
+                "tm_10 = " << std::dec << tm_1->CacheLine_10 << " " <<
+                "tm_11 = " << std::dec << tm_1->CacheLine_11 << " " <<
+                "tm_12 = " << std::dec << tm_1->CacheLine_12 << " " <<
+                "tm_13 = " << std::dec << tm_1->CacheLine_13 << " " <<
+                "tm_p = "  << std::hex << tm_1->next_cacheline << " " <<
+                '\n';
+                // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+                // EFFECTIVE_BOUNDS sizes = {0, meta->size};
+                // EFFECTIVE_BOUNDS bounds = bases + sizes;
                 // size_t offset = (uint8_t *)ptr - (uint8_t *)base;
                 // size_t offset_unadjusted = offset;
 
@@ -307,15 +365,9 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 
         *out << "\n";
     } else if (lowfat_is_global_ptr(ptr)) {
-        // ptr_type += "(GLOBAL)";
+        *out << "GLOBAL ADDRESS\n";
     } else if (lowfat_is_stack_ptr(ptr)) {
-        // size_t idx = lowfat_index(ptr);
-        // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-        //     _LOWFAT_MAGICS[idx] == 0) {
-        //     ;
-        // } else {
-        //     ptr_type += "(STACK)";
-        // }
+        *out << "STACK ADDRESS\n";
     }
 }
 
