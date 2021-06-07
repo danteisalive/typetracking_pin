@@ -1,24 +1,22 @@
 Tool loading /home/dante/EffectiveSan/test/Example.out at 0
-Tool loading /lib64/ld-linux-x86-64.so.2 at 0x7fb47bbdf000
-Tool loading [vdso] at 0x7ffd6597c000
-Tool loading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7fb467675000
-Tool loading /lib/x86_64-linux-gnu/libm.so.6 at 0x7fb4672b3000
-Tool loading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7fb467094000
-Tool loading /lib/x86_64-linux-gnu/librt.so.1 at 0x7fb466e8b000
-Tool loading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7fb466c87000
-Tool loading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7fb466a6e000
-Tool loading /lib/x86_64-linux-gnu/libc.so.6 at 0x7fb46667b000
-0x0000000004000480 32
-tm_0 = 0 tm_1 = 0 tm_2 = 8 tm_3 = 8 tm_4 = 12 tm_5 = 16 tm_6 = 24 tm_7 = 24 tm_8 = 4294967295 tm_9 = 4294967295 tm_10 = 4294967295 tm_11 = 4294967295 tm_12 = 4294967295 tm_13 = 4294967295 tm_p = 0x0000000000000000 
+Tool loading /lib64/ld-linux-x86-64.so.2 at 0x7f591e785000
+Tool loading [vdso] at 0x7fffb1ed7000
+Tool loading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7f590a21b000
+Tool loading /lib/x86_64-linux-gnu/libm.so.6 at 0x7f5909e59000
+Tool loading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7f5909c3a000
+Tool loading /lib/x86_64-linux-gnu/librt.so.1 at 0x7f5909a31000
+Tool loading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7f590982d000
+Tool loading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7f5909614000
+Tool loading /lib/x86_64-linux-gnu/libc.so.6 at 0x7f5909221000
 Tool unloading /home/dante/EffectiveSan/test/Example.out at 0
-Tool unloading /lib64/ld-linux-x86-64.so.2 at 0x7fb47bbdf000
-Tool unloading [vdso] at 0x7ffd6597c000
-Tool unloading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7fb467675000
-Tool unloading /lib/x86_64-linux-gnu/libm.so.6 at 0x7fb4672b3000
-Tool unloading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7fb467094000
-Tool unloading /lib/x86_64-linux-gnu/librt.so.1 at 0x7fb466e8b000
-Tool unloading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7fb466c87000
-Tool unloading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7fb466a6e000
-Tool unloading /lib/x86_64-linux-gnu/libc.so.6 at 0x7fb46667b000
+Tool unloading /lib64/ld-linux-x86-64.so.2 at 0x7f591e785000
+Tool unloading [vdso] at 0x7fffb1ed7000
+Tool unloading /usr/lib/x86_64-linux-gnu/libstdc++.so.6 at 0x7f590a21b000
+Tool unloading /lib/x86_64-linux-gnu/libm.so.6 at 0x7f5909e59000
+Tool unloading /lib/x86_64-linux-gnu/libpthread.so.0 at 0x7f5909c3a000
+Tool unloading /lib/x86_64-linux-gnu/librt.so.1 at 0x7f5909a31000
+Tool unloading /lib/x86_64-linux-gnu/libdl.so.2 at 0x7f590982d000
+Tool unloading /lib/x86_64-linux-gnu/libgcc_s.so.1 at 0x7f5909614000
+Tool unloading /lib/x86_64-linux-gnu/libc.so.6 at 0x7f5909221000
 
 ------------------------------------------------------------------------

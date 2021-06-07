@@ -73,11 +73,11 @@ InsTypeCount ITC;
 std::map<int, std::vector<int> > TypeTreeTID;
 std::map<uint64_t, int> HashMapTID;
 
-std::map<std::string, my_effective_info> effInfos;
+// std::map<std::string, my_effective_info> effInfos;
 
-std::map<std::string, int> mapGlobalname2ID;
+// std::map<std::string, int> mapGlobalname2ID;
 
-std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
+// std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 
 DefaultLVPT *lvpt;
 
@@ -85,18 +85,18 @@ VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 <<
     // std::endl;
 
-    void *ptr = (void *)arg1;
-    size_t idx = lowfat_index(ptr);
-    if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT || _LOWFAT_MAGICS[idx] == 0) {
-        return;
-    }
+    // void *ptr = (void *)arg1;
+    // size_t idx = lowfat_index(ptr);
+    // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT || _LOWFAT_MAGICS[idx] == 0) {
+    //     return;
+    // }
 
-    void *base = lowfat_base(ptr);
+    // void *base = lowfat_base(ptr);
 
-    // Get the object meta-data and calculate the allocation bounds.
-    EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
-    base = (void *)(meta + 1);
-    const EFFECTIVE_TYPE *t = meta->type;
+    // // Get the object meta-data and calculate the allocation bounds.
+    // EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+    // base = (void *)(meta + 1);
+    // const EFFECTIVE_TYPE *t = meta->type;
 
     // if (lowfat_is_heap_ptr(ptr))
     // {
@@ -115,17 +115,18 @@ VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
 
     //*out << std::dec << "PTR: " << meta->size << "\n";
 
-    if (EFFECTIVE_UNLIKELY(t == NULL)) return;
-    //     t = &EFFECTIVE_TYPE_FREE;
+    // if (EFFECTIVE_UNLIKELY(t == NULL)) return;
+    // //     t = &EFFECTIVE_TYPE_FREE;
 
-    void *t1 = (void *)arg2;
-    EFFECTIVE_TYPE *effective_meta = (EFFECTIVE_TYPE *)arg2;
-    effective_meta = effective_meta;
-    uint64_t *effective_type = (uint64_t *)t1;
-    uint64_t *effective_info = effective_type + 6;  //
-    EFFECTIVE_INFO *effective_tid = (EFFECTIVE_INFO *)(*effective_info);
+    // void *t1 = (void *)arg2;
+    // EFFECTIVE_TYPE *effective_meta = (EFFECTIVE_TYPE *)arg2;
+    // effective_meta = effective_meta;
+    // uint64_t *effective_type = (uint64_t *)t1;
+    // uint64_t *effective_info = effective_type + 6;  //
+    // EFFECTIVE_INFO *effective_tid = (EFFECTIVE_INFO *)(*effective_info);
 
-    if (effective_tid->tid_info->num_accesses == 12) {
+
+    // if (effective_tid->tid_info->num_accesses == 12) {
         //  *out << std::dec   << t->info->name << "(" << t->info->tid_info->tid
         //  << ")" <<
         //                     " " << effective_tid->name << "(" <<
@@ -154,19 +155,19 @@ VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
         //         type_count_iter->second.second++;
         //     }
         // }
-        TypesCount::iterator type_count_iter = TC.find(t->hash);
-        if (type_count_iter == TC.end()) {
-            TC.insert(
-                std::make_pair(t->hash, std::make_pair(t->info->name, 0)));
-        } else {
-            if (type_count_iter->second.first != t->info->name) {
-                assert(0);
-            } else {
-                type_count_iter->second.second++;
-            }
-        }
-    } else
-        assert(0);
+    //     TypesCount::iterator type_count_iter = TC.find(t->hash);
+    //     if (type_count_iter == TC.end()) {
+    //         TC.insert(
+    //             std::make_pair(t->hash, std::make_pair(t->info->name, 0)));
+    //     } else {
+    //         if (type_count_iter->second.first != t->info->name) {
+    //             assert(0);
+    //         } else {
+    //             type_count_iter->second.second++;
+    //         }
+    //     }
+    // } else
+    //     assert(0);
 
     NumOfCalls++;
 }
