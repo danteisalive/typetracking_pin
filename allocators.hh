@@ -281,10 +281,6 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 // Find the offset for looking at the layout
                 // Calculate and normalize the `offset'.
                 tm = t->tyche_meta;
-
-                // Meta Cache
-                BOOL MCHit = Meta_Cache.AccessSingleLine((ADDRINT)tm, CACHE_BASE::ACCESS_TYPE_LOAD);
-                MCHit = MCHit;
                 //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
                 //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
                 //EFFECTIVE_BOUNDS bounds = bases + sizes;
@@ -339,6 +335,27 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 if (offset_unadjusted > meta->size) {
                     *out << "out of bound error";
                     assert(0);
+                }
+
+                // Access Meta Cache
+                // find the meta cache line that we should fetch
+                uint64_t block = offset / TYCHE_OFFSETS_IN_EACH_CACHELINE;
+                TYCHE_METADATA_CACHELINE* cl = (TYCHE_METADATA_CACHELINE*)((void*)tm + block * TYCHE_CACHELINE_SIZE);
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: 0 " << " Addr: " << std::hex << cl  << '\n' << std::flush;
+                #endif
+                Meta_Cache.AccessSingleLine((ADDRINT)cl, CACHE_BASE::ACCESS_TYPE_LOAD); 
+                uint64_t level = 0;
+                TYCHE_METADATA_CACHELINE* cl_next_level = cl->next_cacheline;
+                while (cl_next_level != NULL)
+                {
+                    level++;            
+                    assert((uint64_t)cl_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)cl_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
+                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                        *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: " << level << " Addr: " << std::hex << cl_next_level  << '\n' << std::flush;
+                    #endif
+                    Meta_Cache.AccessSingleLine((ADDRINT)cl_next_level, CACHE_BASE::ACCESS_TYPE_LOAD); 
+                    cl_next_level = cl_next_level->next_cacheline;    
                 }
             }
 
@@ -451,9 +468,6 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 // Calculate and normalize the `offset'.
                 tm = t->tyche_meta;
 
-                // Meta Cache
-                BOOL MCHit = Meta_Cache.AccessSingleLine((ADDRINT)tm, CACHE_BASE::ACCESS_TYPE_LOAD);
-                MCHit = MCHit;
                 //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
                 //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
                 //EFFECTIVE_BOUNDS bounds = bases + sizes;
@@ -510,6 +524,26 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     assert(0);
                 }
 
+                // Access Meta Cache
+                // find the meta cache line that we should fetch
+                uint64_t block = offset / TYCHE_OFFSETS_IN_EACH_CACHELINE;
+                TYCHE_METADATA_CACHELINE* cl = (TYCHE_METADATA_CACHELINE*)((void*)tm + block * TYCHE_CACHELINE_SIZE);
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: 0 " << " Addr: " << std::hex << cl  << '\n' << std::flush;
+                #endif
+                Meta_Cache.AccessSingleLine((ADDRINT)cl, CACHE_BASE::ACCESS_TYPE_LOAD); 
+                uint64_t level = 0;
+                TYCHE_METADATA_CACHELINE* cl_next_level = cl->next_cacheline;
+                while (cl_next_level != NULL)
+                {
+                    level++;            
+                    assert((uint64_t)cl_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)cl_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
+                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                        *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: " << level << " Addr: " << std::hex << cl_next_level  << '\n' << std::flush;
+                    #endif
+                    Meta_Cache.AccessSingleLine((ADDRINT)cl_next_level, CACHE_BASE::ACCESS_TYPE_LOAD); 
+                    cl_next_level = cl_next_level->next_cacheline;    
+                }
             }
 
         }
