@@ -195,24 +195,35 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             } else {
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
-                // *out << tm << " " << std::dec << t->size << " " << t->info->name << "\n" << std::flush;
-                // *out << 
-                // "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
-                // "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
-                // "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
-                // "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
-                // "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
-                // "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
-                // "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
-                // "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
-                // "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
-                // "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
-                // "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
-                // "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
-                // "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
-                // "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
-                // "tm_p = "  << std::hex << tm->next_cacheline << " " <<
-                // '\n' << std::flush;
+                //*out << t->info->name << " " << std::dec << t->size << " "<< "\n" << std::flush;
+                uint64_t number_of_offsets_blocks = t->size / 32;
+                for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
+                {
+                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + off * 64);
+                    assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
+                    // *out << std::hex << tm << "\n" << std::flush;
+                    // *out << 
+                    // "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
+                    // "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
+                    // "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
+                    // "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
+                    // "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
+                    // "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
+                    // "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
+                    // "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
+                    // "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
+                    // "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
+                    // "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
+                    // "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
+                    // "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
+                    // "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
+                    // "tm_p = "  << std::hex << tm->next_cacheline << " " <<
+                    // '\n' << std::flush;
+                }
+                
+
+             
+                
                 // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
                 // EFFECTIVE_BOUNDS sizes = {0, meta->size};
                 // EFFECTIVE_BOUNDS bounds = bases + sizes;
@@ -295,62 +306,32 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             } else {
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
-                // *out << tm << " " << std::dec << t->size << " " << t->info->name << "\n" << std::flush;
-                // *out << 
-                // "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
-                // "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
-                // "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
-                // "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
-                // "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
-                // "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
-                // "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
-                // "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
-                // "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
-                // "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
-                // "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
-                // "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
-                // "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
-                // "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
-                // "tm_p = "  << std::hex << tm->next_cacheline << " " <<
-                // '\n' << std::flush;
+                //*out << t->info->name << " " << std::dec << t->size << " "<< "\n" << std::flush;
+                uint64_t number_of_offsets_blocks = t->size / 32;
+                for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
+                {
+                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + off * 64);
+                    assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
+                    // *out << std::hex << tm << "\n" << std::flush;
+                    // *out << 
+                    // "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
+                    // "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
+                    // "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
+                    // "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
+                    // "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
+                    // "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
+                    // "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
+                    // "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
+                    // "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
+                    // "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
+                    // "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
+                    // "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
+                    // "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
+                    // "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
+                    // "tm_p = "  << std::hex << tm->next_cacheline << " " <<
+                    // '\n' << std::flush;
+                }
 
-                // TYCHE_METADATA_CACHELINE* tm_1 = (TYCHE_METADATA_CACHELINE*)((void*)tm + 64);
-                // *out << 
-                // "tm_0 = " << std::dec << tm_1->CacheLine_0 << " " <<
-                // "tm_1 = " << std::dec << tm_1->CacheLine_1 << " " <<
-                // "tm_2 = " << std::dec << tm_1->CacheLine_2 << " " <<
-                // "tm_3 = " << std::dec << tm_1->CacheLine_3 << " " <<
-                // "tm_4 = " << std::dec << tm_1->CacheLine_4 << " " <<
-                // "tm_5 = " << std::dec << tm_1->CacheLine_5 << " " <<
-                // "tm_6 = " << std::dec << tm_1->CacheLine_6 << " " <<
-                // "tm_7 = " << std::dec << tm_1->CacheLine_7 << " " <<
-                // "tm_8 = " << std::dec << tm_1->CacheLine_8 << " " <<
-                // "tm_9 = " << std::dec << tm_1->CacheLine_9 << " " <<
-                // "tm_10 = " << std::dec << tm_1->CacheLine_10 << " " <<
-                // "tm_11 = " << std::dec << tm_1->CacheLine_11 << " " <<
-                // "tm_12 = " << std::dec << tm_1->CacheLine_12 << " " <<
-                // "tm_13 = " << std::dec << tm_1->CacheLine_13 << " " <<
-                // "tm_p = "  << std::hex << tm_1->next_cacheline << " " <<
-                // '\n';
-
-                //  tm_1 = (TYCHE_METADATA_CACHELINE*)((void*)tm_1->next_cacheline + 64);
-                // *out << 
-                // "tm_0 = " << std::dec << tm_1->CacheLine_0 << " " <<
-                // "tm_1 = " << std::dec << tm_1->CacheLine_1 << " " <<
-                // "tm_2 = " << std::dec << tm_1->CacheLine_2 << " " <<
-                // "tm_3 = " << std::dec << tm_1->CacheLine_3 << " " <<
-                // "tm_4 = " << std::dec << tm_1->CacheLine_4 << " " <<
-                // "tm_5 = " << std::dec << tm_1->CacheLine_5 << " " <<
-                // "tm_6 = " << std::dec << tm_1->CacheLine_6 << " " <<
-                // "tm_7 = " << std::dec << tm_1->CacheLine_7 << " " <<
-                // "tm_8 = " << std::dec << tm_1->CacheLine_8 << " " <<
-                // "tm_9 = " << std::dec << tm_1->CacheLine_9 << " " <<
-                // "tm_10 = " << std::dec << tm_1->CacheLine_10 << " " <<
-                // "tm_11 = " << std::dec << tm_1->CacheLine_11 << " " <<
-                // "tm_12 = " << std::dec << tm_1->CacheLine_12 << " " <<
-                // "tm_13 = " << std::dec << tm_1->CacheLine_13 << " " <<
-                // "tm_p = "  << std::hex << tm_1->next_cacheline << " " <<
-                // '\n';
 
                 // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
                 // EFFECTIVE_BOUNDS sizes = {0, static_cast<long int>(meta->size)};
