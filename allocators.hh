@@ -62,7 +62,8 @@ extern UINT64 TID;
 extern UINT64 NumOfCalls;
 
 
-extern DefaultLVPT *lvpt;
+extern DefaultLVPT *ParentTypePredictor;
+extern DefaultLVPT *BasicTypePredictor;
 
 
 // The running count of instructions is kept here
@@ -125,7 +126,7 @@ VOID docount() {
         // }
 
         *out << std::dec << numOfRulesUsedDuringThisPeriod << " "
-             << (double)lvpt->LVPTMissprediction / lvpt->LVPTNumOfAccesses
+             << (double)ParentTypePredictor->LVPTMissprediction / ParentTypePredictor->LVPTNumOfAccesses
              << '\n'
              << std::flush;
 
@@ -377,12 +378,12 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 
                 // Access Type Predictor
                 assert(TypeIDs.find(std::string(t->info->name)) != TypeIDs.end());
-                PointerID tid = lvpt->lookup((uint64_t)pc);
+                PointerID tid = ParentTypePredictor->lookup((uint64_t)pc);
                 bool prediction = false;
                 prediction = (TypeIDs[std::string(t->info->name)] == tid.getPID());
-                lvpt->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]), prediction);
-                lvpt->LVPTNumOfAccesses++;
-                if (!prediction) lvpt->LVPTMissprediction++;
+                ParentTypePredictor->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]), prediction);
+                ParentTypePredictor->LVPTNumOfAccesses++;
+                if (!prediction) ParentTypePredictor->LVPTMissprediction++;
 
                 //*out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
             }
@@ -582,12 +583,12 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 
                 // Access Type Predictor
                 assert(TypeIDs.find(std::string(t->info->name)) != TypeIDs.end());
-                PointerID tid = lvpt->lookup((uint64_t)pc);
+                PointerID tid = ParentTypePredictor->lookup((uint64_t)pc);
                 bool prediction = false;
                 prediction = (TypeIDs[std::string(t->info->name)] == tid.getPID());
-                lvpt->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]) , prediction);
-                lvpt->LVPTNumOfAccesses++;
-                if (!prediction) lvpt->LVPTMissprediction++;
+                ParentTypePredictor->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]) , prediction);
+                ParentTypePredictor->LVPTNumOfAccesses++;
+                if (!prediction) ParentTypePredictor->LVPTMissprediction++;
 
                 //*out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
             }

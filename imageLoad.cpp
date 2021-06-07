@@ -73,7 +73,8 @@ InsTypeCount ITC;
 InsTypeCount TypeIDs;
 UINT64 TID;
 
-DefaultLVPT *lvpt;
+DefaultLVPT *ParentTypePredictor;
+DefaultLVPT *BasicTypePredictor;
 
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 <<
@@ -293,7 +294,8 @@ int main(INT32 argc, CHAR **argv) {
     out = new ofstream(KnobOutputFile.Value().c_str());
     *out << hex << showbase;
 
-    lvpt = new DefaultLVPT(1024, 16, 0, 1);
+    ParentTypePredictor = new DefaultLVPT(1024, 16, 0, 1);
+    BasicTypePredictor = new DefaultLVPT(1024, 16, 0, 1);
 
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);
