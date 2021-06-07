@@ -347,11 +347,11 @@ class DefaultLVPT
     }
 
     
-    uint64_t getIndex(uint64_t instPC, ThreadID tid)
+    uint64_t getIndex(uint64_t instPC)
     {
         // Need to shift PC over by the word offset.
         return ((instPC >> instShiftAmt)
-                ^ (tid << (tagShiftAmt - instShiftAmt - log2NumThreads)))
+                ^ (0 << (tagShiftAmt - instShiftAmt - log2NumThreads)))
                 & idxMask;
     }
 
@@ -362,7 +362,7 @@ class DefaultLVPT
 
     bool valid(uint64_t instPC, ThreadID tid)
     {
-        uint64_t lvpt_idx = getIndex(instPC, tid);
+        uint64_t lvpt_idx = getIndex(instPC);
 
         uint64_t inst_tag = getTag(instPC);
 
@@ -379,111 +379,60 @@ class DefaultLVPT
 
 
 
-    PointerID lookup( uint64_t instPC, ThreadID tid)
+    PointerID lookup( uint64_t instPC)
     {
 
 
-        uint64_t lvpt_idx = getIndex(instPC, tid);
-
-        // if the instPC is in the banList then just return zero;
-        // if (banList[lvpt_idx].find(instPC) != banList[lvpt_idx].end()){
-        //     return TheISA::PointerID(0);
-        // }
+        uint64_t lvpt_idx = getIndex(instPC);
 
         uint64_t inst_tag = getTag(instPC);
 
         assert(lvpt_idx < numEntries);
 
-        if (lvpt[lvpt_idx].valid)
+        if (lvpt[lvpt_idx].valid && lvpt[lvpt_idx].tag == inst_tag)
         {
 
             PointerID pred_pid = PointerID(0);
-            if (inst_tag == lvpt[lvpt_idx].tag)
-            {
-                switch (localCtrs[lvpt_idx].read()) {
-                    case 0x0:
-                        //pred_pid = PointerID(lvpt[lvpt_idx].target.getPID());
-                        pred_pid = PointerID(0);
-                        //LVPTStridePredictions++;
-                    
-                        break;
-                    
-                    case 0x1:
-                        //pred_pid = PointerID(lvpt[lvpt_idx].target.getPID());
-                        pred_pid = PointerID(0);
-                        //LVPTStridePredictions++;
-                        
-                        break;
-                    case 0x2:
-                    case 0x3:
-                        //LVPTConstantPredictions++;
-                        
-                        pred_pid = lvpt[lvpt_idx].target;
-                        break;
-
-                    default:
-                        assert(0);
-                   
-                }
-            }
-            // else {
-            //     return TheISA::PointerID(0);
-            // }
-            // if (localPointerPredictor[lvpt_idx].read() > 0 &&
-            //     pred_pid == TheISA::PointerID(0) &&
-            //     confLevel[lvpt_idx].read() > 1)
-            // {
-            //     return TheISA::PointerID(0x1000000000000-1);
-            // }
-
-            // set the confidence level of this prediction
-
-          
+            pred_pid = lvpt[lvpt_idx].target;
             return pred_pid;
 
         }
         else
         {
-            
-            //LVPTConstantPredictions++;
             return PointerID(0);
         }
     }
 
 
-    void update(uint64_t instPC,
-                const PointerID &target,
-                ThreadID tid, bool predict
+    void update(uint64_t instPC, const PointerID &target,  bool predict
                )
     {
-        uint64_t lvpt_idx = getIndex(instPC, tid);
+        uint64_t lvpt_idx = getIndex(instPC);
 
         assert(lvpt_idx < numEntries);
 
         // if prediction is true, we just update the localCtrs
         // std::cout << std::hex << "Update localCtrs: " <<
         // localCtrs[lvpt_idx].read() << std::endl;
-        switch (localCtrs[lvpt_idx].read())
-        {
-            case 0x0:
-            case 0x1:
-            case 0x2:
-            case 0x3:
-                if (predict){ localCtrs[lvpt_idx].increment(); }
-                else        { localCtrs[lvpt_idx].decrement(); }
-                break;
+        // switch (localCtrs[lvpt_idx].read())
+        // {
+        //     case 0x0:
+        //     case 0x1:
+        //     case 0x2:
+        //     case 0x3:
+        //         if (predict){ localCtrs[lvpt_idx].increment(); }
+        //         else        { localCtrs[lvpt_idx].decrement(); }
+        //         break;
 
-            default:
-                assert(0);
-        }
+        //     default:
+        //         assert(0);
+        // }
 
 
 
         // std::cout << std::hex << "Inst. " << instPC << " updated the LVPT." <<
         // " Before: " <<   lvpt[lvpt_idx].target << " After: " << target << "\n";
 
-        localBiases[lvpt_idx] = target.getPID() - lvpt[lvpt_idx].target.getPID();
-        lvpt[lvpt_idx].tid = tid;
         lvpt[lvpt_idx].valid = true;
         lvpt[lvpt_idx].target = target;
         lvpt[lvpt_idx].tag = getTag(instPC);

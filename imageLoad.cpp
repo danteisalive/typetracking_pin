@@ -70,14 +70,8 @@ KNOB<BOOL> KnobImageOnly(KNOB_MODE_WRITEONCE, "pintool", "l", "0",
 
 TypesCount TC;
 InsTypeCount ITC;
-std::map<int, std::vector<int> > TypeTreeTID;
-std::map<uint64_t, int> HashMapTID;
-
-// std::map<std::string, my_effective_info> effInfos;
-
-// std::map<std::string, int> mapGlobalname2ID;
-
-// std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
+InsTypeCount TypeIDs;
+UINT64 TID;
 
 DefaultLVPT *lvpt;
 
@@ -285,9 +279,8 @@ VOID Fini(INT32 code, VOID *v) {
         }
     }
     *out << '\n' << std::flush;
-    *out << "------------------------------------------------------------------"
-            "------\n"
-         << std::flush;
+    *out << "------------------------------------------------------------------------\n" << std::flush;
+
 
     out->close();
 }
@@ -312,6 +305,7 @@ int main(INT32 argc, CHAR **argv) {
 
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
+    TID = 0;
 
     //std::string TIDFileName("1.hash");
     // std::string HashMapFileName("final.hash");

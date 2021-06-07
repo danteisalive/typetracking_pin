@@ -148,7 +148,7 @@ typedef struct TYCHE_METADATA_CACHELINE TYCHE_METADATA_CACHELINE;
 
 struct EFFECTIVE_TYPE
 {   
-    TYCHE_METADATA_CACHELINE* tyche_meta;
+    TYCHE_METADATA_CACHELINE* tyche_meta; // TyChe matadata section 0 address
     uint64_t hash;              // Type-specific hash value.
     uint64_t hash2;             // 2nd type-specific hash value.
     uint32_t size;              // sizeof(T)

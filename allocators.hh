@@ -56,11 +56,11 @@ typedef InsTypeCount InsTypeCount;
 extern ofstream *out;
 extern TypesCount TC;
 extern InsTypeCount ITC;
-
-// extern std::map<int, std::vector<int> > TypeTreeTID;
-// extern std::map<uint64_t, int> HashMapTID;
+extern InsTypeCount TypeIDs;
+extern UINT64 TID;
 
 extern UINT64 NumOfCalls;
+
 
 extern DefaultLVPT *lvpt;
 
@@ -116,21 +116,30 @@ VOID docount() {
         NumOfCalls = 0;
 
         int numOfRulesUsedDuringThisPeriod = 0;
-        for (InsTypeCount::iterator it = ITC.begin(); it != ITC.end(); it++) {
-            if (it->second != 0) {
-                //*out << std::dec << it->first << "(" << it->second <<  ")\n";
-                it->second = 0;
-                numOfRulesUsedDuringThisPeriod++;
-            }
-        }
-        // *out << std::dec << numOfRulesUsedDuringThisPeriod << " "
-        //      << (double)lvpt->LVPTMissprediction / lvpt->LVPTNumOfAccesses
-        //      << '\n'
-        //      << std::flush;
-        //*out <<
-        //"------------------------------------------------------------------------\n"
-        //<< std::flush;
-        *out << Meta_Cache;
+        // for (InsTypeCount::iterator it = ITC.begin(); it != ITC.end(); it++) {
+        //     if (it->second != 0) {
+        //         //*out << std::dec << it->first << "(" << it->second <<  ")\n";
+        //         it->second = 0;
+        //         numOfRulesUsedDuringThisPeriod++;
+        //     }
+        // }
+
+        *out << std::dec << numOfRulesUsedDuringThisPeriod << " "
+             << (double)lvpt->LVPTMissprediction / lvpt->LVPTNumOfAccesses
+             << '\n'
+             << std::flush;
+
+        //*out << Meta_Cache << std::flush;
+
+        // for (InsTypeCount::iterator it = TypeIDs.begin(); it != TypeIDs.end(); it++) {
+        //     if (it->second != 0) {
+        //         *out << std::dec << it->first << "(" << it->second << ")\n";
+        //         it->second = 0;
+        //     }
+        // }
+        // *out << '\n' << std::flush;
+        *out << "------------------------------------------------------------------------\n"  << std::flush;
+
     }
 }
 
@@ -210,6 +219,13 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
+
+                // Update the Type ID
+                if (TypeIDs.find(std::string(t->info->name)) == TypeIDs.end())
+                    TypeIDs[std::string(t->info->name)] = TID++;
+                // How many different types were accesses during this epoch
+                ITC[std::string(t->info->name)]++;
+
                 // Verify the type information layout
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
@@ -357,6 +373,18 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     Meta_Cache.AccessSingleLine((ADDRINT)cl_next_level, CACHE_BASE::ACCESS_TYPE_LOAD); 
                     cl_next_level = cl_next_level->next_cacheline;    
                 }
+
+
+                // Access Type Predictor
+                assert(TypeIDs.find(std::string(t->info->name)) != TypeIDs.end());
+                PointerID tid = lvpt->lookup((uint64_t)pc);
+                bool prediction = false;
+                prediction = (TypeIDs[std::string(t->info->name)] == tid.getPID());
+                lvpt->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]), prediction);
+                lvpt->LVPTNumOfAccesses++;
+                if (!prediction) lvpt->LVPTMissprediction++;
+
+                //*out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
             }
 
         }
@@ -399,6 +427,13 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
+
+                // Update the Type ID
+                if (TypeIDs.find(std::string(t->info->name)) == TypeIDs.end())
+                    TypeIDs[std::string(t->info->name)] = TID++;
+                // How many different types were accesses during this epoch
+                ITC[std::string(t->info->name)]++;
+
                 // Verify the type information layout
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
@@ -544,6 +579,17 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     Meta_Cache.AccessSingleLine((ADDRINT)cl_next_level, CACHE_BASE::ACCESS_TYPE_LOAD); 
                     cl_next_level = cl_next_level->next_cacheline;    
                 }
+
+                // Access Type Predictor
+                assert(TypeIDs.find(std::string(t->info->name)) != TypeIDs.end());
+                PointerID tid = lvpt->lookup((uint64_t)pc);
+                bool prediction = false;
+                prediction = (TypeIDs[std::string(t->info->name)] == tid.getPID());
+                lvpt->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]) , prediction);
+                lvpt->LVPTNumOfAccesses++;
+                if (!prediction) lvpt->LVPTMissprediction++;
+
+                //*out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
             }
 
         }
