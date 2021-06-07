@@ -284,10 +284,11 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     offset += t->offset_fam;
 
                     *out << "FAM or Array. Offset is adjusted. Offset = "
-                         << std::dec << offset << ", t->size = " << t->size << '\n' << std::flush;
+                         << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
                 }
 
-                assert(offset <= t->size);
+                if (t->size_fam == t->size )    assert(offset <= t->size);
+                else                            assert(offset <= (t->size_fam + t->size ));
 
                 if (offset_unadjusted > meta->size) {
                     *out << "out of bound error";
@@ -427,10 +428,11 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     offset += t->offset_fam;
 
                     *out << "FAM or Array. Offset is adjusted. Offset = "
-                         << offset << ", t->size = " << t->size << '\n' << std::flush;
+                         << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam << '\n' << std::flush;
                 }
                 
-                assert(offset <= t->size);
+                if (t->size_fam == t->size )    assert(offset <= t->size);
+                else                            assert(offset <= (t->size_fam + t->size ));
 
                 if (offset_unadjusted > meta->size) {
                     *out << "out of bound error";
