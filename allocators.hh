@@ -19,6 +19,26 @@
 #include "pin.H"
 #include "predictor.hh"
 
+typedef UINT32 CACHE_STATS; // type of cache hit/miss counters
+
+#include "pin_cache.H"
+
+
+namespace MC
+{
+    // 1st level data cache: 4 kB, 64B lines, 8-way associative
+    const UINT32 cacheSize = 4*KILO;
+    const UINT32 lineSize = 64;
+    const UINT32 associativity = 8;
+    const CACHE_ALLOC::STORE_ALLOCATION allocation = CACHE_ALLOC::STORE_NO_ALLOCATE;
+
+    const UINT32 max_sets = cacheSize / (lineSize * associativity);
+    const UINT32 max_associativity = associativity;
+
+    typedef CACHE_ROUND_ROBIN(max_sets, max_associativity, allocation) CACHE;
+}
+LOCALVAR MC::CACHE Meta_Cache("Meta Cache", MC::cacheSize, MC::lineSize, MC::associativity);
+
 using std::stringstream;
 
 //#define ENABLE_TYCHE_LAYOUT_DEBUG 1
@@ -110,6 +130,7 @@ VOID docount() {
         //*out <<
         //"------------------------------------------------------------------------\n"
         //<< std::flush;
+        *out << Meta_Cache;
     }
 }
 
@@ -261,6 +282,9 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 // Calculate and normalize the `offset'.
                 tm = t->tyche_meta;
 
+                // Meta Cache
+                BOOL MCHit = Meta_Cache.AccessSingleLine((ADDRINT)tm, CACHE_BASE::ACCESS_TYPE_LOAD);
+                MCHit = MCHit;
                 //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
                 //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
                 //EFFECTIVE_BOUNDS bounds = bases + sizes;
@@ -427,6 +451,9 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 // Calculate and normalize the `offset'.
                 tm = t->tyche_meta;
 
+                // Meta Cache
+                BOOL MCHit = Meta_Cache.AccessSingleLine((ADDRINT)tm, CACHE_BASE::ACCESS_TYPE_LOAD);
+                MCHit = MCHit;
                 //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
                 //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
                 //EFFECTIVE_BOUNDS bounds = bases + sizes;
