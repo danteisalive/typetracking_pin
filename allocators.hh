@@ -21,6 +21,8 @@
 
 using std::stringstream;
 
+//#define ENABLE_TYCHE_LAYOUT_DEBUG 1
+
 typedef std::map<uint64_t, std::pair<const char *, uint64_t> > TypesCount;
 typedef TypesCount TypesCount;
 
@@ -37,6 +39,7 @@ extern InsTypeCount ITC;
 extern UINT64 NumOfCalls;
 
 extern DefaultLVPT *lvpt;
+
 
 // The running count of instructions is kept here
 // make it static to help the compiler optimize docount
@@ -195,30 +198,68 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             } else {
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
-                //*out << t->info->name << " " << std::dec << t->size << " "<< "\n" << std::flush;
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << "Type Name: " << t->info->name << " Size: " << std::dec << t->size << " "<< "\n" << std::flush;
+                #endif
                 uint64_t number_of_offsets_blocks = t->size / 32;
                 for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
                 {
-                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + off * 64);
+                    uint64_t level = 0;
                     assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
-                    // *out << std::hex << tm << "\n" << std::flush;
-                    // *out << 
-                    // "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
-                    // "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
-                    // "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
-                    // "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
-                    // "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
-                    // "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
-                    // "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
-                    // "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
-                    // "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
-                    // "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
-                    // "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
-                    // "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
-                    // "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
-                    // "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
-                    // "tm_p = "  << std::hex << tm->next_cacheline << " " <<
-                    // '\n' << std::flush;
+                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                        *out << "Level: " << std::dec  << level << " " << std::hex << tm << "\n" << std::flush;
+                        *out << 
+                        "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
+                        "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
+                        "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
+                        "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
+                        "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
+                        "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
+                        "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
+                        "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
+                        "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
+                        "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
+                        "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
+                        "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
+                        "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
+                        "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
+                        "tm_p = "  << std::hex << tm->next_cacheline << " " <<
+                        '\n' << std::flush;
+                    #endif
+
+
+                    TYCHE_METADATA_CACHELINE* tm_next_level = tm->next_cacheline;
+                    while (tm_next_level != NULL)
+                    {
+                        level++;
+                        
+                        assert((uint64_t)tm_next_level >= (0x4000000 + level * 0x100000) && (uint64_t)tm_next_level < (0x4100000 + level * 0x100000)); 
+                        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                            *out << "Level: " << std::dec  << level << " " << std::hex << tm_next_level << "\n" << std::flush;  
+                            *out << std::hex << tm_next_level << "\n" << std::flush;
+                            *out << 
+                            "tm_0 = " << std::dec << tm_next_level->CacheLine_0 << " " <<
+                            "tm_1 = " << std::dec << tm_next_level->CacheLine_1 << " " <<
+                            "tm_2 = " << std::dec << tm_next_level->CacheLine_2 << " " <<
+                            "tm_3 = " << std::dec << tm_next_level->CacheLine_3 << " " <<
+                            "tm_4 = " << std::dec << tm_next_level->CacheLine_4 << " " <<
+                            "tm_5 = " << std::dec << tm_next_level->CacheLine_5 << " " <<
+                            "tm_6 = " << std::dec << tm_next_level->CacheLine_6 << " " <<
+                            "tm_7 = " << std::dec << tm_next_level->CacheLine_7 << " " <<
+                            "tm_8 = " << std::dec << tm_next_level->CacheLine_8 << " " <<
+                            "tm_9 = " << std::dec << tm_next_level->CacheLine_9 << " " <<
+                            "tm_10 = " << std::dec << tm_next_level->CacheLine_10 << " " <<
+                            "tm_11 = " << std::dec << tm_next_level->CacheLine_11 << " " <<
+                            "tm_12 = " << std::dec << tm_next_level->CacheLine_12 << " " <<
+                            "tm_13 = " << std::dec << tm_next_level->CacheLine_13 << " " <<
+                            "tm_p = "  << std::hex << tm_next_level->next_cacheline << " " <<
+                            '\n' << std::flush;
+                        #endif
+                        tm_next_level = tm_next_level->next_cacheline;  
+                              
+                    }
+                    
+                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + 64);
                 }
                 
 
@@ -306,30 +347,66 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             } else {
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
-                //*out << t->info->name << " " << std::dec << t->size << " "<< "\n" << std::flush;
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << "Type Name: " << t->info->name << " Size: " << std::dec << t->size << " "<< "\n" << std::flush;
+                #endif
                 uint64_t number_of_offsets_blocks = t->size / 32;
                 for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
                 {
-                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + off * 64);
+                    uint64_t level = 0;
                     assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
-                    // *out << std::hex << tm << "\n" << std::flush;
-                    // *out << 
-                    // "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
-                    // "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
-                    // "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
-                    // "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
-                    // "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
-                    // "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
-                    // "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
-                    // "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
-                    // "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
-                    // "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
-                    // "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
-                    // "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
-                    // "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
-                    // "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
-                    // "tm_p = "  << std::hex << tm->next_cacheline << " " <<
-                    // '\n' << std::flush;
+                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                        *out << "Level: " << std::dec  << level << " " << std::hex << tm << "\n" << std::flush;
+                        *out << 
+                        "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
+                        "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
+                        "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
+                        "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
+                        "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
+                        "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
+                        "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
+                        "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
+                        "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
+                        "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
+                        "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
+                        "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
+                        "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
+                        "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
+                        "tm_p = "  << std::hex << tm->next_cacheline << " " <<
+                        '\n' << std::flush;
+                    #endif
+
+                    TYCHE_METADATA_CACHELINE* tm_next_level = tm->next_cacheline;
+                    
+                    while (tm_next_level != NULL)
+                    {
+                        level++;
+                        
+                        assert((uint64_t)tm_next_level >= (0x4000000 + level * 0x100000) && (uint64_t)tm_next_level < (0x4100000 + level * 0x100000)); 
+                        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                            *out << "Level: " << std::dec  << level << " " << std::hex << tm_next_level << "\n" << std::flush;
+                            *out << 
+                            "tm_0 = " << std::dec << tm_next_level->CacheLine_0 << " " <<
+                            "tm_1 = " << std::dec << tm_next_level->CacheLine_1 << " " <<
+                            "tm_2 = " << std::dec << tm_next_level->CacheLine_2 << " " <<
+                            "tm_3 = " << std::dec << tm_next_level->CacheLine_3 << " " <<
+                            "tm_4 = " << std::dec << tm_next_level->CacheLine_4 << " " <<
+                            "tm_5 = " << std::dec << tm_next_level->CacheLine_5 << " " <<
+                            "tm_6 = " << std::dec << tm_next_level->CacheLine_6 << " " <<
+                            "tm_7 = " << std::dec << tm_next_level->CacheLine_7 << " " <<
+                            "tm_8 = " << std::dec << tm_next_level->CacheLine_8 << " " <<
+                            "tm_9 = " << std::dec << tm_next_level->CacheLine_9 << " " <<
+                            "tm_10 = " << std::dec << tm_next_level->CacheLine_10 << " " <<
+                            "tm_11 = " << std::dec << tm_next_level->CacheLine_11 << " " <<
+                            "tm_12 = " << std::dec << tm_next_level->CacheLine_12 << " " <<
+                            "tm_13 = " << std::dec << tm_next_level->CacheLine_13 << " " <<
+                            "tm_p = "  << std::hex << tm_next_level->next_cacheline << " " <<
+                            '\n' << std::flush;   
+                        #endif
+                        tm_next_level = tm_next_level->next_cacheline;  
+                    }
+
+                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + 64);
                 }
 
 
