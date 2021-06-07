@@ -21,7 +21,7 @@
 
 using std::stringstream;
 
-//#define ENABLE_TYCHE_LAYOUT_DEBUG 1
+#define ENABLE_TYCHE_LAYOUT_DEBUG 1
 #define TYCHE_SECTION_0_START_ADDR 0x4000000
 #define TYCHE_SECTION_0_END_ADDR 0x4100000
 #define TYCHE_CACHELINE_SIZE 64
@@ -172,34 +172,24 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
     void *ptr = (void *)addr;
 
     if (lowfat_is_heap_ptr(ptr)) {
-        // *out << "RecordMemRead: "
-        //     << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-        //     << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-        //     << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-        //     << ")\n"
-        //     << std::flush;
-        // *out << "\n";
         size_t idx = lowfat_index(ptr);
         if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
             _LOWFAT_MAGICS[idx] == 0) {
             *out << "`ptr' is a non-fat-pointer\n";
         } else {
             void *base = lowfat_base(ptr);
+            
+            // if this memory operation is part of updating the fat pointers, igonore it
 
             // Get the object meta-data and calculate the allocation bounds.
             EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
             base = (void *)(meta + 1);
             const EFFECTIVE_TYPE *t = meta->type;
-            // TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
-            // *out << "tm = " << tm->CacheLine_0 << ", t->size = " << t->size
-            //          << '\n';
-            // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-            // EFFECTIVE_BOUNDS sizes = {0, meta->size};
-            // EFFECTIVE_BOUNDS bounds = bases + sizes;
 
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
+                // Verify the type information layout
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
                 #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
@@ -267,42 +257,44 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 }
                 
 
-             
-                
-                // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-                // EFFECTIVE_BOUNDS sizes = {0, meta->size};
-                // EFFECTIVE_BOUNDS bounds = bases + sizes;
-                // *out << "tm = " << tm->CacheLine_0 << ", t->size = " << t->size
-                //         << '\n';
-                // size_t offset = (uint8_t *)ptr - (uint8_t *)base;
-                // size_t offset_unadjusted = offset;
-                // *out << "offset = " << offset << ", t->size = " << t->size
-                //      << '\n';
+                // Find the offset for looking at the layout
+                // Calculate and normalize the `offset'.
+                tm = t->tyche_meta;
 
-                // if (offset >= t->size) {
-                //     // The `offset' is >= sizeof(T).  Thus `ptr' may be
-                //     // pointing to an element in an array of T.
-                //     // Alternatively, `ptr' may be pointing to a FAM at the
-                //     // end of T.  Either way, the offset is normalized here.
-                //     // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
-                //     offset -= t->size;
-                //     unsigned __int128 tmp = (unsigned __int128)offset;
-                //     tmp *= (unsigned __int128)t->magic;
-                //     idx = (size_t)(tmp >> EFFECTIVE_RADIX);
-                //     offset -= idx * t->size_fam;
-                //     // bounds += adjust;
-                //     offset += t->offset_fam;
+                //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+                //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
+                //EFFECTIVE_BOUNDS bounds = bases + sizes;
+                size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+                size_t offset_unadjusted = offset;
+                *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                     << '\n' << std::flush;
 
-                //     *out << "FAM or Array. Offset is adjusted. Offset = "
-                //          << offset << ", t->size = " << t->size << '\n';
-                // }
+                if (offset >= t->size) {
+                    // The `offset' is >= sizeof(T).  Thus `ptr' may be
+                    // pointing to an element in an array of T.
+                    // Alternatively, `ptr' may be pointing to a FAM at the
+                    // end of T.  Either way, the offset is normalized here.
+                    // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
+                    offset -= t->size;
+                    unsigned __int128 tmp = (unsigned __int128)offset;
+                    tmp *= (unsigned __int128)t->magic;
+                    idx = (size_t)(tmp >> EFFECTIVE_RADIX);
+                    offset -= idx * t->size_fam;
+                    //bounds += adjust;
+                    offset += t->offset_fam;
 
-                // if (offset_unadjusted > meta->size) {
-                //     *out << "out of bound error";
-                // }
+                    *out << "FAM or Array. Offset is adjusted. Offset = "
+                         << std::dec << offset << ", t->size = " << t->size << '\n' << std::flush;
+                }
+
+                assert(offset <= t->size);
+
+                if (offset_unadjusted > meta->size) {
+                    *out << "out of bound error";
+                    assert(0);
+                }
             }
 
-            // Calculate and normalize the `offset'.
         }
 
         //*out << "\n";
@@ -327,13 +319,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
     void *ptr = (void *)addr;
 
     if (lowfat_is_heap_ptr(ptr)) {
-        // *out << "RecordMemWrite: "
-        //      << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-        //      << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-        //      << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-        //      << ")\n"
-        //      << std::flush;
-        // *out << "\n";
+
         size_t idx = lowfat_index(ptr);
         if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
             _LOWFAT_MAGICS[idx] == 0) {
@@ -349,6 +335,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
+                // Verify the type information layout
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
                 assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
                 #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
@@ -413,40 +400,45 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + TYCHE_CACHELINE_SIZE);
                 }
 
+                // Find the offset for looking at the layout
+                // Calculate and normalize the `offset'.
+                tm = t->tyche_meta;
 
-                // EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-                // EFFECTIVE_BOUNDS sizes = {0, static_cast<long int>(meta->size)};
-                // EFFECTIVE_BOUNDS bounds = bases + sizes;
-                // size_t offset = (uint8_t *)ptr - (uint8_t *)base;
-                // size_t offset_unadjusted = offset;
+                //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
+                //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
+                //EFFECTIVE_BOUNDS bounds = bases + sizes;
+                size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+                size_t offset_unadjusted = offset;
+                *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc << " ptr: " << ptr << " base: " << base  << std::dec << " offset = " << offset <<  ", t->size = " << t->size << ", meta->size = " << meta->size
+                     << '\n' << std::flush;   ;
 
-                // *out << "offset = " << std::dec << offset << ", t->size = " << t->size
-                //      << '\n';
+                if (offset >= t->size) {
+                    // The `offset' is >= sizeof(T).  Thus `ptr' may be
+                    // pointing to an element in an array of T.
+                    // Alternatively, `ptr' may be pointing to a FAM at the
+                    // end of T.  Either way, the offset is normalized here.
+                    // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
+                    offset -= t->size;
+                    unsigned __int128 tmp = (unsigned __int128)offset;
+                    tmp *= (unsigned __int128)t->magic;
+                    idx = (size_t)(tmp >> EFFECTIVE_RADIX);
+                    offset -= idx * t->size_fam;
+                    //bounds += adjust;
+                    offset += t->offset_fam;
 
-                // if (offset >= t->size) {
-                //     // The `offset' is >= sizeof(T).  Thus `ptr' may be
-                //     // pointing to an element in an array of T.
-                //     // Alternatively, `ptr' may be pointing to a FAM at the
-                //     // end of T.  Either way, the offset is normalized here.
-                //     EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
-                //     offset -= t->size;
-                //     unsigned __int128 tmp = (unsigned __int128)offset;
-                //     tmp *= (unsigned __int128)t->magic;
-                //     idx = (size_t)(tmp >> EFFECTIVE_RADIX);
-                //     offset -= idx * t->size_fam;
-                //     bounds += adjust; bounds = bounds;
-                //     offset += t->offset_fam;
+                    *out << "FAM or Array. Offset is adjusted. Offset = "
+                         << offset << ", t->size = " << t->size << '\n' << std::flush;
+                }
+                
+                assert(offset <= t->size);
 
-                //     *out << "FAM or Array. Offset is adjusted. Offset = "
-                //          << std::dec << offset << ", t->size = " << t->size << '\n';
-                // }
+                if (offset_unadjusted > meta->size) {
+                    *out << "out of bound error";
+                    assert(0);
+                }
 
-                // if (offset_unadjusted > meta->size) {
-                //     *out << "out of bound error";
-                // }
             }
 
-            // Calculate and normalize the `offset'.
         }
 
         //*out << "\n";
@@ -475,7 +467,17 @@ VOID Instruction(INS ins, VOID *v) {
     if ((rtn_name.find("lowfat_") != std::string::npos) ||
         (rtn_name.find("effective_") != std::string::npos) ||
         (rtn_name.find("EFFECTIVE_") != std::string::npos) ||
-        (rtn_name.find("LOWFAT_") != std::string::npos)) {
+        (rtn_name.find("LOWFAT_") != std::string::npos) || 
+        (rtn_name.find("malloc") != std::string::npos) || 
+        (rtn_name.find("_Znwm") != std::string::npos) || 
+        (rtn_name.find("_Znam") != std::string::npos) || 
+        (rtn_name.find("_ZnwmRKSt9nothrow_t") != std::string::npos) || 
+        (rtn_name.find("_ZnamRKSt9nothrow_t") != std::string::npos) ||
+        (rtn_name.find("free") != std::string::npos) ||
+        (rtn_name.find("_ZdlPv") != std::string::npos) ||
+        (rtn_name.find("_ZdaPv") != std::string::npos) ||
+        (rtn_name.find("calloc") != std::string::npos) || 
+        (rtn_name.find("realloc") != std::string::npos)) {
         //*out << "Function Name: " << rtn_name << '\n' << std::flush;
         return;
     } else {
