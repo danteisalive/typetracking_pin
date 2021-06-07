@@ -22,6 +22,10 @@
 using std::stringstream;
 
 //#define ENABLE_TYCHE_LAYOUT_DEBUG 1
+#define TYCHE_SECTION_0_START_ADDR 0x4000000
+#define TYCHE_SECTION_0_END_ADDR 0x4100000
+#define TYCHE_CACHELINE_SIZE 64
+#define TYCHE_OFFSETS_IN_EACH_CACHELINE 32
 
 typedef std::map<uint64_t, std::pair<const char *, uint64_t> > TypesCount;
 typedef TypesCount TypesCount;
@@ -197,15 +201,15 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 *out << "Effective type free!!!\n";
             } else {
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
-                assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
+                assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
                 #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                     *out << "Type Name: " << t->info->name << " Size: " << std::dec << t->size << " "<< "\n" << std::flush;
                 #endif
-                uint64_t number_of_offsets_blocks = t->size / 32;
+                uint64_t number_of_offsets_blocks = t->size / TYCHE_OFFSETS_IN_EACH_CACHELINE;
                 for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
                 {
                     uint64_t level = 0;
-                    assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
+                    assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
                     #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                         *out << "Level: " << std::dec  << level << " " << std::hex << tm << "\n" << std::flush;
                         *out << 
@@ -233,7 +237,7 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     {
                         level++;
                         
-                        assert((uint64_t)tm_next_level >= (0x4000000 + level * 0x100000) && (uint64_t)tm_next_level < (0x4100000 + level * 0x100000)); 
+                        assert((uint64_t)tm_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)tm_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
                         #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                             *out << "Level: " << std::dec  << level << " " << std::hex << tm_next_level << "\n" << std::flush;  
                             *out << std::hex << tm_next_level << "\n" << std::flush;
@@ -259,7 +263,7 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                               
                     }
                     
-                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + 64);
+                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + TYCHE_CACHELINE_SIZE);
                 }
                 
 
@@ -346,15 +350,15 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 *out << "Effective type free!!!\n";
             } else {
                 TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
-                assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
+                assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
                 #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                     *out << "Type Name: " << t->info->name << " Size: " << std::dec << t->size << " "<< "\n" << std::flush;
                 #endif
-                uint64_t number_of_offsets_blocks = t->size / 32;
+                uint64_t number_of_offsets_blocks = t->size / TYCHE_OFFSETS_IN_EACH_CACHELINE;
                 for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
                 {
                     uint64_t level = 0;
-                    assert((uint64_t)tm >= 0x4000000 && (uint64_t)tm < 0x4100000);
+                    assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
                     #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                         *out << "Level: " << std::dec  << level << " " << std::hex << tm << "\n" << std::flush;
                         *out << 
@@ -382,7 +386,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     {
                         level++;
                         
-                        assert((uint64_t)tm_next_level >= (0x4000000 + level * 0x100000) && (uint64_t)tm_next_level < (0x4100000 + level * 0x100000)); 
+                        assert((uint64_t)tm_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)tm_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
                         #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                             *out << "Level: " << std::dec  << level << " " << std::hex << tm_next_level << "\n" << std::flush;
                             *out << 
@@ -406,7 +410,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                         tm_next_level = tm_next_level->next_cacheline;  
                     }
 
-                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + 64);
+                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + TYCHE_CACHELINE_SIZE);
                 }
 
 
