@@ -21,7 +21,7 @@
 
 using std::stringstream;
 
-#define ENABLE_TYCHE_LAYOUT_DEBUG 1
+//#define ENABLE_TYCHE_LAYOUT_DEBUG 1
 #define TYCHE_SECTION_0_START_ADDR 0x4000000
 #define TYCHE_SECTION_0_END_ADDR 0x4100000
 #define TYCHE_CACHELINE_SIZE 64
@@ -266,9 +266,10 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 //EFFECTIVE_BOUNDS bounds = bases + sizes;
                 size_t offset = (uint8_t *)ptr - (uint8_t *)base;
                 size_t offset_unadjusted = offset;
-                *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
-                     << '\n' << std::flush;
-
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                        << '\n' << std::flush;
+                #endif
                 if (offset >= t->size) {
                     // The `offset' is >= sizeof(T).  Thus `ptr' may be
                     // pointing to an element in an array of T.
@@ -282,13 +283,34 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     offset -= idx * t->size_fam;
                     //bounds += adjust;
                     offset += t->offset_fam;
-
-                    *out << "FAM or Array. Offset is adjusted. Offset = "
-                         << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                        *out << "FAM or Array. Offset is adjusted. Offset = "
+                             << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+                    #endif
                 }
 
-                if (t->size_fam == t->size )    assert(offset <= t->size);
-                else                            assert(offset <= (t->size_fam + t->size ));
+                if (t->size_fam == t->size)    
+                {
+                    if (offset > t->size)
+                    {
+                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                            << '\n' << std::flush;
+                        *out << "FAM or Array. Offset is adjusted. Offset = "
+                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+                    }
+                    assert(offset <= t->size);
+                }
+                else                           
+                {
+                    if (offset > (t->size_fam + t->size ))
+                    {
+                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                            << '\n' << std::flush;
+                        *out << "FAM or Array. Offset is adjusted. Offset = "
+                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+                    }
+                    assert(offset <= (t->size_fam + t->size ));
+                }
 
                 if (offset_unadjusted > meta->size) {
                     *out << "out of bound error";
@@ -410,9 +432,10 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 //EFFECTIVE_BOUNDS bounds = bases + sizes;
                 size_t offset = (uint8_t *)ptr - (uint8_t *)base;
                 size_t offset_unadjusted = offset;
-                *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc << " ptr: " << ptr << " base: " << base  << std::dec << " offset = " << offset <<  ", t->size = " << t->size << ", meta->size = " << meta->size
-                     << '\n' << std::flush;   ;
-
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                        << '\n' << std::flush;
+                #endif
                 if (offset >= t->size) {
                     // The `offset' is >= sizeof(T).  Thus `ptr' may be
                     // pointing to an element in an array of T.
@@ -426,13 +449,34 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     offset -= idx * t->size_fam;
                     //bounds += adjust;
                     offset += t->offset_fam;
-
-                    *out << "FAM or Array. Offset is adjusted. Offset = "
-                         << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam << '\n' << std::flush;
+                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                        *out << "FAM or Array. Offset is adjusted. Offset = "
+                             << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+                    #endif
                 }
-                
-                if (t->size_fam == t->size )    assert(offset <= t->size);
-                else                            assert(offset <= (t->size_fam + t->size ));
+
+                if (t->size_fam == t->size)    
+                {
+                    if (offset > t->size)
+                    {
+                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                            << '\n' << std::flush;
+                        *out << "FAM or Array. Offset is adjusted. Offset = "
+                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+                    }
+                    assert(offset <= t->size);
+                }
+                else                           
+                {
+                    if (offset > (t->size_fam + t->size ))
+                    {
+                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                            << '\n' << std::flush;
+                        *out << "FAM or Array. Offset is adjusted. Offset = "
+                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+                    }
+                    assert(offset <= (t->size_fam + t->size ));
+                }
 
                 if (offset_unadjusted > meta->size) {
                     *out << "out of bound error";
