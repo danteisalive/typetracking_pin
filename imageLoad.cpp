@@ -70,11 +70,12 @@ KNOB<BOOL> KnobImageOnly(KNOB_MODE_WRITEONCE, "pintool", "l", "0",
 
 TypesCount TC;
 InsTypeCount ITC;
-InsTypeCount TypeIDs;
-UINT64 TID;
+InsTypeCount ParrentTypeIDs;
+TypesLayout  TyCheTypeLayout;
+UINT64 ParentTID;
 
 DefaultLVPT *ParentTypePredictor;
-DefaultLVPT *BasicTypePredictor;
+DefaultBasicTypePredictor *BasicTypePredictor;
 
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 <<
@@ -296,7 +297,7 @@ int main(INT32 argc, CHAR **argv) {
     *out << hex << showbase;
 
     ParentTypePredictor = new DefaultLVPT(1024, 16, 0, 1);
-    BasicTypePredictor = new DefaultLVPT(1024, 16, 0, 1);
+    BasicTypePredictor = new DefaultBasicTypePredictor(1024, 16, 0, 1);
 
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);
@@ -308,7 +309,7 @@ int main(INT32 argc, CHAR **argv) {
 
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
-    TID = 0;
+    ParentTID = 0;
 
     //std::string TIDFileName("1.hash");
     // std::string HashMapFileName("final.hash");

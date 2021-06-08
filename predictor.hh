@@ -502,5 +502,258 @@ class DefaultLVPT
         uint64_t LVPTNumOfAccesses;
 };
 
+class DefaultBasicTypePredictor
+{
+  private:
+    struct BasicTypeEntry
+    {
+        BasicTypeEntry()
+        {
+          this->tag = 0;
+          this->target = "";
+          this->valid = false;
+        }
+
+        /** The entry's tag. */
+        uint64_t tag;
+
+        /** The entry's target. */
+        std::string target;
+
+        /** Whether or not the entry is valid. */
+        bool valid;
+    };
+
+  public:
+    unsigned leastSigBit(unsigned n)
+    {
+        return n & ~(n - 1);
+    }
+
+    int floorLog2(unsigned x)
+    {
+            assert(x > 0);
+
+            int y = 0;
+
+            if (x & 0xffff0000) { y += 16; x >>= 16; }
+            if (x & 0x0000ff00) { y +=  8; x >>=  8; }
+            if (x & 0x000000f0) { y +=  4; x >>=  4; }
+            if (x & 0x0000000c) { y +=  2; x >>=  2; }
+            if (x & 0x00000002) { y +=  1; }
+
+            return y;
+    }
+
+    bool isPowerOf2(unsigned n)
+    {
+        return n != 0 && leastSigBit(n) == n;
+    }
+    /** Creates a LVPT with the given number of entries, number of bits per
+     *  tag, and instruction offset amount.
+     *  @param numEntries Number of entries for the LVPT.
+     *  @param tagBits Number of bits for each tag in the LVPT.
+     *  @param instShiftAmt Offset amount for instructions to ignore alignment.
+     */
+    DefaultBasicTypePredictor(unsigned numEntries, unsigned tagBits,
+               unsigned instShiftAmt, unsigned numThreads)
+    {
+        this->numEntries = numEntries;
+        this->tagBits = tagBits;
+        this->instShiftAmt = instShiftAmt;
+        this->log2NumThreads = floorLog2(numThreads);
+        
+        if (!isPowerOf2(numEntries)) {
+            assert(0);
+        }
+
+        lvpt.resize(numEntries);
+
+        for (unsigned i = 0; i < numEntries; ++i) {
+            lvpt[i].valid = false;
+        }
+
+        this->idxMask = numEntries - 1;
+
+        this->tagMask = (1 << tagBits) - 1;
+
+        this->tagShiftAmt = instShiftAmt + floorLog2(numEntries); // 12 + 2
+
+        //Setup the array of counters for the local predictor
+        localBiases.resize(numEntries);
+
+        for (unsigned i = 0; i < numEntries; ++i){
+            localBiases[i] = 0;
+        }
+
+        localCtrs.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+            localCtrs[i].setBits(2);
+            localCtrs[i].setInitial(0x3); // initial value is 0x11
+            localCtrs[i].reset();
+        }
+
+        confLevel.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+            confLevel[i].setBits(4);
+            confLevel[i].setInitial(0); // initial value is 0
+            confLevel[i].reset();
+        }
+
+        localPointerPredictor.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+            localPointerPredictor[i].setBits(4);
+            localPointerPredictor[i].setInitial(0); // initial value is 0
+            localPointerPredictor[i].reset();
+        }
+
+     
+        predictorMissCount.resize(numEntries);
+        for (size_t i = 0; i < numEntries; i++) {
+        predictorMissCount[i] = 0;
+        }
+        blackList.resize(numEntries);
+
+        this->LVPTMissprediction = 0;
+        this->LVPTNumOfAccesses = 0;
+    }
+
+    void reset()
+    {
+        for (unsigned i = 0; i < numEntries; ++i) {
+            lvpt[i].valid = false;
+        }
+        
+    }
+
+    
+    uint64_t getIndex(uint64_t instPC)
+    {
+        // Need to shift PC over by the word offset.
+        return ((instPC >> instShiftAmt)) & idxMask;
+    }
+
+    uint64_t getTag(uint64_t instPC)
+    {
+        return (instPC >> tagShiftAmt) & tagMask;
+    }
+
+    bool valid(uint64_t instPC, ThreadID tid)
+    {
+        uint64_t lvpt_idx = getIndex(instPC);
+
+        uint64_t inst_tag = getTag(instPC);
+
+        assert(lvpt_idx < numEntries);
+
+        if (lvpt[lvpt_idx].valid && inst_tag == lvpt[lvpt_idx].tag) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    bool lookup( uint64_t instPC, std::string actualType)
+    {
+
+        LVPTNumOfAccesses++;
+
+        uint64_t lvpt_idx = getIndex(instPC);
+
+        uint64_t inst_tag = getTag(instPC);
+
+        assert(lvpt_idx < numEntries);
+
+        if (lvpt[lvpt_idx].valid && lvpt[lvpt_idx].tag == inst_tag)
+        {
+            if (lvpt[lvpt_idx].target == actualType)
+            {
+                
+                return true;
+            }
+            else 
+            {
+                LVPTMissprediction++;
+                lvpt[lvpt_idx].target = actualType;
+                return false;
+            }
+
+        }
+        else
+        {
+            LVPTMissprediction++;
+            lvpt[lvpt_idx].valid = true;
+            lvpt[lvpt_idx].target = actualType;
+            lvpt[lvpt_idx].tag = getTag(instPC);
+            return false;
+        }
+    }
+
+
+    float getAverageConfidenceLevel() {
+
+        float avg = 0.0;
+
+        for (size_t i = 0; i < numEntries; i++) {
+          avg += float(confLevel[i].read());
+        }
+
+        return avg/numEntries;
+    }
+
+    double getMissRate()
+    {
+        return (double)LVPTMissprediction/ (double)LVPTNumOfAccesses;
+    }
+
+    uint64_t getNumOfAccsses() {return LVPTNumOfAccesses;}
+
+
+  private:
+
+
+
+    /** The actual LVPT. */
+    std::vector<BasicTypeEntry>  lvpt;
+    std::vector<int>        localBiases;
+    std::vector<SatCounter> localCtrs;
+    std::vector<SatCounter> confLevel;
+    std::vector<SatCounter> localPointerPredictor;
+
+    // use predictor execpt for these addresses
+    std::vector<std::map<uint64_t,uint64_t> > blackList;
+
+    //for logs
+    std::vector<uint64_t> predictorMissCount;
+
+
+
+    /** The number of entries in the LVPT. */
+    unsigned numEntries;
+
+    /** The index mask. */
+    unsigned idxMask;
+
+    /** The number of tag bits per entry. */
+    unsigned tagBits;
+
+    /** The tag mask. */
+    unsigned tagMask;
+
+    /** Number of bits to shift PC when calculating index. */
+    unsigned instShiftAmt;
+
+    /** Number of bits to shift PC when calculating tag. */
+    unsigned tagShiftAmt;
+
+    /** Log2 NumThreads used for hashing threadid */
+    unsigned log2NumThreads;
+
+    uint64_t LVPTMissprediction;
+    uint64_t LVPTNumOfAccesses;
+};
+
 
 #endif
