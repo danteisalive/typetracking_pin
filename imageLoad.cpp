@@ -45,12 +45,12 @@ using std::ofstream;
 using std::showbase;
 using std::string;
 
-#define FILE 1
+//#define FILE 1
 #define DIRECTORTY 2
 #define NOTEXIST 0
 
 ofstream *out = 0;
-
+FILE* effectiveDumpFile;
 UINT64 NumOfCalls = 0;
 
 // The running count of instructions is kept here
@@ -291,6 +291,7 @@ int main(INT32 argc, CHAR **argv) {
     PIN_InitSymbols();
     PIN_Init(argc, argv);
 
+    effectiveDumpFile = fopen("EffectiveSan.log", "w") ;
     out = new ofstream(KnobOutputFile.Value().c_str());
     *out << hex << showbase;
 

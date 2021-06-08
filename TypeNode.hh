@@ -80,8 +80,20 @@ using std::atoi;
 #define EFFECTIVE_COERCED_INT32_HASH    0x51A0B9BF4F692902ull   // Random
 #define EFFECTIVE_COERCED_INT8_PTR_HASH 0x2317E969C295951Dull   // Random
 
+#define EFFECTIVE_TYPESTACK_SIZE    128
+#define EFFECTIVE_NOINLINE          __attribute__((__noinline__))
 
+#define EFFECTIVE_NONE                  0
+#define EFFECTIVE_RED                   1
+#define EFFECTIVE_GREEN                 2
+#define EFFECTIVE_BLUE                  3
+#define EFFECTIVE_YELLOW                4
+#define EFFECTIVE_CYAN                  5
+#define EFFECTIVE_MAGENTA               6
 
+#define EFFECTIVE_INFO_FLAG_UNION               0x1
+#define EFFECTIVE_INFO_FLAG_FLEXIBLE_LEN        0x2
+#define EFFECTIVE_INFO_FLAG_INCOMPLETE          0x4
 
 typedef struct EFFECTIVE_INFO EFFECTIVE_INFO;
 
@@ -89,11 +101,12 @@ typedef intptr_t EFFECTIVE_BOUNDS EFFECTIVE_VECTOR_SIZE(16);
 
 struct EFFECTIVE_ENTRY
 {
+    const char *name;
+    uint64_t offset;
     uint64_t hash;              // Layout entry type.
     uint64_t _pad;              // Padding.
     EFFECTIVE_BOUNDS bounds;    // Sub-object bounds.
-} EFFECTIVE_PACKED;
-
+} ;
 typedef struct EFFECTIVE_ENTRY EFFECTIVE_ENTRY;
 
 #define EFFECTIVE_ENTRY_EMPTY_HASH  EFFECTIVE_TYPE_NIL_HASH
@@ -159,6 +172,7 @@ struct EFFECTIVE_TYPE
     size_t mask;                // Mask for layout[]
     const EFFECTIVE_INFO *info; // Type info
     uint64_t next;              // Hash of next type coercion
+    uint32_t length;
     EFFECTIVE_ENTRY layout[];   // The layout hash table.
 };
 
@@ -171,6 +185,34 @@ struct EFFECTIVE_META
     size_t size;                // Object's allocation size.
 };
 
+/*
+ * Type stacks.
+ */
+struct EFFECTIVE_TYPESTACK_ENTRY
+{
+    size_t offset:40;
+    size_t indent:8;
+    size_t index:16;
+    const EFFECTIVE_INFO *info;
+};
+typedef struct EFFECTIVE_TYPESTACK_ENTRY EFFECTIVE_TYPESTACK_ENTRY;
 
+struct EFFECTIVE_TYPESTACK
+{
+    ssize_t ptr;
+    EFFECTIVE_TYPESTACK_ENTRY entry[EFFECTIVE_TYPESTACK_SIZE];
+};
+typedef struct EFFECTIVE_TYPESTACK EFFECTIVE_TYPESTACK;
+
+/*
+ * Streams.
+ */
+struct EFFECTIVE_STREAM
+{
+    uint32_t ptr;
+    bool full;
+    char buf[BUFSIZ];
+};
+typedef struct EFFECTIVE_STREAM EFFECTIVE_STREAM;
 
 #endif // __CPU_O3_DEP_GRAPH_HH__

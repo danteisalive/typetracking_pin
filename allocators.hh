@@ -53,6 +53,7 @@ typedef TypesCount TypesCount;
 typedef std::map<std::string, uint64_t> InsTypeCount;
 typedef InsTypeCount InsTypeCount;
 
+extern FILE* effectiveDumpFile;
 extern ofstream *out;
 extern TypesCount TC;
 extern InsTypeCount ITC;
@@ -70,19 +71,333 @@ extern DefaultLVPT *BasicTypePredictor;
 // make it static to help the compiler optimize docount
 extern UINT64 icount;
 
-
-void dumpEffectiveTypeInfo(const EFFECTIVE_INFO* info)
+static void effective_typestack_init(EFFECTIVE_TYPESTACK *stack,
+    size_t offset, const EFFECTIVE_INFO *info)
 {
-    while (info != NULL)
+    stack->ptr = 0;
+    stack->entry[0].offset = offset;
+    stack->entry[0].indent = 0;
+    stack->entry[0].index  = 0;
+    stack->entry[0].info   = info;
+}
+
+static bool effective_typestack_empty(const EFFECTIVE_TYPESTACK *stack)
+{
+    return stack->ptr < 0;
+}
+
+static const EFFECTIVE_INFO *effective_typestack_peek_info(
+    const EFFECTIVE_TYPESTACK *stack)
+{
+    return stack->entry[stack->ptr].info;
+}
+static size_t effective_typestack_peek_offset(
+    const EFFECTIVE_TYPESTACK *stack)
+{
+    return stack->entry[stack->ptr].offset;
+}
+static size_t effective_typestack_peek_indent(
+    const EFFECTIVE_TYPESTACK *stack)
+{
+    return stack->entry[stack->ptr].indent;
+}
+/*
+ * Write a character to a stream.
+ */
+static EFFECTIVE_NOINLINE void effective_write_char(EFFECTIVE_STREAM *stream,
+    char c)
+{
+    if (stream->full)
+        return;
+    stream->buf[stream->ptr++] = c;
+    if (sizeof(stream->buf) - stream->ptr == 4)
     {
-        *out << "Type Name: " << info->name << "\n";
-        for (size_t i = 0; i < info->num_entries; i++)
-        {
-            dumpEffectiveTypeInfo(info->entries[i].type);
-        }
-        *out << "------\n";            
-        info = info->next;
+        stream->full = true;
+        stream->buf[sizeof(stream->buf)-4] = '.';
+        stream->buf[sizeof(stream->buf)-3] = '.';
+        stream->buf[sizeof(stream->buf)-2] = '.';
+        stream->buf[sizeof(stream->buf)-1] = '\0';
     }
+}
+
+/*
+ * Write a string to a stream.
+ */
+static EFFECTIVE_NOINLINE void effective_write_string(EFFECTIVE_STREAM *stream,
+    const char *str)
+{
+    for (size_t i = 0; str[i] && !stream->full; i++)
+        effective_write_char(stream, str[i]);
+}
+/*
+ * Set color if terminal.
+ */
+// static const char *effective_set_color(int color)
+// {
+//     if (!isatty(STDERR_FILENO))
+//         return "";
+//     switch (color)
+//     {
+//         case EFFECTIVE_NONE:
+//             return "\33[0m";
+//         case EFFECTIVE_RED:
+//             return "\33[31m";
+//         case EFFECTIVE_GREEN:
+//             return "\33[32m";
+//         case EFFECTIVE_BLUE:
+//             return "\33[34m";
+//         case EFFECTIVE_YELLOW:
+//             return "\33[33m";
+//         case EFFECTIVE_CYAN:
+//             return "\33[36m";
+//         case EFFECTIVE_MAGENTA:
+//             return "\33[35m";
+//         default:
+//             return "";
+//     }
+// }
+/*
+ * Expand the type stack.
+ */
+static EFFECTIVE_NOINLINE void effective_typestack_next(
+    EFFECTIVE_TYPESTACK *stack, size_t minsize)
+{
+    while (stack->ptr >= 0)
+    {
+        size_t offset = stack->entry[stack->ptr].offset;
+        size_t indent = stack->entry[stack->ptr].indent;
+        const EFFECTIVE_INFO *info = stack->entry[stack->ptr].info;
+
+        if (offset >= info->size && offset > 0)
+        {
+            if ((info->flags & EFFECTIVE_INFO_FLAG_FLEXIBLE_LEN) != 0)
+            {
+                offset = offset - info->size;
+                stack->entry[stack->ptr].offset = offset;
+                stack->entry[stack->ptr].indent = indent + 1;
+                stack->entry[stack->ptr].info = info->next;
+                return;
+            }
+            offset = (info->size == 0? 0: offset % info->size);
+            stack->entry[stack->ptr].offset = offset;
+            return;
+        }
+        for (size_t i = stack->entry[stack->ptr].index; i < info->num_entries;
+            i++)
+        {
+            stack->entry[stack->ptr].index = i+1;
+            bool is_virtual =
+                (info->entries[i].flags & EFFECTIVE_INFO_ENTRY_FLAG_VIRTUAL);
+            if (!is_virtual && offset >= info->entries[i].lb &&
+                offset < info->entries[i].ub &&
+                info->entries[i].ub - info->entries[i].lb >= minsize)
+            {
+                stack->ptr++;
+                if (stack->ptr >= EFFECTIVE_TYPESTACK_SIZE)
+                {
+                    stack->ptr--;
+                    continue;
+                }
+                offset = offset - info->entries[i].lb;
+                stack->entry[stack->ptr].offset = offset;
+                stack->entry[stack->ptr].indent = indent + 1;
+                stack->entry[stack->ptr].index = 0;
+                stack->entry[stack->ptr].info = info->entries[i].type;
+                return;
+            }
+        }
+        stack->ptr--;
+    }
+    return;
+}
+
+/*
+ * Write an integer to a stream.
+ */
+static EFFECTIVE_NOINLINE void effective_write_int(EFFECTIVE_STREAM *stream,
+    ssize_t i)
+{
+    if (stream->full)
+        return;
+    char buf[100];
+    ssize_t r = snprintf(buf, sizeof(buf)-1, "%zd", i);
+    if (r > 0 && r <= (ssize_t)sizeof(buf)-1)
+        effective_write_string(stream, buf);
+}
+/*
+ * Write offsets to a stream.
+ */
+static EFFECTIVE_NOINLINE void effective_write_offsets(EFFECTIVE_STREAM *stream,
+    const EFFECTIVE_INFO_ENTRY *entry)
+{
+    //effective_write_string(stream, effective_set_color(EFFECTIVE_CYAN));
+    effective_write_string(stream, "/*");
+    effective_write_int(stream, entry->lb);
+    effective_write_string(stream, "..");
+    if (entry->ub != UINT32_MAX)
+        effective_write_int(stream, entry->ub);
+    effective_write_string(stream, "*/");
+    //effective_write_string(stream, effective_set_color(EFFECTIVE_GREEN));
+}
+
+/*
+ * Write a type to a stream.
+ */
+static EFFECTIVE_NOINLINE void effective_write_type(EFFECTIVE_STREAM *stream,
+    const EFFECTIVE_INFO *info, bool expand, bool offsets, bool array)
+{
+    if (stream->full)
+        return;
+    // if (expand)
+    //     effective_write_string(stream, effective_set_color(EFFECTIVE_GREEN));
+    if (!array)
+    {
+        for (size_t i = 0; info->name[i] != '[' && info->name[i] != '\0'; i++)
+            effective_write_char(stream, info->name[i]);
+    }
+    else
+        effective_write_string(stream, info->name);
+    
+    bool is_anon = false;
+    if (strcmp(info->name, "struct ") == 0)
+        is_anon = true;
+    if (!is_anon && !expand)
+        return;
+
+    char prefix_struct[] = "struct";
+    char prefix_class[]  = "class";
+    char prefix_union[]  = "union";
+    char prefix_new[]    = "new";
+    if (strncmp(info->name, prefix_struct, sizeof(prefix_struct)-1) != 0 &&
+        strncmp(info->name, prefix_class, sizeof(prefix_class)-1) != 0 &&
+        strncmp(info->name, prefix_union, sizeof(prefix_union)-1) != 0 &&
+        strncmp(info->name, prefix_new, sizeof(prefix_union)-1) != 0)
+    {
+not_composite:
+        //effective_write_string(stream, effective_set_color(EFFECTIVE_NONE));
+        return;
+    }
+    size_t len = strlen(info->name);
+    if (len == 0 || info->name[len-1] == '*')
+        goto not_composite;
+
+    bool inheritance = false;
+    for (size_t i = 0; i < info->num_entries && !stream->full; i++)
+    {
+        if (!(info->entries[i].flags & EFFECTIVE_INFO_ENTRY_FLAG_INHERITANCE))
+            continue;
+        if (!inheritance)
+        {
+            effective_write_string(stream, " : ");
+            inheritance = true;
+        }
+        else
+            effective_write_string(stream, ", ");
+        bool is_virtual = info->entries[i].flags & EFFECTIVE_INFO_ENTRY_FLAG_VIRTUAL;
+        if (is_virtual)
+            effective_write_string(stream, "virtual ");
+        else
+            effective_write_string(stream, "public ");
+        effective_write_type(stream, info->entries[i].type, false, false,
+            false);
+        if (offsets && !is_virtual)
+        {
+            effective_write_char(stream, ' ');
+            effective_write_offsets(stream, &info->entries[i]);
+        }
+    }
+
+    if (!is_anon)
+        effective_write_char(stream, ' ');
+    effective_write_string(stream, "{ ");
+    for (size_t i = 0; i < info->num_entries && !stream->full; i++)
+    {
+        if (info->entries[i].flags & EFFECTIVE_INFO_ENTRY_FLAG_INHERITANCE)
+            continue;
+        size_t count = 1;
+        if (info->entries[i].type->size != 0)
+            count = (info->entries[i].ub - info->entries[i].lb) /
+                info->entries[i].type->size;
+        if (count == 0)
+            continue;
+        effective_write_type(stream, info->entries[i].type, false, false,
+            false);
+        if (count != 1)
+        {
+            effective_write_char(stream, '[');
+            if (count != 0)
+                effective_write_int(stream, count);
+            effective_write_char(stream, ']');
+            const char *idxs = strchr(info->entries[i].type->name, '[');
+            if (idxs != NULL)
+                effective_write_string(stream, idxs);
+        }
+        effective_write_string(stream, "; ");
+        if (offsets)
+        {
+            effective_write_offsets(stream, &info->entries[i]);
+            effective_write_char(stream, ' ');
+        }
+    }
+    if ((info->flags & EFFECTIVE_INFO_FLAG_FLEXIBLE_LEN) != 0)
+    {
+        effective_write_type(stream, info->next, false, false, false);
+        effective_write_string(stream, "[]; ");
+        if (offsets)
+        {
+            EFFECTIVE_INFO_ENTRY entry;
+            entry.lb = info->size;
+            entry.ub = UINT32_MAX;
+            effective_write_offsets(stream, &entry);
+            effective_write_char(stream, ' ');
+        }
+    }
+    effective_write_string(stream, "}");
+    //effective_write_string(stream, effective_set_color(EFFECTIVE_NONE));
+}
+
+/*
+ * Dump a type error stack.
+ */
+static void effective_dump_type_stack(const EFFECTIVE_INFO *info,
+    size_t indent, size_t offset)
+{
+    EFFECTIVE_TYPESTACK stack0;
+    EFFECTIVE_TYPESTACK *stack = &stack0;
+    effective_typestack_init(stack, offset, info);
+
+    size_t count = 0;
+    while (!effective_typestack_empty(stack))
+    {
+        EFFECTIVE_STREAM stream;
+        stream.ptr = 0;
+        stream.full = false;
+        effective_write_type(&stream, effective_typestack_peek_info(stack),
+            true, true, true);
+        effective_write_char(&stream, '\0');
+        for (size_t i = 0; count != 0 && i < indent && i < 80; i++)
+            putc(' ', effectiveDumpFile);
+        for (size_t i = 0; i < effective_typestack_peek_indent(stack); i++)
+            putc('>', effectiveDumpFile);
+        fprintf(effectiveDumpFile, "%s [+%zu]\n", stream.buf,
+            effective_typestack_peek_offset(stack));
+        effective_typestack_next(stack, 0);
+        count++;
+    }
+}
+
+/*
+ * Dump information about the given pointer.
+ */
+void effective_dump(const void *ptr)
+{
+    const void *base = effective_baseof(ptr); assert(base != NULL);
+    const EFFECTIVE_TYPE *t = effective_typeof(ptr); assert(t != NULL);
+    const EFFECTIVE_META *meta = (const EFFECTIVE_META *)base;
+    base = (const void *)(meta + 1);
+    ssize_t offset = (intptr_t)ptr - (intptr_t)base;
+    fprintf(effectiveDumpFile, "%p: %s (%+zd)\n", ptr, t->info->name, offset);
+    effective_dump_type_stack(t->info, 0, offset);
 }
 
 uint64_t Val2Str(const PIN_REGISTER &value, const UINT size) {
@@ -145,37 +460,20 @@ VOID docount() {
              << '\n'
              << std::flush;
 
-        //*out << Meta_Cache << std::flush;
+        *out << Meta_Cache << std::flush;
 
-        // for (InsTypeCount::iterator it = TypeIDs.begin(); it != TypeIDs.end(); it++) {
-        //     if (it->second != 0) {
-        //         *out << std::dec << it->first << "(" << it->second << ")\n";
-        //         it->second = 0;
-        //     }
-        // }
-        // *out << '\n' << std::flush;
+        for (InsTypeCount::iterator it = TypeIDs.begin(); it != TypeIDs.end(); it++) {
+            if (it->second != 0) {
+                *out << std::dec << it->first << "(" << it->second << ")\n";
+                it->second = 0;
+            }
+        }
+        *out << '\n' << std::flush;
         *out << "------------------------------------------------------------------------\n"  << std::flush;
 
     }
 }
 
-bool findPtrType(const EFFECTIVE_INFO *info) {
-    assert(info->num_entries >= 0);
-
-    if (info->num_entries == 0) {
-        //*out << std::dec << info->name << "\n" << std::flush;
-        ;
-        //*out << std::dec << info->hash << "\n" << std::flush;;
-        // *out << std::hex << info->entries[0].lb << "\n" << std::flush;;
-        // *out << std::hex << info->entries[0].ub << "\n" << std::flush;;
-    } else {
-        for (uint32_t i = 0; i < info->num_entries; i++) {
-            findPtrType(info->entries[i].type);
-        }
-    }
-
-    return false;
-}
 
 static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
     // *out << "-------------------- " << std::hex << pc << std::dec
@@ -403,9 +701,11 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     *out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
                 #endif
 
-                const EFFECTIVE_INFO* info = t->info;
-                dumpEffectiveTypeInfo(info);
-                *out <<  "\n----------------------------------------------------\n";
+                // for (size_t type_entry_id = 0; type_entry_id < t->mask + 1; type_entry_id++)
+                // {
+                //     *out << std::dec << "Offset: " <<  t->layout[type_entry_id].offset << " Name: " <<  t->layout[type_entry_id].name << std::flush;
+                // }
+                // *out <<  "\n----------------------------------------------------\n";
             }
 
         }
@@ -612,9 +912,14 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                     *out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
                 #endif
-
-                const EFFECTIVE_INFO* info = t->info;
-                dumpEffectiveTypeInfo(info);
+                
+                
+                *out << std::dec << "Parent Name: " << t->info->name << " Length: " << t->length << std::endl << std::flush;
+                for (size_t type_entry_id = 0; type_entry_id < t->length; type_entry_id++)
+                {
+                    *out << std::dec << "Offset: " <<  t->layout[type_entry_id].offset << " Name: " <<  t->layout[type_entry_id].name << std::flush;
+                    //*out << std::dec << "Offset: " <<  t->layout[type_entry_id].offset << " Name: " << std::flush;
+                }
                 *out <<  "\n----------------------------------------------------\n";
                 
             }
@@ -729,5 +1034,7 @@ VOID Instruction(INS ins, VOID *v) {
         }
     }
 }
+
+
 
 #endif

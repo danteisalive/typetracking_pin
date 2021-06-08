@@ -32,7 +32,8 @@
 #define EFFECTIVE_LIKELY(x)         __builtin_expect((x), 1)
 #define EFFECTIVE_UNLIKELY(x)       __builtin_expect((x), 0)
 
-
+#define EFFECTIVE_CONST     __attribute__((__const__))
+#define EFFECTIVE_PURE              __attribute__((__pure__))
 
 //#define LOWFAT_SIZES_PAGES 1
 //#define LOWFAT_REGION_SIZE_SHIFT 36
@@ -200,6 +201,27 @@ void *lowfat_base(const void *ptr)
     return (void *)iptr;
 }
 
+/*
+ * Get the base address of a pointer.
+ */
+static EFFECTIVE_CONST const void *effective_baseof(const void *ptr)
+{
+    size_t idx = lowfat_index(ptr);
+    if (idx > 1024 || _LOWFAT_MAGICS[idx] == 0)     // XXX: 1024 magic
+        return NULL;
+    return lowfat_base(ptr);
+}
 
+/*
+ * Get the effective type of a pointer.
+ */
+static EFFECTIVE_PURE const EFFECTIVE_TYPE *effective_typeof(const void *ptr)
+{
+    const void *base = effective_baseof(ptr);
+    if (base == NULL)
+        return NULL;
+    const EFFECTIVE_META *meta = (const EFFECTIVE_META *)base;
+    return meta->type;
+}
 
 #endif	
