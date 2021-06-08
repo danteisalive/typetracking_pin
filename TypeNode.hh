@@ -171,29 +171,6 @@ struct EFFECTIVE_META
     size_t size;                // Object's allocation size.
 };
 
-class TypeNode
-{
-public:
-  
-  TypeNode(std::string name, int tid) { this->name = name; this->typeID=tid;}
-  int nodeNo;
-  std::string title;
-  std::string name;
-  int typeID;
-  std::vector<TypeNode *> childs;
 
-  void deepCopy(TypeNode *source)
-  {
-    this->childs.clear();
-    for (std::vector<TypeNode*>::iterator it = childs.begin(); it != childs.end() ;it++)
-    {
-      //std::cerr << "child's title is " << (*it)->title << '\n';
-      TypeNode *newChild = new TypeNode((*it)->title, (*it)->typeID);
-      this->childs.push_back(newChild);
-      newChild->deepCopy((*it));
-    }
-  }
-
-};
 
 #endif // __CPU_O3_DEP_GRAPH_HH__

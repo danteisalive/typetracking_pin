@@ -70,6 +70,21 @@ extern DefaultLVPT *BasicTypePredictor;
 // make it static to help the compiler optimize docount
 extern UINT64 icount;
 
+
+void dumpEffectiveTypeInfo(const EFFECTIVE_INFO* info)
+{
+    while (info != NULL)
+    {
+        *out << "Type Name: " << info->name << "\n";
+        for (size_t i = 0; i < info->num_entries; i++)
+        {
+            dumpEffectiveTypeInfo(info->entries[i].type);
+        }
+        *out << "------\n";            
+        info = info->next;
+    }
+}
+
 uint64_t Val2Str(const PIN_REGISTER &value, const UINT size) {
     //*out << "Called Val2Str2 with size=" << size << "\n" << std::flush;
     switch (size) {
@@ -384,8 +399,13 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 ParentTypePredictor->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]), prediction);
                 ParentTypePredictor->LVPTNumOfAccesses++;
                 if (!prediction) ParentTypePredictor->LVPTMissprediction++;
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
+                #endif
 
-                //*out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
+                const EFFECTIVE_INFO* info = t->info;
+                dumpEffectiveTypeInfo(info);
+                *out <<  "\n----------------------------------------------------\n";
             }
 
         }
@@ -589,8 +609,14 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 ParentTypePredictor->update((uint64_t)pc, PointerID(TypeIDs[std::string(t->info->name)]) , prediction);
                 ParentTypePredictor->LVPTNumOfAccesses++;
                 if (!prediction) ParentTypePredictor->LVPTMissprediction++;
+                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                    *out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
+                #endif
 
-                //*out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual TID: " << TypeIDs[std::string(t->info->name)]  << " Pred. TID: " << tid.getPID() << "\n" << std::flush;
+                const EFFECTIVE_INFO* info = t->info;
+                dumpEffectiveTypeInfo(info);
+                *out <<  "\n----------------------------------------------------\n";
+                
             }
 
         }
