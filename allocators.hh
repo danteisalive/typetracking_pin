@@ -65,7 +65,7 @@ extern UINT64 ParentTID;
 
 extern UINT64 NumOfCalls;
 
-
+extern InsTypeCount TypesUsedInEpoch;
 extern DefaultLVPT *ParentTypePredictor;
 extern DefaultBasicTypePredictor *BasicTypePredictor;
 
@@ -124,8 +124,9 @@ VOID docount() {
         // }
         // *out << nonzero_tid << '\n' << std::flush;
         NumOfCalls = 0;
+        
 
-        int numOfRulesUsedDuringThisPeriod = 0;
+        //int numOfRulesUsedDuringThisPeriod = 0;
         // for (InsTypeCount::iterator it = ITC.begin(); it != ITC.end(); it++) {
         //     if (it->second != 0) {
         //         //*out << std::dec << it->first << "(" << it->second <<  ")\n";
@@ -134,22 +135,24 @@ VOID docount() {
         //     }
         // }
 
-        *out << std::dec << numOfRulesUsedDuringThisPeriod << "\nParent Type Predictor Miss Rate: "
-             << (double)ParentTypePredictor->LVPTMissprediction / ParentTypePredictor->LVPTNumOfAccesses << " " << ParentTypePredictor->LVPTMissprediction << " "
-             << "\nBasic Type Predictor Miss Rate: " << BasicTypePredictor->getMissRate() << " " << BasicTypePredictor->getNumOfAccsses() << " "
-             << '\n'
-             << std::flush;
+        *out << std::dec
+            << (double)ParentTypePredictor->LVPTMissprediction * 100.0 / ParentTypePredictor->LVPTNumOfAccesses << " "
+            << BasicTypePredictor->getMissRate() * 100.0 << " "
+            << TypesUsedInEpoch.size() << " "
+            << (double)Meta_Cache.Misses() * 100.0 /(double)Meta_Cache.Accesses()  << " "
+            << '\n'
+            << std::flush;
 
-        *out << Meta_Cache << std::flush;
+        //*out << Meta_Cache << std::flush;
 
-        for (InsTypeCount::iterator it = ParrentTypeIDs.begin(); it != ParrentTypeIDs.end(); it++) {
-            if (it->second != 0) {
-                *out << std::dec << it->first << "(" << it->second << ")\n";
-                it->second = 0;
-            }
-        }
-        *out << '\n' << std::flush;
-        *out << "------------------------------------------------------------------------\n"  << std::flush;
+        // for (InsTypeCount::iterator it = ParrentTypeIDs.begin(); it != ParrentTypeIDs.end(); it++) {
+        //     if (it->second != 0) {
+        //         *out << std::dec << it->first << "(" << it->second << ")\n";
+        //         it->second = 0;
+        //     }
+        // }
+        // *out << '\n' << std::flush;
+        // *out << "------------------------------------------------------------------------\n"  << std::flush;
 
     }
 }
@@ -213,6 +216,13 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
+
+                
+                // Count number of types used during this epoch
+                if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
+                    TypesUsedInEpoch[std::string(t->info->name)] = 1;
+                else 
+                    TypesUsedInEpoch[std::string(t->info->name)] += 1;
 
                 // Update the Type ID
                 if (ParrentTypeIDs.find(std::string(t->info->name)) == ParrentTypeIDs.end())
@@ -453,6 +463,12 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
+
+                // Count number of types used during this epoch
+                if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
+                    TypesUsedInEpoch[std::string(t->info->name)] = 1;
+                else 
+                    TypesUsedInEpoch[std::string(t->info->name)] += 1;
 
                 // Update the Type ID
                 if (ParrentTypeIDs.find(std::string(t->info->name)) == ParrentTypeIDs.end())
