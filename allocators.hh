@@ -79,6 +79,7 @@ void VerifyTypeLayout(const EFFECTIVE_TYPE* t);
 void UpdateStatics(const EFFECTIVE_TYPE* t);
 size_t FindOffset(const EFFECTIVE_TYPE *t, const void* ptr, ADDRINT pc);
 void AccessMetaCache(const EFFECTIVE_TYPE* t, const size_t offset);
+void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc);
 
 uint64_t Val2Str(const PIN_REGISTER &value, const UINT size) {
     //*out << "Called Val2Str2 with size=" << size << "\n" << std::flush;
@@ -232,53 +233,13 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 AccessMetaCache(t, offset);
 
 
-                // Access Parent Type Predictor
-                assert(ParrentTypeIDs.find(std::string(t->info->name)) != ParrentTypeIDs.end());
-                PointerID tid = ParentTypePredictor->lookup((uint64_t)pc);
-                bool prediction = false;
-                prediction = (ParrentTypeIDs[std::string(t->info->name)] == tid.getPID());
-                ParentTypePredictor->update((uint64_t)pc, PointerID(ParrentTypeIDs[std::string(t->info->name)]), prediction);
-                ParentTypePredictor->LVPTNumOfAccesses++;
-                if (!prediction) ParentTypePredictor->LVPTMissprediction++;
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual ParentTID: " << ParrentTypeIDs[std::string(t->info->name)]  << " Pred. ParentTID: " << tid.getPID() << "\n" << std::flush;
-                #endif
+                // Access Parent and Basic Type Predictors
+                AccessTypePredictors(t, offset, pc);
 
-
-                // add it if it's not added already
-                if (TyCheTypeLayout.find((uint64_t)t->tyche_meta) == TyCheTypeLayout.end())
-                {    
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << std::dec << "Parent Name: " << t->info->name << " Length: " << t->length << std::endl << std::flush;
-                    #endif
-                    for (size_t type_entry_id = 0; type_entry_id < t->length-1 ; type_entry_id++)
-                    {
-                        assert(t->layout[type_entry_id].name != NULL);
-                        TyCheTypeLayout[(uint64_t)t->tyche_meta][t->layout[type_entry_id].offset] = std::string(t->layout[type_entry_id].name);
-                        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                            *out << std::dec << "Offset: " <<  t->layout[type_entry_id].offset << " Name: " <<  t->layout[type_entry_id].name << " " <<  std::flush;
-                        #endif
-                    }
-                    assert(t->layout[t->length-1].offset == UINT64_MAX);
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out <<  "\n----------------------------------------------------\n";
-                    #endif
-                }
-
-                //Basic Type Predictor 
-                TypesLayout::iterator typeTreeIterator = TyCheTypeLayout.find((uint64_t)t->tyche_meta);
-                assert(typeTreeIterator != TyCheTypeLayout.end());
-                std::map<uint64_t,std::string>::iterator offsetsIterator = typeTreeIterator->second.find(offset);
-                //assert(offsetsIterator != typeTreeIterator->second.end());
-                if (offsetsIterator != typeTreeIterator->second.end())
-                {
-                    BasicTypePredictor->lookup((uint64_t)pc, offsetsIterator->second);
-                }
             }
 
         }
 
-        //*out << "\n";
     } 
     // else if (lowfat_is_global_ptr(ptr)) {
     //     *out << "GLOBAL ADDRESS\n";
@@ -329,54 +290,13 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 // Access Meta Cache
                 AccessMetaCache(t, offset);
 
-                // Access Type Predictor
-                assert(ParrentTypeIDs.find(std::string(t->info->name)) != ParrentTypeIDs.end());
-                PointerID tid = ParentTypePredictor->lookup((uint64_t)pc);
-                bool prediction = false;
-                prediction = (ParrentTypeIDs[std::string(t->info->name)] == tid.getPID());
-                ParentTypePredictor->update((uint64_t)pc, PointerID(ParrentTypeIDs[std::string(t->info->name)]) , prediction);
-                ParentTypePredictor->LVPTNumOfAccesses++;
-                if (!prediction) ParentTypePredictor->LVPTMissprediction++;
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual ParentTID: " << ParrentTypeIDs[std::string(t->info->name)]  << " Pred. ParentTID: " << tid.getPID() << "\n" << std::flush;
-                #endif
-                
-                
-                // add it if it's not added already
-                if (TyCheTypeLayout.find((uint64_t)t->tyche_meta) == TyCheTypeLayout.end())
-                {    
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << std::dec << "Parent Name: " << t->info->name << " Length: " << t->length << std::endl << std::flush;
-                    #endif
-                    for (size_t type_entry_id = 0; type_entry_id < t->length-1 ; type_entry_id++)
-                    {
-                        assert(t->layout[type_entry_id].name != NULL);
-                        TyCheTypeLayout[(uint64_t)t->tyche_meta][t->layout[type_entry_id].offset] = std::string(t->layout[type_entry_id].name);
-                        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                            *out << std::dec << "Offset: " <<  t->layout[type_entry_id].offset << " Name: " <<  t->layout[type_entry_id].name << " " <<  std::flush;
-                        #endif
-                    }
-                    assert(t->layout[t->length-1].offset == UINT64_MAX);
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out <<  "\n----------------------------------------------------\n";
-                    #endif
-                }
-
-                //Basic Type Predictor 
-                TypesLayout::iterator typeTreeIterator = TyCheTypeLayout.find((uint64_t)t->tyche_meta);
-                assert(typeTreeIterator != TyCheTypeLayout.end());
-                std::map<uint64_t,std::string>::iterator offsetsIterator = typeTreeIterator->second.find(offset);
-                //assert(offsetsIterator != typeTreeIterator->second.end());
-                if (offsetsIterator != typeTreeIterator->second.end())
-                {
-                    BasicTypePredictor->lookup((uint64_t)pc, offsetsIterator->second);
-                }
+                // Access Parent and Basic Type Predictors
+                AccessTypePredictors(t, offset, pc);
                 
             }
 
         }
 
-        //*out << "\n";
     } 
     // else if (lowfat_is_global_ptr(ptr)) {
     //     *out << "GLOBAL ADDRESS\n";
@@ -641,6 +561,51 @@ void AccessMetaCache(const EFFECTIVE_TYPE *t, const size_t offset)
         cl_next_level = cl_next_level->next_cacheline;    
     }
 
+}
+
+void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc)
+{
+    assert(ParrentTypeIDs.find(std::string(t->info->name)) != ParrentTypeIDs.end());
+    PointerID tid = ParentTypePredictor->lookup((uint64_t)pc);
+    bool prediction = false;
+    prediction = (ParrentTypeIDs[std::string(t->info->name)] == tid.getPID());
+    ParentTypePredictor->update((uint64_t)pc, PointerID(ParrentTypeIDs[std::string(t->info->name)]), prediction);
+    ParentTypePredictor->LVPTNumOfAccesses++;
+    if (!prediction) ParentTypePredictor->LVPTMissprediction++;
+    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+        *out << std::hex << "Meta Cache Access => PC: " << (uint64_t)pc << " Pred.: " << prediction <<  " Actual ParentTID: " << ParrentTypeIDs[std::string(t->info->name)]  << " Pred. ParentTID: " << tid.getPID() << "\n" << std::flush;
+    #endif
+
+
+    // add it if it's not added already
+    if (TyCheTypeLayout.find((uint64_t)t->tyche_meta) == TyCheTypeLayout.end())
+    {    
+        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+            *out << std::dec << "Parent Name: " << t->info->name << " Length: " << t->length << std::endl << std::flush;
+        #endif
+        for (size_t type_entry_id = 0; type_entry_id < t->length-1 ; type_entry_id++)
+        {
+            assert(t->layout[type_entry_id].name != NULL);
+            TyCheTypeLayout[(uint64_t)t->tyche_meta][t->layout[type_entry_id].offset] = std::string(t->layout[type_entry_id].name);
+            #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                *out << std::dec << "Offset: " <<  t->layout[type_entry_id].offset << " Name: " <<  t->layout[type_entry_id].name << " " <<  std::flush;
+            #endif
+        }
+        assert(t->layout[t->length-1].offset == UINT64_MAX);
+        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+            *out <<  "\n----------------------------------------------------\n";
+        #endif
+    }
+
+    //Basic Type Predictor 
+    TypesLayout::iterator typeTreeIterator = TyCheTypeLayout.find((uint64_t)t->tyche_meta);
+    assert(typeTreeIterator != TyCheTypeLayout.end());
+    std::map<uint64_t,std::string>::iterator offsetsIterator = typeTreeIterator->second.find(offset);
+    //assert(offsetsIterator != typeTreeIterator->second.end());
+    if (offsetsIterator != typeTreeIterator->second.end())
+    {
+        BasicTypePredictor->lookup((uint64_t)pc, offsetsIterator->second);
+    }
 }
 
 void UpdateStatics(const EFFECTIVE_TYPE* t)
