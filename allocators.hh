@@ -75,9 +75,10 @@ extern DefaultBasicTypePredictor *BasicTypePredictor;
 extern UINT64 icount;
 
 
-
-
-
+void VerifyTypeLayout(const EFFECTIVE_TYPE* t);
+void UpdateStatics(const EFFECTIVE_TYPE* t);
+size_t FindOffset(const EFFECTIVE_TYPE *t, const void* ptr, ADDRINT pc);
+void AccessMetaCache(const EFFECTIVE_TYPE* t, const size_t offset);
 
 uint64_t Val2Str(const PIN_REGISTER &value, const UINT size) {
     //*out << "Called Val2Str2 with size=" << size << "\n" << std::flush;
@@ -218,165 +219,17 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             } else {
 
                 
-                // Count number of types used during this epoch
-                if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
-                    TypesUsedInEpoch[std::string(t->info->name)] = 1;
-                else 
-                    TypesUsedInEpoch[std::string(t->info->name)] += 1;
-
-                // Update the Type ID
-                if (ParrentTypeIDs.find(std::string(t->info->name)) == ParrentTypeIDs.end())
-                    ParrentTypeIDs[std::string(t->info->name)] = ParentTID++;
-                // How many different types were accesses during this epoch
-                ITC[std::string(t->info->name)]++;
+                UpdateStatics(t);
 
                 // Verify the type information layout
-                TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
-                assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << "Type Name: " << t->info->name << " Size: " << std::dec << t->size << " "<< "\n" << std::flush;
-                #endif
-                uint64_t number_of_offsets_blocks = t->size / TYCHE_OFFSETS_IN_EACH_CACHELINE;
-                for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
-                {
-                    uint64_t level = 0;
-                    assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << "Level: " << std::dec  << level << " " << std::hex << tm << "\n" << std::flush;
-                        *out << 
-                        "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
-                        "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
-                        "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
-                        "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
-                        "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
-                        "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
-                        "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
-                        "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
-                        "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
-                        "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
-                        "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
-                        "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
-                        "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
-                        "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
-                        "tm_p = "  << std::hex << tm->next_cacheline << " " <<
-                        '\n' << std::flush;
-                    #endif
-
-
-                    TYCHE_METADATA_CACHELINE* tm_next_level = tm->next_cacheline;
-                    while (tm_next_level != NULL)
-                    {
-                        level++;
-                        
-                        assert((uint64_t)tm_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)tm_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
-                        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                            *out << "Level: " << std::dec  << level << " " << std::hex << tm_next_level << "\n" << std::flush;  
-                            *out << std::hex << tm_next_level << "\n" << std::flush;
-                            *out << 
-                            "tm_0 = " << std::dec << tm_next_level->CacheLine_0 << " " <<
-                            "tm_1 = " << std::dec << tm_next_level->CacheLine_1 << " " <<
-                            "tm_2 = " << std::dec << tm_next_level->CacheLine_2 << " " <<
-                            "tm_3 = " << std::dec << tm_next_level->CacheLine_3 << " " <<
-                            "tm_4 = " << std::dec << tm_next_level->CacheLine_4 << " " <<
-                            "tm_5 = " << std::dec << tm_next_level->CacheLine_5 << " " <<
-                            "tm_6 = " << std::dec << tm_next_level->CacheLine_6 << " " <<
-                            "tm_7 = " << std::dec << tm_next_level->CacheLine_7 << " " <<
-                            "tm_8 = " << std::dec << tm_next_level->CacheLine_8 << " " <<
-                            "tm_9 = " << std::dec << tm_next_level->CacheLine_9 << " " <<
-                            "tm_10 = " << std::dec << tm_next_level->CacheLine_10 << " " <<
-                            "tm_11 = " << std::dec << tm_next_level->CacheLine_11 << " " <<
-                            "tm_12 = " << std::dec << tm_next_level->CacheLine_12 << " " <<
-                            "tm_13 = " << std::dec << tm_next_level->CacheLine_13 << " " <<
-                            "tm_p = "  << std::hex << tm_next_level->next_cacheline << " " <<
-                            '\n' << std::flush;
-                        #endif
-                        tm_next_level = tm_next_level->next_cacheline;  
-                              
-                    }
-                    
-                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + TYCHE_CACHELINE_SIZE);
-                }
-                
-
+                VerifyTypeLayout(t);
+            
                 // Find the offset for looking at the layout
                 // Calculate and normalize the `offset'.
-                tm = t->tyche_meta;
-                //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-                //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
-                //EFFECTIVE_BOUNDS bounds = bases + sizes;
-                size_t offset = (uint8_t *)ptr - (uint8_t *)base;
-                size_t offset_unadjusted = offset;
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
-                        << '\n' << std::flush;
-                #endif
-                if (offset >= t->size) {
-                    // The `offset' is >= sizeof(T).  Thus `ptr' may be
-                    // pointing to an element in an array of T.
-                    // Alternatively, `ptr' may be pointing to a FAM at the
-                    // end of T.  Either way, the offset is normalized here.
-                    // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
-                    offset -= t->size;
-                    unsigned __int128 tmp = (unsigned __int128)offset;
-                    tmp *= (unsigned __int128)t->magic;
-                    idx = (size_t)(tmp >> EFFECTIVE_RADIX);
-                    offset -= idx * t->size_fam;
-                    //bounds += adjust;
-                    offset += t->offset_fam;
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << "FAM or Array. Offset is adjusted. Offset = "
-                             << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
-                    #endif
-                }
-
-                if (t->size_fam == t->size)    
-                {
-                    if (offset > t->size)
-                    {
-                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
-                            << '\n' << std::flush;
-                        *out << "FAM or Array. Offset is adjusted. Offset = "
-                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
-                    }
-                    assert(offset <= t->size);
-                }
-                else                           
-                {
-                    if (offset > (t->size_fam + t->size ))
-                    {
-                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
-                            << '\n' << std::flush;
-                        *out << "FAM or Array. Offset is adjusted. Offset = "
-                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
-                    }
-                    assert(offset <= (t->size_fam + t->size ));
-                }
-
-                if (offset_unadjusted > meta->size) {
-                    *out << "out of bound error";
-                    assert(0);
-                }
+                size_t offset = FindOffset(t, ptr, pc);
 
                 // Access Meta Cache
-                // find the meta cache line that we should fetch
-                uint64_t block = offset / TYCHE_OFFSETS_IN_EACH_CACHELINE;
-                TYCHE_METADATA_CACHELINE* cl = (TYCHE_METADATA_CACHELINE*)((void*)tm + block * TYCHE_CACHELINE_SIZE);
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: 0 " << " Addr: " << std::hex << cl  << '\n' << std::flush;
-                #endif
-                Meta_Cache.AccessSingleLine((ADDRINT)cl, CACHE_BASE::ACCESS_TYPE_LOAD); 
-                uint64_t level = 0;
-                TYCHE_METADATA_CACHELINE* cl_next_level = cl->next_cacheline;
-                while (cl_next_level != NULL)
-                {
-                    level++;            
-                    assert((uint64_t)cl_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)cl_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: " << level << " Addr: " << std::hex << cl_next_level  << '\n' << std::flush;
-                    #endif
-                    Meta_Cache.AccessSingleLine((ADDRINT)cl_next_level, CACHE_BASE::ACCESS_TYPE_LOAD); 
-                    cl_next_level = cl_next_level->next_cacheline;    
-                }
+                AccessMetaCache(t, offset);
 
 
                 // Access Parent Type Predictor
@@ -463,164 +316,18 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
                 *out << "Effective type free!!!\n";
             } else {
-
-                // Count number of types used during this epoch
-                if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
-                    TypesUsedInEpoch[std::string(t->info->name)] = 1;
-                else 
-                    TypesUsedInEpoch[std::string(t->info->name)] += 1;
-
-                // Update the Type ID
-                if (ParrentTypeIDs.find(std::string(t->info->name)) == ParrentTypeIDs.end())
-                    ParrentTypeIDs[std::string(t->info->name)] = ParentTID++;
-                // How many different types were accesses during this epoch
-                ITC[std::string(t->info->name)]++;
+                
+                UpdateStatics(t);
 
                 // Verify the type information layout
-                TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
-                assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << "Type Name: " << t->info->name << " Size: " << std::dec << t->size << " "<< "\n" << std::flush;
-                #endif
-                uint64_t number_of_offsets_blocks = t->size / TYCHE_OFFSETS_IN_EACH_CACHELINE;
-                for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
-                {
-                    uint64_t level = 0;
-                    assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << "Level: " << std::dec  << level << " " << std::hex << tm << "\n" << std::flush;
-                        *out << 
-                        "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
-                        "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
-                        "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
-                        "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
-                        "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
-                        "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
-                        "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
-                        "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
-                        "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
-                        "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
-                        "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
-                        "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
-                        "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
-                        "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
-                        "tm_p = "  << std::hex << tm->next_cacheline << " " <<
-                        '\n' << std::flush;
-                    #endif
-
-                    TYCHE_METADATA_CACHELINE* tm_next_level = tm->next_cacheline;
-                    
-                    while (tm_next_level != NULL)
-                    {
-                        level++;
-                        
-                        assert((uint64_t)tm_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)tm_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
-                        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                            *out << "Level: " << std::dec  << level << " " << std::hex << tm_next_level << "\n" << std::flush;
-                            *out << 
-                            "tm_0 = " << std::dec << tm_next_level->CacheLine_0 << " " <<
-                            "tm_1 = " << std::dec << tm_next_level->CacheLine_1 << " " <<
-                            "tm_2 = " << std::dec << tm_next_level->CacheLine_2 << " " <<
-                            "tm_3 = " << std::dec << tm_next_level->CacheLine_3 << " " <<
-                            "tm_4 = " << std::dec << tm_next_level->CacheLine_4 << " " <<
-                            "tm_5 = " << std::dec << tm_next_level->CacheLine_5 << " " <<
-                            "tm_6 = " << std::dec << tm_next_level->CacheLine_6 << " " <<
-                            "tm_7 = " << std::dec << tm_next_level->CacheLine_7 << " " <<
-                            "tm_8 = " << std::dec << tm_next_level->CacheLine_8 << " " <<
-                            "tm_9 = " << std::dec << tm_next_level->CacheLine_9 << " " <<
-                            "tm_10 = " << std::dec << tm_next_level->CacheLine_10 << " " <<
-                            "tm_11 = " << std::dec << tm_next_level->CacheLine_11 << " " <<
-                            "tm_12 = " << std::dec << tm_next_level->CacheLine_12 << " " <<
-                            "tm_13 = " << std::dec << tm_next_level->CacheLine_13 << " " <<
-                            "tm_p = "  << std::hex << tm_next_level->next_cacheline << " " <<
-                            '\n' << std::flush;   
-                        #endif
-                        tm_next_level = tm_next_level->next_cacheline;  
-                    }
-
-                    tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + TYCHE_CACHELINE_SIZE);
-                }
+                VerifyTypeLayout(t);
 
                 // Find the offset for looking at the layout
                 // Calculate and normalize the `offset'.
-                tm = t->tyche_meta;
-
-                //EFFECTIVE_BOUNDS bases = {(intptr_t)base, (intptr_t)base};
-                //EFFECTIVE_BOUNDS sizes = {0, (long int)meta->size};
-                //EFFECTIVE_BOUNDS bounds = bases + sizes;
-                size_t offset = (uint8_t *)ptr - (uint8_t *)base;
-                size_t offset_unadjusted = offset;
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
-                        << '\n' << std::flush;
-                #endif
-                if (offset >= t->size) {
-                    // The `offset' is >= sizeof(T).  Thus `ptr' may be
-                    // pointing to an element in an array of T.
-                    // Alternatively, `ptr' may be pointing to a FAM at the
-                    // end of T.  Either way, the offset is normalized here.
-                    // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
-                    offset -= t->size;
-                    unsigned __int128 tmp = (unsigned __int128)offset;
-                    tmp *= (unsigned __int128)t->magic;
-                    idx = (size_t)(tmp >> EFFECTIVE_RADIX);
-                    offset -= idx * t->size_fam;
-                    //bounds += adjust;
-                    offset += t->offset_fam;
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << "FAM or Array. Offset is adjusted. Offset = "
-                             << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
-                    #endif
-                }
-
-                if (t->size_fam == t->size)    
-                {
-                    if (offset > t->size)
-                    {
-                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
-                            << '\n' << std::flush;
-                        *out << "FAM or Array. Offset is adjusted. Offset = "
-                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
-                    }
-                    assert(offset <= t->size);
-                }
-                else                           
-                {
-                    if (offset > (t->size_fam + t->size ))
-                    {
-                        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
-                            << '\n' << std::flush;
-                        *out << "FAM or Array. Offset is adjusted. Offset = "
-                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
-                    }
-                    assert(offset <= (t->size_fam + t->size ));
-                }
-
-                if (offset_unadjusted > meta->size) {
-                    *out << "out of bound error";
-                    assert(0);
-                }
+                size_t offset = FindOffset(t, ptr, pc);
 
                 // Access Meta Cache
-                // find the meta cache line that we should fetch
-                uint64_t block = offset / TYCHE_OFFSETS_IN_EACH_CACHELINE;
-                TYCHE_METADATA_CACHELINE* cl = (TYCHE_METADATA_CACHELINE*)((void*)tm + block * TYCHE_CACHELINE_SIZE);
-                #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                    *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: 0 " << " Addr: " << std::hex << cl  << '\n' << std::flush;
-                #endif
-                Meta_Cache.AccessSingleLine((ADDRINT)cl, CACHE_BASE::ACCESS_TYPE_LOAD); 
-                uint64_t level = 0;
-                TYCHE_METADATA_CACHELINE* cl_next_level = cl->next_cacheline;
-                while (cl_next_level != NULL)
-                {
-                    level++;            
-                    assert((uint64_t)cl_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)cl_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
-                    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
-                        *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: " << level << " Addr: " << std::hex << cl_next_level  << '\n' << std::flush;
-                    #endif
-                    Meta_Cache.AccessSingleLine((ADDRINT)cl_next_level, CACHE_BASE::ACCESS_TYPE_LOAD); 
-                    cl_next_level = cl_next_level->next_cacheline;    
-                }
+                AccessMetaCache(t, offset);
 
                 // Access Type Predictor
                 assert(ParrentTypeIDs.find(std::string(t->info->name)) != ParrentTypeIDs.end());
@@ -776,6 +483,185 @@ VOID Instruction(INS ins, VOID *v) {
                 maxNumRRegs, IARG_PTR, maxNumWRegs, IARG_END);
         }
     }
+}
+
+void VerifyTypeLayout(const EFFECTIVE_TYPE* t)
+{
+    TYCHE_METADATA_CACHELINE* tm = t->tyche_meta;
+    assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
+    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+        *out << "Type Name: " << t->info->name << " Size: " << std::dec << t->size << " "<< "\n" << std::flush;
+    #endif
+    uint64_t number_of_offsets_blocks = t->size / TYCHE_OFFSETS_IN_EACH_CACHELINE;
+    for (size_t off = 0; off < number_of_offsets_blocks + 1; off++)
+    {
+        uint64_t level = 0;
+        assert((uint64_t)tm >= TYCHE_SECTION_0_START_ADDR && (uint64_t)tm < TYCHE_SECTION_0_END_ADDR);
+        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+            *out << "Level: " << std::dec  << level << " " << std::hex << tm << "\n" << std::flush;
+            *out << 
+            "tm_0 = " << std::dec << tm->CacheLine_0 << " " <<
+            "tm_1 = " << std::dec << tm->CacheLine_1 << " " <<
+            "tm_2 = " << std::dec << tm->CacheLine_2 << " " <<
+            "tm_3 = " << std::dec << tm->CacheLine_3 << " " <<
+            "tm_4 = " << std::dec << tm->CacheLine_4 << " " <<
+            "tm_5 = " << std::dec << tm->CacheLine_5 << " " <<
+            "tm_6 = " << std::dec << tm->CacheLine_6 << " " <<
+            "tm_7 = " << std::dec << tm->CacheLine_7 << " " <<
+            "tm_8 = " << std::dec << tm->CacheLine_8 << " " <<
+            "tm_9 = " << std::dec << tm->CacheLine_9 << " " <<
+            "tm_10 = " << std::dec << tm->CacheLine_10 << " " <<
+            "tm_11 = " << std::dec << tm->CacheLine_11 << " " <<
+            "tm_12 = " << std::dec << tm->CacheLine_12 << " " <<
+            "tm_13 = " << std::dec << tm->CacheLine_13 << " " <<
+            "tm_p = "  << std::hex << tm->next_cacheline << " " <<
+            '\n' << std::flush;
+        #endif
+
+
+        TYCHE_METADATA_CACHELINE* tm_next_level = tm->next_cacheline;
+        while (tm_next_level != NULL)
+        {
+            level++;
+                        
+            assert((uint64_t)tm_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)tm_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
+            #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+                *out << "Level: " << std::dec  << level << " " << std::hex << tm_next_level << "\n" << std::flush;  
+                *out << std::hex << tm_next_level << "\n" << std::flush;
+                *out << 
+                "tm_0 = " << std::dec << tm_next_level->CacheLine_0 << " " <<
+                "tm_1 = " << std::dec << tm_next_level->CacheLine_1 << " " <<
+                "tm_2 = " << std::dec << tm_next_level->CacheLine_2 << " " <<
+                "tm_3 = " << std::dec << tm_next_level->CacheLine_3 << " " <<
+                "tm_4 = " << std::dec << tm_next_level->CacheLine_4 << " " <<
+                "tm_5 = " << std::dec << tm_next_level->CacheLine_5 << " " <<
+                "tm_6 = " << std::dec << tm_next_level->CacheLine_6 << " " <<
+                "tm_7 = " << std::dec << tm_next_level->CacheLine_7 << " " <<
+                "tm_8 = " << std::dec << tm_next_level->CacheLine_8 << " " <<
+                "tm_9 = " << std::dec << tm_next_level->CacheLine_9 << " " <<
+                "tm_10 = " << std::dec << tm_next_level->CacheLine_10 << " " <<
+                "tm_11 = " << std::dec << tm_next_level->CacheLine_11 << " " <<
+                "tm_12 = " << std::dec << tm_next_level->CacheLine_12 << " " <<
+                "tm_13 = " << std::dec << tm_next_level->CacheLine_13 << " " <<
+                "tm_p = "  << std::hex << tm_next_level->next_cacheline << " " <<
+                '\n' << std::flush;
+            #endif
+            tm_next_level = tm_next_level->next_cacheline;  
+                              
+        }
+                    
+            tm = (TYCHE_METADATA_CACHELINE*)((void*)tm + TYCHE_CACHELINE_SIZE);
+    }
+}
+
+
+size_t FindOffset(const EFFECTIVE_TYPE *t, const void* ptr, ADDRINT pc)
+{
+    size_t idx = lowfat_index(ptr);
+    void *base = lowfat_base(ptr);
+    EFFECTIVE_META *meta = (EFFECTIVE_META *)base;
+    base = (void *)(meta + 1);
+    //TYCHE_METADATA_CACHELINE*  tm = t->tyche_meta;
+    size_t offset = (uint8_t *)ptr - (uint8_t *)base;
+    size_t offset_unadjusted = offset;
+    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+        *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                        << '\n' << std::flush;
+    #endif
+    if (offset >= t->size) {
+        // The `offset' is >= sizeof(T).  Thus `ptr' may be
+        // pointing to an element in an array of T.
+        // Alternatively, `ptr' may be pointing to a FAM at the
+        // end of T.  Either way, the offset is normalized here.
+        // EFFECTIVE_BOUNDS adjust = {t->offset_fam, 0};
+        offset -= t->size;
+        unsigned __int128 tmp = (unsigned __int128)offset;
+        tmp *= (unsigned __int128)t->magic;
+        idx = (size_t)(tmp >> EFFECTIVE_RADIX);
+        offset -= idx * t->size_fam;
+        //bounds += adjust;
+        offset += t->offset_fam;
+        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+            *out << "FAM or Array. Offset is adjusted. Offset = "
+                << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+        #endif
+    }
+
+    if (t->size_fam == t->size)    
+    {
+        if (offset > t->size)
+        {
+            *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                            << '\n' << std::flush;
+            *out << "FAM or Array. Offset is adjusted. Offset = "
+                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+        }
+        assert(offset <= t->size);
+    }
+    else                           
+    {
+        if (offset > (t->size_fam + t->size ))
+        {
+            *out << std::hex << "Type Name: " << t->info->name << " pc: " << pc <<  " ptr: " << ptr << " base: " << base << std::dec << " offset = " << offset << ", t->size = " << t->size << ", meta->size = " << meta->size
+                            << '\n' << std::flush;
+            *out << "FAM or Array. Offset is adjusted. Offset = "
+                            << std::dec << offset << ", t->size = " << t->size << ", t->size_fam = " << t->size_fam << ", t->offset_fam = " << t->offset_fam  << '\n' << std::flush;
+        }
+        assert(offset <= (t->size_fam + t->size ));
+    }
+
+    if (offset_unadjusted > meta->size) {
+        *out << "out of bound error";
+        assert(0);
+    }
+
+    return offset;
+}
+
+void AccessMetaCache(const EFFECTIVE_TYPE *t, const size_t offset)
+{
+    TYCHE_METADATA_CACHELINE*  tm = t->tyche_meta;
+    // find the meta cache line that we should fetch
+    uint64_t block = offset / TYCHE_OFFSETS_IN_EACH_CACHELINE;
+    TYCHE_METADATA_CACHELINE* cl = (TYCHE_METADATA_CACHELINE*)((void*)tm + block * TYCHE_CACHELINE_SIZE);
+    #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+        *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: 0 " << " Addr: " << std::hex << cl  << '\n' << std::flush;
+    #endif
+    Meta_Cache.AccessSingleLine((ADDRINT)cl, CACHE_BASE::ACCESS_TYPE_LOAD); 
+    uint64_t level = 0;
+    TYCHE_METADATA_CACHELINE* cl_next_level = cl->next_cacheline;
+    while (cl_next_level != NULL)
+    {
+        level++;            
+        assert((uint64_t)cl_next_level >= (TYCHE_SECTION_0_START_ADDR + level * 0x100000) && (uint64_t)cl_next_level < (TYCHE_SECTION_0_END_ADDR + level * 0x100000)); 
+        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+            *out << "Meta Cache Access: Offset = " << std::dec << offset << " Block: " << block << " Level: " << level << " Addr: " << std::hex << cl_next_level  << '\n' << std::flush;
+        #endif
+        Meta_Cache.AccessSingleLine((ADDRINT)cl_next_level, CACHE_BASE::ACCESS_TYPE_LOAD); 
+        cl_next_level = cl_next_level->next_cacheline;    
+    }
+
+}
+
+void UpdateStatics(const EFFECTIVE_TYPE* t)
+{
+    // Count number of types used during this epoch
+    if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
+    {
+        TypesUsedInEpoch[std::string(t->info->name)] = 1;
+    }
+    else 
+    {
+        TypesUsedInEpoch[std::string(t->info->name)] += 1;
+    }
+
+    // Update the Type ID
+    if (ParrentTypeIDs.find(std::string(t->info->name)) == ParrentTypeIDs.end())
+    {
+        ParrentTypeIDs[std::string(t->info->name)] = ParentTID++;
+    }
+    // How many different types were accesses during this epoch
+    ITC[std::string(t->info->name)]++;
 }
 
 
