@@ -47,7 +47,7 @@ using std::stringstream;
 #define TYCHE_CACHELINE_SIZE 64
 #define TYCHE_OFFSETS_IN_EACH_CACHELINE 32
 
-typedef std::map<uint64_t, std::pair<const char *, uint64_t> > TypesCount;
+typedef std::map<uint64_t, std::pair<std::string, uint64_t> > TypesCount;
 typedef std::map<uint64_t, std::map<uint64_t, std::string> > TypesLayout;
 typedef TypesCount TypesCount;
 typedef TypesLayout TypesLayout;
@@ -76,7 +76,7 @@ extern UINT64 icount;
 
 
 void VerifyTypeLayout(const EFFECTIVE_TYPE* t);
-void UpdateStatics(const EFFECTIVE_TYPE* t);
+void UpdateStatics(const EFFECTIVE_META * meta);
 size_t FindOffset(const EFFECTIVE_TYPE *t, const void* ptr, ADDRINT pc);
 void AccessMetaCache(const EFFECTIVE_TYPE* t, const size_t offset);
 void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc);
@@ -115,16 +115,29 @@ VOID docount() {
     uint64_t nonzero_tid = 0;
     nonzero_tid = nonzero_tid;
     if (icount % 100000000 == 0) {
+        
         //*out << std::dec << icount/100000000 << " " << NumOfCalls << endl;
 
-        // for (TypesCount::iterator it = TC.begin(); it != TC.end(); it++) {
-        //     if (it->second.second != 0) {
-        //         *out << std::dec << it->second.second << " " << std::flush;
-        //         it->second.second = 0;
-        //         nonzero_tid++;
-        //     }
+        std::map<std::string, uint64_t> AliveAllocations;
+        for (TypesCount::iterator it = TC.begin(); it != TC.end(); it++) 
+        {
+            if (AliveAllocations.find(it->second.first) == AliveAllocations.end())
+            {
+                AliveAllocations[it->second.first] = 1;
+            }            
+            else 
+            {
+                AliveAllocations[it->second.first]++;
+            }
+        }
+        // *out << std::dec << "AliveAllocations: " << TC.size() << std::endl << std::flush;
+        // for (std::map<std::string, uint64_t>::iterator it = AliveAllocations.begin(); it != AliveAllocations.end(); it++)
+        // {
+        //     *out << it->first << " " << it->second << std::endl << std::flush;
         // }
-        // *out << nonzero_tid << '\n' << std::flush;
+
+
+
         NumOfCalls = 0;
         
 
@@ -142,6 +155,7 @@ VOID docount() {
             << BasicTypePredictor->getMissRate() * 100.0 << " "
             << TypesUsedInEpoch.size() << " "
             << (double)Meta_Cache.Misses() * 100.0 /(double)Meta_Cache.Accesses()  << " "
+            << TC.size() << " "
             << '\n'
             << std::flush;
 
@@ -155,6 +169,8 @@ VOID docount() {
         // }
         // *out << '\n' << std::flush;
         // *out << "------------------------------------------------------------------------\n"  << std::flush;
+
+        TC.clear();
 
     }
 }
@@ -219,9 +235,7 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 *out << "Effective type free!!!\n";
             } else {
 
-                //*out << std::dec << meta->PID << std::endl;
-
-                UpdateStatics(t);
+                UpdateStatics(meta);
 
                 // Verify the type information layout
                 VerifyTypeLayout(t);
@@ -271,8 +285,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 *out << "Effective type free!!!\n";
             } else {
                 
-                //*out << std::dec << meta->PID << std::endl;
-                UpdateStatics(t);
+                UpdateStatics(meta);
 
                 // Verify the type information layout
                 VerifyTypeLayout(t);
@@ -603,8 +616,9 @@ void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc)
     }
 }
 
-void UpdateStatics(const EFFECTIVE_TYPE* t)
-{
+void UpdateStatics(const EFFECTIVE_META * meta)
+{   
+    const EFFECTIVE_TYPE *t = meta->type;
     // Count number of types used during this epoch
     if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
     {
@@ -622,6 +636,15 @@ void UpdateStatics(const EFFECTIVE_TYPE* t)
     }
     // How many different types were accesses during this epoch
     ITC[std::string(t->info->name)]++;
+
+    if (TC.find(meta->PID) == TC.end())
+    {
+        TC[meta->PID] = std::make_pair(std::string(t->info->name), 1);
+    }
+    else 
+    {
+        TC[meta->PID].second++;
+    }
 }
 
 

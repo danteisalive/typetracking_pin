@@ -123,48 +123,7 @@ VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     // EFFECTIVE_INFO *effective_tid = (EFFECTIVE_INFO *)(*effective_info);
 
 
-    // if (effective_tid->tid_info->num_accesses == 12) {
-        //  *out << std::dec   << t->info->name << "(" << t->info->tid_info->tid
-        //  << ")" <<
-        //                     " " << effective_tid->name << "(" <<
-        //                     effective_tid->tid_info->tid << ")" << std::endl;
 
-        // *out << std::dec << effective_tid->name << " " <<
-        //                     effective_meta->hash << " " <<
-        //                     effective_meta->hash2 << " " <<
-        //                     effective_tid->tid_info->tid << " " <<
-        //                     effective_tid->tid_info->num_accesses <<
-        //                     std::endl;
-
-        // TypesCount::iterator type_count_iter = TC.find(effective_meta->hash);
-        // if (type_count_iter == TC.end())
-        // {
-        //     TC.insert(std::make_pair(effective_meta->hash,
-        //     std::make_pair(effective_tid->name, 0)));
-        // }
-        // else
-        // {
-        //     if (type_count_iter->second.first != effective_tid->name){
-        //         assert(0);
-        //     }
-        //     else
-        //     {
-        //         type_count_iter->second.second++;
-        //     }
-        // }
-    //     TypesCount::iterator type_count_iter = TC.find(t->hash);
-    //     if (type_count_iter == TC.end()) {
-    //         TC.insert(
-    //             std::make_pair(t->hash, std::make_pair(t->info->name, 0)));
-    //     } else {
-    //         if (type_count_iter->second.first != t->info->name) {
-    //             assert(0);
-    //         } else {
-    //             type_count_iter->second.second++;
-    //         }
-    //     }
-    // } else
-    //     assert(0);
 
     NumOfCalls++;
 }
