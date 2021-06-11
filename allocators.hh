@@ -219,7 +219,8 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 *out << "Effective type free!!!\n";
             } else {
 
-                
+                //*out << std::dec << meta->PID << std::endl;
+
                 UpdateStatics(t);
 
                 // Verify the type information layout
@@ -241,15 +242,7 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
         }
 
     } 
-    // else if (lowfat_is_global_ptr(ptr)) {
-    //     *out << "GLOBAL ADDRESS\n";
-    // } else if (lowfat_is_stack_ptr(ptr)) {
-    //     *out << "STACK ADDRESS\n";
-    // }
 
-    // *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
-    //      << '\n'
-    //      << std::flush;
 }
 
 // Print a memory write record
@@ -278,6 +271,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 *out << "Effective type free!!!\n";
             } else {
                 
+                //*out << std::dec << meta->PID << std::endl;
                 UpdateStatics(t);
 
                 // Verify the type information layout
@@ -298,11 +292,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
         }
 
     } 
-    // else if (lowfat_is_global_ptr(ptr)) {
-    //     *out << "GLOBAL ADDRESS\n";
-    // } else if (lowfat_is_stack_ptr(ptr)) {
-    //     *out << "STACK ADDRESS\n";
-    // }
+
 }
 
 VOID Instruction(INS ins, VOID *v) {
@@ -332,7 +322,12 @@ VOID Instruction(INS ins, VOID *v) {
         (rtn_name.find("_ZdlPv") != std::string::npos) ||
         (rtn_name.find("_ZdaPv") != std::string::npos) ||
         (rtn_name.find("calloc") != std::string::npos) || 
-        (rtn_name.find("realloc") != std::string::npos)) {
+        (rtn_name.find("realloc") != std::string::npos) ||
+        (rtn_name.find("__libc_realloc") != std::string::npos) ||
+        (rtn_name.find("__libc_malloc") != std::string::npos) ||
+        (rtn_name.find("__libc_memalign") != std::string::npos) ||
+        (rtn_name.find("__​libc_calloc") != std::string::npos) ||
+        (rtn_name.find("__libc_free") != std::string::npos)) {
         //*out << "Function Name: " << rtn_name << '\n' << std::flush;
         return;
     } else {

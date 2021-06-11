@@ -183,6 +183,7 @@ struct EFFECTIVE_META
 {
     const EFFECTIVE_TYPE *type; // Object's effective type sans bounds.
     size_t size;                // Object's allocation size.
+    size_t PID;
 };
 
 /*
