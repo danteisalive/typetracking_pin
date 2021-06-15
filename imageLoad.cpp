@@ -56,7 +56,8 @@ UINT64 NumOfCalls = 0;
 // The running count of instructions is kept here
 // make it static to help the compiler optimize docount
 UINT64 icount = 0;
-
+size_t total_number_of_allocations = 0;
+size_t total_number_of_freed_allocations = 0;
 #define EFFECTIVETYPECHECK "effective_type_check"
 
 KNOB<string> KnobTypeDotFile(KNOB_MODE_WRITEONCE, "pintool", "d", "merged.dot",

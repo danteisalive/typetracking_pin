@@ -75,6 +75,8 @@ extern DefaultBasicTypePredictor *BasicTypePredictor;
 // The running count of instructions is kept here
 // make it static to help the compiler optimize docount
 extern UINT64 icount;
+extern size_t total_number_of_allocations;
+extern size_t total_number_of_freed_allocations;
 
 
 void VerifyTypeLayout(const EFFECTIVE_TYPE* t);
@@ -142,6 +144,7 @@ VOID docount() {
         double totalAllocs = 0.0;
         for (std::map<std::string, uint64_t>::iterator itr = AliveAllocations.begin(); itr != AliveAllocations.end(); ++itr)
         {
+            *out << itr->first << " " << itr->second << std::endl;
             pairs[itr->second] = itr->first;
             totalAllocs += (double)(itr->second);
         }
@@ -151,7 +154,7 @@ VOID docount() {
         for (std::map<uint64_t, std::string>::reverse_iterator itr = pairs.rbegin(); itr != pairs.rend(); ++itr)
         {
             totalAllocs95Percent += (double)(itr->first);
-            if (totalAllocs95Percent/totalAllocs >= 0.9999) uniqueTypes95Percent++;
+            if ((double)(itr->first)/totalAllocs >= 0.01) uniqueTypes95Percent++;
         }        
 
 
@@ -175,8 +178,10 @@ VOID docount() {
             << TypesUsedInEpoch.size() << " "
             << (double)Meta_Cache.Misses() * 100.0 /(double)Meta_Cache.Accesses()  << " "
             << TC.size() << " "
-            << totalAllocs95Percent/totalAllocs << " "
+           // << totalAllocs95Percent/totalAllocs << " "
             << uniqueTypes95Percent << " "
+            << total_number_of_allocations << " "
+            << total_number_of_freed_allocations << " "
             << '\n'
             << std::flush;
 
@@ -192,6 +197,7 @@ VOID docount() {
         // *out << "------------------------------------------------------------------------\n"  << std::flush;
 
         TC.clear();
+        TypesUsedInEpoch.clear();
 
     }
 }
@@ -641,7 +647,9 @@ void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc)
 void UpdateStatics(const EFFECTIVE_META * meta)
 {   
     const EFFECTIVE_TYPE *t = meta->type;
-    std::cout << std::dec << "ALLOCATED: " << *((size_t*)meta->ALIVE_ALLOCATION) << "FREED: " <<  *((size_t*)meta->FREED_ALLOCATIONS) << std::endl;
+
+    total_number_of_allocations = *((size_t*)meta->ALIVE_ALLOCATION);
+    total_number_of_freed_allocations = *((size_t*)meta->FREED_ALLOCATIONS);
     // Count number of types used during this epoch
     if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
     {
