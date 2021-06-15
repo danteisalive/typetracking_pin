@@ -47,6 +47,8 @@ using std::stringstream;
 #define TYCHE_CACHELINE_SIZE 64
 #define TYCHE_OFFSETS_IN_EACH_CACHELINE 32
 
+
+
 typedef std::map<uint64_t, std::pair<std::string, uint64_t> > TypesCount;
 typedef std::map<uint64_t, std::map<uint64_t, std::string> > TypesLayout;
 typedef TypesCount TypesCount;
@@ -136,6 +138,23 @@ VOID docount() {
         //     *out << it->first << " " << it->second << std::endl << std::flush;
         // }
 
+        std::map<uint64_t, std::string> pairs;
+        double totalAllocs = 0.0;
+        for (std::map<std::string, uint64_t>::iterator itr = AliveAllocations.begin(); itr != AliveAllocations.end(); ++itr)
+        {
+            pairs[itr->second] = itr->first;
+            totalAllocs += (double)(itr->second);
+        }
+        
+        uint64_t uniqueTypes95Percent = 0;
+        double totalAllocs95Percent = 0.0;
+        for (std::map<uint64_t, std::string>::reverse_iterator itr = pairs.rbegin(); itr != pairs.rend(); ++itr)
+        {
+            totalAllocs95Percent += (double)(itr->first);
+            if (totalAllocs95Percent/totalAllocs >= 0.9999) uniqueTypes95Percent++;
+        }        
+
+
 
 
         NumOfCalls = 0;
@@ -156,6 +175,8 @@ VOID docount() {
             << TypesUsedInEpoch.size() << " "
             << (double)Meta_Cache.Misses() * 100.0 /(double)Meta_Cache.Accesses()  << " "
             << TC.size() << " "
+            << totalAllocs95Percent/totalAllocs << " "
+            << uniqueTypes95Percent << " "
             << '\n'
             << std::flush;
 
@@ -309,6 +330,7 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 }
 
 VOID Instruction(INS ins, VOID *v) {
+
     // Insert a call to docount before every instruction, no arguments are
     // passed
     INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
@@ -619,6 +641,7 @@ void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc)
 void UpdateStatics(const EFFECTIVE_META * meta)
 {   
     const EFFECTIVE_TYPE *t = meta->type;
+    std::cout << std::dec << "ALLOCATED: " << *((size_t*)meta->ALIVE_ALLOCATION) << "FREED: " <<  *((size_t*)meta->FREED_ALLOCATIONS) << std::endl;
     // Count number of types used during this epoch
     if (TypesUsedInEpoch.find(std::string(t->info->name)) == TypesUsedInEpoch.end())
     {

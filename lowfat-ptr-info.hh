@@ -23,7 +23,7 @@
 #ifndef __LOWFAT_PTR_INFO_HH
 #define __LOWFAT_PTR_INFO_HH
 
-#define _LOWFAT_SIZES                       ((size_t *)0x200000)
+#define _LOWFAT_SIZES                       0x200000
 #define _LOWFAT_MAGICS                      ((uint64_t *)0x300000)
 #define _LOWFAT_REGION_SIZE                 68719476736ull
 #define LOWFAT_REGION_SIZE                  _LOWFAT_REGION_SIZE

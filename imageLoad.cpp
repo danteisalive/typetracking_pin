@@ -271,43 +271,6 @@ int main(INT32 argc, CHAR **argv) {
     PIN_AddFiniFunction(Fini, 0);
     ParentTID = 0;
 
-    //std::string TIDFileName("1.hash");
-    // std::string HashMapFileName("final.hash");
-
-    // Replace 'Plop' with your file name.
-    // std::ifstream           TIDFile(TIDFileName.c_str());
-    // std::ifstream           HashMapFile(HashMapFileName.c_str());
-
-    // std::string   line;
-    // Read one line at a time into the variable line:
-    // while(std::getline(TIDFile, line))
-    // {
-    //     std::stringstream  lineStream(line);
-
-    //     int value, key;
-    //     lineStream >> key;
-    //     // Read an integer at a time from the line
-    //     while(lineStream >> value)
-    //     {
-    //         // Add the integers from a line to a 1D array (vector)
-    //         TypeTreeTID[key].push_back(value);
-    //     }
-    // }
-
-    // while(std::getline(HashMapFile, line))
-    // {
-    //     std::stringstream  lineStream(line);
-
-    //     uint64_t  key;
-    //     int value;
-
-    //     lineStream >> key;
-    //     lineStream >> value;
-    //     // Add the integers from a line to a 1D array (vector)
-    //     HashMapTID[key] = value;
-
-    // }
-
     // Never returns
     PIN_StartProgram();
 
