@@ -75,6 +75,7 @@ InsTypeCount ParrentTypeIDs;
 TypesLayout  TyCheTypeLayout;
 UINT64 ParentTID;
 InsTypeCount TypesUsedInEpoch;
+TypeTreeUsage TyCHETypeTreeUsage;
 
 DefaultLVPT *ParentTypePredictor;
 DefaultBasicTypePredictor *BasicTypePredictor;

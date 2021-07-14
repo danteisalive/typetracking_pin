@@ -50,11 +50,12 @@ using std::stringstream;
 
 
 typedef std::map<uint64_t, std::pair<std::string, uint64_t> > TypesCount;
-typedef std::map<uint64_t, std::map<uint64_t, std::string> > TypesLayout;
+typedef std::map<uint64_t, std::map<uint64_t, std::pair<std::string, uint64_t> > > TypesLayout;
 typedef TypesCount TypesCount;
 typedef TypesLayout TypesLayout;
 
 typedef std::map<std::string, uint64_t> InsTypeCount;
+typedef std::map<uint64_t, uint64_t> TypeTreeUsage;
 typedef InsTypeCount InsTypeCount;
 
 extern FILE* effectiveDumpFile;
@@ -63,6 +64,7 @@ extern TypesCount TC;
 extern InsTypeCount ITC;
 extern InsTypeCount ParrentTypeIDs;
 extern TypesLayout TyCheTypeLayout;
+extern TypeTreeUsage TyCHETypeTreeUsage;
 extern UINT64 ParentTID;
 
 extern UINT64 NumOfCalls;
@@ -144,7 +146,7 @@ VOID docount() {
         double totalAllocs = 0.0;
         for (std::map<std::string, uint64_t>::iterator itr = AliveAllocations.begin(); itr != AliveAllocations.end(); ++itr)
         {
-            *out << itr->first << " " << itr->second << std::endl;
+            //*out << itr->first << " " << itr->second << std::endl;
             pairs[itr->second] = itr->first;
             totalAllocs += (double)(itr->second);
         }
@@ -163,13 +165,33 @@ VOID docount() {
         NumOfCalls = 0;
         
 
-        //int numOfRulesUsedDuringThisPeriod = 0;
-        // for (InsTypeCount::iterator it = ITC.begin(); it != ITC.end(); it++) {
-        //     if (it->second != 0) {
-        //         //*out << std::dec << it->first << "(" << it->second <<  ")\n";
-        //         it->second = 0;
-        //         numOfRulesUsedDuringThisPeriod++;
+        // find the percentage of type tree
+        double totalTypeTreeUsage = 0.0;
+        for (TypeTreeUsage::iterator it = TyCHETypeTreeUsage.begin(); it != TyCHETypeTreeUsage.end(); it++)
+        {
+            assert(TyCheTypeLayout.find(it->first) != TyCheTypeLayout.end());
+            TypesLayout::iterator typeTreeIterator = TyCheTypeLayout.find(it->first);
+            assert(typeTreeIterator != TyCheTypeLayout.end());
+            int subTreeUsed = 0;
+            for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = typeTreeIterator->second.begin(); offsetsIterator != typeTreeIterator->second.end(); offsetsIterator++)
+            {
+                if (offsetsIterator->second.second > 0) subTreeUsed++;
+                offsetsIterator->second.second = 0;
+            }
+
+            assert(typeTreeIterator->second.size() != 0);
+            double percentage = (double)subTreeUsed/(double)typeTreeIterator->second.size();
+            totalTypeTreeUsage += percentage;
+
+        }
+
+        // for (TypesLayout::iterator it = TyCheTypeLayout.begin(); it != TyCheTypeLayout.end(); it++)
+        // {
+        //     for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = it->second.begin(); offsetsIterator != it->second.end(); offsetsIterator++)
+        //     {
+        //         offsetsIterator->second.second = 0;
         //     }
+
         // }
 
         *out << std::dec
@@ -182,6 +204,7 @@ VOID docount() {
             << uniqueTypes95Percent << " "
             << total_number_of_allocations << " "
             << total_number_of_freed_allocations << " "
+            << (totalTypeTreeUsage * 100.0 / TyCHETypeTreeUsage.size()) << " "
             << '\n'
             << std::flush;
 
@@ -198,6 +221,9 @@ VOID docount() {
 
         TC.clear();
         TypesUsedInEpoch.clear();
+        TyCHETypeTreeUsage.clear();
+
+        
 
     }
 }
@@ -616,13 +642,13 @@ void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc)
     // add it if it's not added already
     if (TyCheTypeLayout.find((uint64_t)t->tyche_meta) == TyCheTypeLayout.end())
     {    
-        #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
+       #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
             *out << std::dec << "Parent Name: " << t->info->name << " Length: " << t->length << std::endl << std::flush;
         #endif
         for (size_t type_entry_id = 0; type_entry_id < t->length-1 ; type_entry_id++)
         {
             assert(t->layout[type_entry_id].name != NULL);
-            TyCheTypeLayout[(uint64_t)t->tyche_meta][t->layout[type_entry_id].offset] = std::string(t->layout[type_entry_id].name);
+            TyCheTypeLayout[(uint64_t)t->tyche_meta][t->layout[type_entry_id].offset] = std::make_pair(std::string(t->layout[type_entry_id].name), 0);
             #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
                 *out << std::dec << "Offset: " <<  t->layout[type_entry_id].offset << " Name: " <<  t->layout[type_entry_id].name << " " <<  std::flush;
             #endif
@@ -630,17 +656,19 @@ void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc)
         assert(t->layout[t->length-1].offset == UINT64_MAX);
         #ifdef ENABLE_TYCHE_LAYOUT_DEBUG
             *out <<  "\n----------------------------------------------------\n";
-        #endif
+       #endif
     }
 
     //Basic Type Predictor 
     TypesLayout::iterator typeTreeIterator = TyCheTypeLayout.find((uint64_t)t->tyche_meta);
     assert(typeTreeIterator != TyCheTypeLayout.end());
-    std::map<uint64_t,std::string>::iterator offsetsIterator = typeTreeIterator->second.find(offset);
+    std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = typeTreeIterator->second.find(offset);
     //assert(offsetsIterator != typeTreeIterator->second.end());
     if (offsetsIterator != typeTreeIterator->second.end())
     {
-        BasicTypePredictor->lookup((uint64_t)pc, offsetsIterator->second);
+        TyCHETypeTreeUsage[(uint64_t)t->tyche_meta] = 0;
+        offsetsIterator->second.second++;
+        BasicTypePredictor->lookup((uint64_t)pc, offsetsIterator->second.first);
     }
 }
 
