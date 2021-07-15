@@ -81,6 +81,8 @@ std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 
 DefaultLVPT *lvpt;
 
+std::map<int, int> TypesDepth;
+
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 <<
     // std::endl;
@@ -291,13 +293,20 @@ VOID Fini(INT32 code, VOID *v) {
     out->close();
 }
 void retreiveEffInfosFromFile(const std::string hashFileName) {
-    *out << hashFileName << "\n";
-    std::ifstream afile(hashFileName.c_str());
+    //*out << hashFileName << "\n";
+
+    std::ifstream afile;    
+    afile.open(hashFileName.c_str(), ios::in);
+    if(!afile)
+    {
+        assert(0);
+    } 
+    // std::ifstream afile(hashFileName.c_str());
     std::string line;
     std::vector<std::string> strs;
 
     while (std::getline(afile, line)) {
-        *out << line << "\n";
+        //*out << line << "\n";
         std::string eff_info_global_name;
         uint64_t tid;
         uint64_t access;
@@ -357,8 +366,8 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
         effInfos.insert(std::pair<std::string, my_effective_info>(
             eff_info_global_name, eff_info));
     }
-    *out << "Exited "
-         << "\n";
+    // *out << "Exited "
+    //      << "\n";
     afile.close();
 }
 
@@ -395,7 +404,7 @@ void printTypeTree() {
         itr;
     for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
         int tid = itr->first;
-        *out << "TypeID = " << tid << ": \n";
+        *out << std::dec << "TypeID = " << tid << ": \n";
         std::map<int, std::set<std::pair<int, int> > > mp = itr->second;
         std::map<int, std::set<std::pair<int, int> > >::iterator mpItr =
             mp.begin();
@@ -413,6 +422,78 @@ void printTypeTree() {
 
             mpItr++;
         }
+    }
+}
+
+
+
+int dfs(int tid)
+{
+
+        if (TypesDepth.find(tid) != TypesDepth.end())
+        {
+            std::cout << std::dec << "Returning depth: " << TypesDepth[tid] << " for TID: " << tid << std::endl;
+            return TypesDepth[tid];
+        }
+
+        std::map<int, std::map<int, std::set<std::pair<int, int> > > >::iterator itr;
+        itr = typeTree.find(tid); assert(itr != typeTree.end());
+
+        std::map<int, std::set<std::pair<int, int> > > mp = itr->second;
+        std::map<int, std::set<std::pair<int, int> > >::iterator mpItr = mp.begin();
+        
+        int offsetDepth = 0;
+        std::cout << "TID = " << tid << std::endl;
+        while (mpItr != mp.end()) {
+            int offset = mpItr->first;
+            std::set<std::pair<int, int> > set = mpItr->second;
+            std::set<std::pair<int, int> >::iterator setItr = set.begin();
+            int maxDepth = 0;;
+            while (setItr != set.end()) {
+                
+                if ((*setItr).first == tid) {
+                    if (maxDepth < 1)  maxDepth = 1;
+                }
+                else 
+                {
+                    int depth = dfs((*setItr).first) + 1;
+                    if (depth > maxDepth) maxDepth = depth;
+                }
+                std::cout << "\t\tSubObject = " << (*setItr).first << " Depth = " << maxDepth << std::endl;
+                setItr++;
+            }
+
+            if (maxDepth > offsetDepth) offsetDepth = maxDepth;
+
+            std::cout << "\tOffset = " << offset << " Depth: " << offsetDepth << std::endl;
+
+            mpItr++;
+        }
+
+        return offsetDepth;
+
+}
+
+void buildTypeTreeDepthMap() {
+
+
+    std::map<int, std::map<int, std::set<std::pair<int, int> > > >::iterator itr;
+
+    for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
+        int tid = itr->first;
+        int depth = dfs(tid);
+        std::cout << std::dec << "Setting TID = " << tid << " Depth = " <<  depth << std::endl;
+        TypesDepth[tid] = depth;
+        std::cout << std::dec << "--------------------------------------------------" << std::endl;
+    }
+}
+
+void printDepthTree ()
+{
+    *out << "Types Depth: \n";
+    for (std::map<int,int>::iterator it = TypesDepth.begin(); it != TypesDepth.end(); it++)
+    {
+        *out << std::dec << it->first << " = " << it->second << std::endl;
     }
 }
 
@@ -436,7 +517,7 @@ int main(INT32 argc, CHAR **argv) {
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
 
-    std::string TIDFileName("1.hash");
+    std::string TIDFileName("/home/dante/EffSan/test/type_tree.hash");
     // std::string HashMapFileName("final.hash");
 
     retreiveEffInfosFromFile(TIDFileName);
@@ -445,6 +526,10 @@ int main(INT32 argc, CHAR **argv) {
         buildTypeTree(itr->second);
     }
     printTypeTree();
+    *out << std::flush;
+    buildTypeTreeDepthMap();
+    printDepthTree();
+    
     // Replace 'Plop' with your file name.
     // std::ifstream           TIDFile(TIDFileName.c_str());
     // std::ifstream           HashMapFile(HashMapFileName.c_str());
@@ -478,7 +563,7 @@ int main(INT32 argc, CHAR **argv) {
     //     HashMapTID[key] = value;
 
     // }
-
+    assert(0);
     // Never returns
     PIN_StartProgram();
 

@@ -509,12 +509,12 @@ VOID Instruction(INS ins, VOID *v) {
 VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                    const CONTEXT *ctx, ADDRINT opcode,
                    std::vector<UINT32> *RRegs, std::vector<UINT32> *WRegs) {
-    *out << "RecordMemRead: "
-         << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-         << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-         << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-         << ")\n"
-         << std::flush;
+    // *out << "RecordMemRead: "
+    //      << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+    //      << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+    //      << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+    //      << ")\n"
+    //      << std::flush;
 
     void *ptr = (void *)addr;
 
@@ -541,8 +541,8 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             } else {
                 size_t offset = (uint8_t *)ptr - (uint8_t *)base;
                 size_t offset_unadjusted = offset;
-                *out << "offset = " << offset << ", t->size = " << t->size
-                     << '\n';
+                // *out << "offset = " << offset << ", t->size = " << t->size
+                //      << '\n';
 
                 if (offset >= t->size) {
                     // The `offset' is >= sizeof(T).  Thus `ptr' may be
@@ -558,45 +558,53 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     // bounds += adjust;
                     offset += t->offset_fam;
 
-                    *out << "FAM or Array. Offset is adjusted. Offset = "
-                         << offset << ", t->size = " << t->size << '\n';
+                    // *out << "FAM or Array. Offset is adjusted. Offset = "
+                    //      << offset << ", t->size = " << t->size << '\n';
                 }
+                *out << "RecordMemRead: "
+                     << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+                     << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+                     << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+                     << ")\n"
+                     << std::flush;
+                *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl<< std::flush;
 
                 if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
-                    *out << "Could not find effective_info\n";
+                    //*out << "Could not find effective_info\n";
                 } else {
                     if (typeTree[t->info->tid_info->tid].find(offset) ==
                         typeTree[t->info->tid_info->tid].end()) {
-                        *out << "Could not find offset: " << offset << "\n";
+                        // *out << "Could not find offset: " << offset << "\n";
                     } else {
                         std::set<std::pair<int, int> > pairs =
                             typeTree[t->info->tid_info->tid][offset];
                         std::set<std::pair<int, int> >::iterator it;
                         for (it = pairs.begin(); it != pairs.end(); it++) {
-                            *out << "offset typeID = " << it->first << '\n';
+                            //*out << "offset typeID = " << it->first << '\n';
                         }
                     }
                 }
                 if (offset_unadjusted > meta->size) {
-                    *out << "out of bound error";
+                    //*out << "out of bound error";
                 }
             }
 
             // Calculate and normalize the `offset'.
         }
 
-        *out << "\n";
-    } else if (lowfat_is_global_ptr(ptr)) {
-        // ptr_type += "(GLOBAL)";
-    } else if (lowfat_is_stack_ptr(ptr)) {
-        // size_t idx = lowfat_index(ptr);
-        // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-        //     _LOWFAT_MAGICS[idx] == 0) {
-        //     ;
-        // } else {
-        //     ptr_type += "(STACK)";
-        // }
-    }
+       // *out << "\n";
+    } 
+    // else if (lowfat_is_global_ptr(ptr)) {
+    //     // ptr_type += "(GLOBAL)";
+    // } else if (lowfat_is_stack_ptr(ptr)) {
+    //     // size_t idx = lowfat_index(ptr);
+    //     // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+    //     //     _LOWFAT_MAGICS[idx] == 0) {
+    //     //     ;
+    //     // } else {
+    //     //     ptr_type += "(STACK)";
+    //     // }
+    // }
 
     // *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
     //      << '\n'
@@ -607,21 +615,21 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     const CONTEXT *ctx, ADDRINT opcode,
                     std::vector<UINT32> *RRegs, std::vector<UINT32> *WRegs) {
-    *out << "RecordMemWrite: "
-         << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-         << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-         << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-         << ")\n"
-         << std::flush;
+    // *out << "RecordMemWrite: "
+    //      << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+    //      << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+    //      << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+    //      << ")\n"
+    //      << std::flush;
 
     void *ptr = (void *)addr;
 
     if (lowfat_is_heap_ptr(ptr)) {
-        *out << "\n";
+        //*out << "\n";
         size_t idx = lowfat_index(ptr);
         if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
             _LOWFAT_MAGICS[idx] == 0) {
-            *out << "`ptr' is a non-fat-pointer\n";
+            //*out << "`ptr' is a non-fat-pointer\n";
         } else {
             void *base = lowfat_base(ptr);
 
@@ -635,13 +643,13 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             // EFFECTIVE_BOUNDS bounds = bases + sizes;
 
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
-                *out << "Effective type free!!!\n";
+                //*out << "Effective type free!!!\n";
             } else {
                 size_t offset = (uint8_t *)ptr - (uint8_t *)base;
                 size_t offset_unadjusted = offset;
 
-                *out << "offset = " << offset << ", t->size = " << t->size
-                     << '\n';
+                // *out << "offset = " << offset << ", t->size = " << t->size
+                //      << '\n';
 
                 if (offset >= t->size) {
                     // The `offset' is >= sizeof(T).  Thus `ptr' may be
@@ -657,45 +665,52 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     // bounds += adjust;
                     offset += t->offset_fam;
 
-                    *out << "FAM or Array. Offset is adjusted. Offset = "
-                         << offset << ", t->size = " << t->size << '\n';
+                    // *out << "FAM or Array. Offset is adjusted. Offset = "
+                    //      << offset << ", t->size = " << t->size << '\n';
                 }
-
+                *out << "RecordMemWrite: "
+                    << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+                    << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+                    << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+                    << ")\n"
+                    << std::flush;
+                *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl << std::flush;
                 if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
-                    *out << "Could not find effective_info\n";
+                    //*out << "Could not find effective_info\n";
                 } else {
                     if (typeTree[t->info->tid_info->tid].find(offset) ==
                         typeTree[t->info->tid_info->tid].end()) {
-                        *out << "Could not find offset: " << offset << "\n";
+                      //  *out << "Could not find offset: " << offset << "\n";
                     } else {
                         std::set<std::pair<int, int> > pairs =
                             typeTree[t->info->tid_info->tid][offset];
                         std::set<std::pair<int, int> >::iterator it;
                         for (it = pairs.begin(); it != pairs.end(); it++) {
-                            *out << "offset typeID = " << it->first << '\n';
+                        //    *out << "offset typeID = " << it->first << '\n';
                         }
                     }
                 }
                 if (offset_unadjusted > meta->size) {
-                    *out << "out of bound error";
+                    //*out << "out of bound error";
                 }
             }
 
             // Calculate and normalize the `offset'.
         }
 
-        *out << "\n";
-    } else if (lowfat_is_global_ptr(ptr)) {
-        // ptr_type += "(GLOBAL)";
-    } else if (lowfat_is_stack_ptr(ptr)) {
-        // size_t idx = lowfat_index(ptr);
-        // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
-        //     _LOWFAT_MAGICS[idx] == 0) {
-        //     ;
-        // } else {
-        //     ptr_type += "(STACK)";
-        // }
-    }
+        //*out << "\n";
+    } 
+    // else if (lowfat_is_global_ptr(ptr)) {
+    //     // ptr_type += "(GLOBAL)";
+    // } else if (lowfat_is_stack_ptr(ptr)) {
+    //     // size_t idx = lowfat_index(ptr);
+    //     // if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
+    //     //     _LOWFAT_MAGICS[idx] == 0) {
+    //     //     ;
+    //     // } else {
+    //     //     ptr_type += "(STACK)";
+    //     // }
+    // }
 }
 
 VOID Instruction(INS ins, VOID *v) {
