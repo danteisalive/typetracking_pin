@@ -87,9 +87,13 @@ std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 DefaultLVPT *lvpt;
 
 std::map<int, int> TypesDepth;
+std::map<int, int> CompositeTypes;
+
 
 double AverageTypeTreeDepth;
 uint64_t NumOfMemAccesses; 
+double AverageTypeTreeDepthInEpoch;
+uint64_t NumOfMemAccessesInEpoch; 
 
 
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
@@ -299,6 +303,10 @@ VOID Fini(INT32 code, VOID *v) {
             "------\n"
          << std::flush;
 
+    *out << "Final Results:\n";
+    *out << AverageTypeTreeDepth/(double)NumOfMemAccesses << " "
+         << std::endl << std::flush;
+
     out->close();
 }
 void retreiveEffInfosFromFile(const std::string hashFileName) {
@@ -506,6 +514,20 @@ void printDepthTree ()
     }
 }
 
+void buildTypeTreeNodeCountMap() {
+
+
+    std::map<int, std::map<int, std::set<std::pair<int, int> > > >::iterator itr;
+
+    for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
+        int tid = itr->first;
+        int depth = dfs(tid);
+        std::cout << std::dec << "Setting TID = " << tid << " Depth = " <<  depth << std::endl;
+        TypesDepth[tid] = depth;
+        std::cout << std::dec << "--------------------------------------------------" << std::endl;
+    }
+}
+
 int main(INT32 argc, CHAR **argv) {
     PIN_InitSymbols();
     PIN_Init(argc, argv);
@@ -517,6 +539,8 @@ int main(INT32 argc, CHAR **argv) {
 
     AverageTypeTreeDepth = 0;
     NumOfMemAccesses = 0; 
+    AverageTypeTreeDepthInEpoch = 0;
+    NumOfMemAccessesInEpoch = 0; 
 
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);

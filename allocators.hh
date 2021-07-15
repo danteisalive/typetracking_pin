@@ -38,6 +38,8 @@ extern UINT64 NumOfCalls;
 
 extern double AverageTypeTreeDepth;
 extern uint64_t NumOfMemAccesses; 
+extern double AverageTypeTreeDepthInEpoch;
+extern uint64_t NumOfMemAccessesInEpoch; 
 extern std::map<int, int> TypesDepth;
 
 extern std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
@@ -102,13 +104,18 @@ VOID docount() {
                 numOfRulesUsedDuringThisPeriod++;
             }
         }
+        if (NumOfMemAccessesInEpoch == 0) {NumOfMemAccessesInEpoch = 1; AverageTypeTreeDepthInEpoch = 0;}
+
         *out << std::dec
-             << AverageTypeTreeDepth / (double)NumOfMemAccesses << " "
+             << AverageTypeTreeDepthInEpoch / (double)NumOfMemAccessesInEpoch << " "
              << std::endl 
              << std::flush;
         
         //"------------------------------------------------------------------------\n"
         //<< std::flush;
+        AverageTypeTreeDepthInEpoch = 0;
+        NumOfMemAccessesInEpoch = 0;
+
     }
 }
 
@@ -573,8 +580,10 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 //      << std::flush;
                 // *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl<< std::flush;
 
+                NumOfMemAccessesInEpoch++;
                 NumOfMemAccesses++;
                 std::map<int, int>::iterator tt_depth_iter = TypesDepth.find(t->info->tid_info->tid);
+                AverageTypeTreeDepthInEpoch += tt_depth_iter->second;
                 AverageTypeTreeDepth += tt_depth_iter->second;
 
                 if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
@@ -684,8 +693,10 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 //     << std::flush;
                 // *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl << std::flush;
 
+                NumOfMemAccessesInEpoch++;
                 NumOfMemAccesses++;
                 std::map<int, int>::iterator tt_depth_iter = TypesDepth.find(t->info->tid_info->tid);
+                AverageTypeTreeDepthInEpoch += tt_depth_iter->second;
                 AverageTypeTreeDepth += tt_depth_iter->second;
 
 
