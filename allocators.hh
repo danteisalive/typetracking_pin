@@ -36,6 +36,10 @@ extern InsTypeCount ITC;
 
 extern UINT64 NumOfCalls;
 
+extern double AverageTypeTreeDepth;
+extern uint64_t NumOfMemAccesses; 
+extern std::map<int, int> TypesDepth;
+
 extern std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 
 extern DefaultLVPT *lvpt;
@@ -98,11 +102,11 @@ VOID docount() {
                 numOfRulesUsedDuringThisPeriod++;
             }
         }
-        *out << std::dec << numOfRulesUsedDuringThisPeriod << " "
-             << (double)lvpt->LVPTMissprediction / lvpt->LVPTNumOfAccesses
-             << '\n'
+        *out << std::dec
+             << AverageTypeTreeDepth / (double)NumOfMemAccesses << " "
+             << std::endl 
              << std::flush;
-        //*out <<
+        
         //"------------------------------------------------------------------------\n"
         //<< std::flush;
     }
@@ -112,7 +116,7 @@ bool findPtrType(const EFFECTIVE_INFO *info) {
     assert(info->num_entries >= 0);
 
     if (info->num_entries == 0) {
-        *out << std::dec << info->name << "\n" << std::flush;
+        //*out << std::dec << info->name << "\n" << std::flush;
         ;
         //*out << std::dec << info->hash << "\n" << std::flush;;
         // *out << std::hex << info->entries[0].lb << "\n" << std::flush;;
@@ -127,9 +131,9 @@ bool findPtrType(const EFFECTIVE_INFO *info) {
 }
 
 static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
-    *out << "-------------------- " << std::hex << pc << std::dec
-         << " ------------------" << '\n'
-         << std::flush;
+    // *out << "-------------------- " << std::hex << pc << std::dec
+    //      << " ------------------" << '\n'
+    //      << std::flush;
     for (int reg = (int)REG_GR_BASE; reg <= (int)REG_GR_LAST; ++reg) {
         // For the integer registers, it is safe to use ADDRINT. But make sure
         // to pass a pointer to it.
@@ -152,9 +156,9 @@ static void PrintRegisters(ADDRINT pc, const CONTEXT *ctxt) {
             }
         }
 
-        *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
-             << '\n'
-             << std::flush;
+        // *out << REG_StringShort((REG)reg) << ": " << std::hex << val << ptr_type
+        //      << '\n'
+        //      << std::flush;
     }
 }
 
@@ -519,11 +523,11 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
     void *ptr = (void *)addr;
 
     if (lowfat_is_heap_ptr(ptr)) {
-        *out << "\n";
+        // *out << "\n";
         size_t idx = lowfat_index(ptr);
         if (idx > EFFECTIVE_LOWFAT_NUM_REGIONS_LIMIT ||
             _LOWFAT_MAGICS[idx] == 0) {
-            *out << "`ptr' is a non-fat-pointer\n";
+            // *out << "`ptr' is a non-fat-pointer\n";
         } else {
             void *base = lowfat_base(ptr);
 
@@ -537,7 +541,7 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
             // EFFECTIVE_BOUNDS bounds = bases + sizes;
 
             if (EFFECTIVE_UNLIKELY(t == NULL)) {
-                *out << "Effective type free!!!\n";
+                // *out << "Effective type free!!!\n";
             } else {
                 size_t offset = (uint8_t *)ptr - (uint8_t *)base;
                 size_t offset_unadjusted = offset;
@@ -561,13 +565,17 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     // *out << "FAM or Array. Offset is adjusted. Offset = "
                     //      << offset << ", t->size = " << t->size << '\n';
                 }
-                *out << "RecordMemRead: "
-                     << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-                     << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-                     << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-                     << ")\n"
-                     << std::flush;
-                *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl<< std::flush;
+                // *out << "RecordMemRead: "
+                //      << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+                //      << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+                //      << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+                //      << ")\n"
+                //      << std::flush;
+                // *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl<< std::flush;
+
+                NumOfMemAccesses++;
+                std::map<int, int>::iterator tt_depth_iter = TypesDepth.find(t->info->tid_info->tid);
+                AverageTypeTreeDepth += tt_depth_iter->second;
 
                 if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
                     //*out << "Could not find effective_info\n";
@@ -668,13 +676,19 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                     // *out << "FAM or Array. Offset is adjusted. Offset = "
                     //      << offset << ", t->size = " << t->size << '\n';
                 }
-                *out << "RecordMemWrite: "
-                    << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
-                    << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
-                    << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
-                    << ")\n"
-                    << std::flush;
-                *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl << std::flush;
+                // *out << "RecordMemWrite: "
+                //     << ": PC(" << std::hex << pc << ") Addr(" << addr << ") " << std::dec
+                //     << "Size(" << size << ") " << std::dec << "Opcode: (" << (UINT32)opcode
+                //     << ") (" << std::hex << OPCODE_StringShort(opcode) << ") (" << *disass
+                //     << ")\n"
+                //     << std::flush;
+                // *out << std::dec << "TID: " << t->info->tid_info->tid << std::endl << std::flush;
+
+                NumOfMemAccesses++;
+                std::map<int, int>::iterator tt_depth_iter = TypesDepth.find(t->info->tid_info->tid);
+                AverageTypeTreeDepth += tt_depth_iter->second;
+
+
                 if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
                     //*out << "Could not find effective_info\n";
                 } else {
@@ -730,7 +744,22 @@ VOID Instruction(INS ins, VOID *v) {
     if ((rtn_name.find("lowfat_") != std::string::npos) ||
         (rtn_name.find("effective_") != std::string::npos) ||
         (rtn_name.find("EFFECTIVE_") != std::string::npos) ||
-        (rtn_name.find("LOWFAT_") != std::string::npos)) {
+        (rtn_name.find("LOWFAT_") != std::string::npos) || 
+        (rtn_name.find("malloc") != std::string::npos) || 
+        (rtn_name.find("_Znwm") != std::string::npos) || 
+        (rtn_name.find("_Znam") != std::string::npos) || 
+        (rtn_name.find("_ZnwmRKSt9nothrow_t") != std::string::npos) || 
+        (rtn_name.find("_ZnamRKSt9nothrow_t") != std::string::npos) ||
+        (rtn_name.find("free") != std::string::npos) ||
+        (rtn_name.find("_ZdlPv") != std::string::npos) ||
+        (rtn_name.find("_ZdaPv") != std::string::npos) ||
+        (rtn_name.find("calloc") != std::string::npos) || 
+        (rtn_name.find("realloc") != std::string::npos) ||
+        (rtn_name.find("__libc_realloc") != std::string::npos) ||
+        (rtn_name.find("__libc_malloc") != std::string::npos) ||
+        (rtn_name.find("__libc_memalign") != std::string::npos) ||
+        (rtn_name.find("__​libc_calloc") != std::string::npos) ||
+        (rtn_name.find("__libc_free") != std::string::npos)) {
         //*out << "Function Name: " << rtn_name << '\n' << std::flush;
         return;
     } else {

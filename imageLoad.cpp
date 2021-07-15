@@ -88,6 +88,10 @@ DefaultLVPT *lvpt;
 
 std::map<int, int> TypesDepth;
 
+double AverageTypeTreeDepth;
+uint64_t NumOfMemAccesses; 
+
+
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 <<
     // std::endl;
@@ -511,6 +515,9 @@ int main(INT32 argc, CHAR **argv) {
 
     lvpt = new DefaultLVPT(1024, 16, 0, 1);
 
+    AverageTypeTreeDepth = 0;
+    NumOfMemAccesses = 0; 
+
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);
 
@@ -568,7 +575,7 @@ int main(INT32 argc, CHAR **argv) {
     //     HashMapTID[key] = value;
 
     // }
-    assert(0);
+    //assert(0);
     // Never returns
     PIN_StartProgram();
 
