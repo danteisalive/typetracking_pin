@@ -65,8 +65,13 @@ KNOB<string> KnobTypeDotFile(KNOB_MODE_WRITEONCE, "pintool", "d", "merged.dot",
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o",
                             "imageload.out", "specify output file name");
 
+KNOB<string> TIDFileName(KNOB_MODE_WRITEONCE, "pintool", "i",
+                            "", "specify type tree path");
+
 KNOB<BOOL> KnobImageOnly(KNOB_MODE_WRITEONCE, "pintool", "l", "0",
                          "List the loaded images");
+
+
 
 TypesCount TC;
 InsTypeCount ITC;
@@ -517,10 +522,10 @@ int main(INT32 argc, CHAR **argv) {
     // Register Fini to be called when the application exits
     PIN_AddFiniFunction(Fini, 0);
 
-    std::string TIDFileName("/home/dante/EffSan/test/type_tree.hash");
+    //std::string TIDFileName("/home/dante/EffSan/test/type_tree.hash");
     // std::string HashMapFileName("final.hash");
 
-    retreiveEffInfosFromFile(TIDFileName);
+    retreiveEffInfosFromFile(TIDFileName.Value().c_str());
     std::map<std::string, my_effective_info>::iterator itr;
     for (itr = effInfos.begin(); itr != effInfos.end(); ++itr) {
         buildTypeTree(itr->second);
