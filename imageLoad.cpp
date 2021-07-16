@@ -87,7 +87,8 @@ std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 DefaultLVPT *lvpt;
 
 std::map<int, int> TypesDepth;
-std::map<int, int> CompositeTypes;
+std::map<int, int> TypesNodeCount;
+std::map<int, std::string> TIDNames;
 
 
 double AverageTypeTreeDepth;
@@ -338,7 +339,7 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
                      boost::token_compress_on);
         eff_info_global_name = strs[0];
         // To-change
-        // std::cerr << "Ahmad\n";
+        
         tid = atoi(strs[1].c_str());
         access = atol(strs[2].c_str());
         name = strs[3];
@@ -346,6 +347,8 @@ void retreiveEffInfosFromFile(const std::string hashFileName) {
         num_entries = atoi(strs[5].c_str());
         flags = atoi(strs[6].c_str());
         next = strs[7];
+
+        TIDNames[tid] = name;
 
         for (unsigned int i = 0; i < num_entries; i++) {
             int idx = 8 + i * 4;
@@ -444,7 +447,7 @@ void printTypeTree() {
 
 
 
-int dfs(int tid)
+int dfs_depth(int tid)
 {
 
         if (TypesDepth.find(tid) != TypesDepth.end())
@@ -473,7 +476,7 @@ int dfs(int tid)
                 }
                 else 
                 {
-                    int depth = dfs((*setItr).first) + 1;
+                    int depth = dfs_depth((*setItr).first) + 1;
                     if (depth > maxDepth) maxDepth = depth;
                 }
                 std::cout << "\t\tSubObject = " << (*setItr).first << " Depth = " << maxDepth << std::endl;
@@ -498,7 +501,7 @@ void buildTypeTreeDepthMap() {
 
     for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
         int tid = itr->first;
-        int depth = dfs(tid);
+        int depth = dfs_depth(tid);
         std::cout << std::dec << "Setting TID = " << tid << " Depth = " <<  depth << std::endl;
         TypesDepth[tid] = depth;
         std::cout << std::dec << "--------------------------------------------------" << std::endl;
@@ -510,8 +513,57 @@ void printDepthTree ()
     *out << "Types Depth: \n";
     for (std::map<int,int>::iterator it = TypesDepth.begin(); it != TypesDepth.end(); it++)
     {
-        *out << std::dec << it->first << " = " << it->second << std::endl;
+        assert(TIDNames.find(it->first) != TIDNames.end());
+        *out << std::dec << it->first << "(" << TIDNames[it->first] << ")" << " = " << it->second << std::endl;
     }
+}
+
+
+int dfs_node_count(int tid)
+{
+
+        if (TypesNodeCount.find(tid) != TypesNodeCount.end())
+        {
+            std::cout << std::dec << "Returning Node Count: " << TypesNodeCount[tid] << " for TID: " << tid << std::endl;
+            return TypesNodeCount[tid];
+        }
+
+        std::map<int, std::map<int, std::set<std::pair<int, int> > > >::iterator itr;
+        itr = typeTree.find(tid); assert(itr != typeTree.end());
+
+        std::map<int, std::set<std::pair<int, int> > > mp = itr->second;
+        std::map<int, std::set<std::pair<int, int> > >::iterator mpItr = mp.begin();
+        
+        int TIDNodeCount = 0;
+        std::cout << "TID = " << tid << std::endl;
+        while (mpItr != mp.end()) {
+            int offset = mpItr->first;
+            std::set<std::pair<int, int> > set = mpItr->second;
+            std::set<std::pair<int, int> >::iterator setItr = set.begin();
+            int MaxNodeCount = 0;;
+            while (setItr != set.end()) {
+                
+                if ((*setItr).first == tid) {
+                    if (MaxNodeCount < 1) MaxNodeCount = 1;
+                }
+                else 
+                {
+                    int NodeCount = dfs_node_count((*setItr).first);
+                    if (NodeCount > MaxNodeCount) MaxNodeCount = NodeCount;
+                }
+                std::cout << "\t\tSubObject TID = " << (*setItr).first << " SubObject Size = " << (*setItr).second << " Node Count = " << MaxNodeCount << std::endl;
+                setItr++;
+            }
+
+            TIDNodeCount += MaxNodeCount;
+
+            std::cout << "\tOffset = " << offset << " Node Count: " << TIDNodeCount << std::endl;
+
+            mpItr++;
+        }
+
+        return TIDNodeCount;
+
 }
 
 void buildTypeTreeNodeCountMap() {
@@ -521,10 +573,23 @@ void buildTypeTreeNodeCountMap() {
 
     for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
         int tid = itr->first;
-        int depth = dfs(tid);
-        std::cout << std::dec << "Setting TID = " << tid << " Depth = " <<  depth << std::endl;
-        TypesDepth[tid] = depth;
+        int nodeCounts = dfs_node_count(tid);
+        std::cout << std::dec << "Setting TID = " << tid << " Node Counts = " <<  nodeCounts << std::endl;
+        TypesNodeCount[tid] = nodeCounts;
         std::cout << std::dec << "--------------------------------------------------" << std::endl;
+    }
+    
+}
+
+
+
+void printTypeTreeNodeCount ()
+{
+    *out << "Types Node Count: \n";
+    for (std::map<int,int>::iterator it = TypesNodeCount.begin(); it != TypesNodeCount.end(); it++)
+    {
+        assert(TIDNames.find(it->first) != TIDNames.end());
+        *out << std::dec << it->first << "(" << TIDNames[it->first] << ")" << " = " << it->second << std::endl;
     }
 }
 
@@ -565,6 +630,10 @@ int main(INT32 argc, CHAR **argv) {
     *out << std::flush;
     buildTypeTreeDepthMap();
     printDepthTree();
+    *out << std::flush;
+    buildTypeTreeNodeCountMap();
+    printTypeTreeNodeCount();
+    *out << std::flush;
     
     // Replace 'Plop' with your file name.
     // std::ifstream           TIDFile(TIDFileName.c_str());
@@ -599,7 +668,7 @@ int main(INT32 argc, CHAR **argv) {
     //     HashMapTID[key] = value;
 
     // }
-    //assert(0);
+    assert(0);
     // Never returns
     PIN_StartProgram();
 
