@@ -89,12 +89,13 @@ DefaultLVPT *lvpt;
 std::map<int, int> TypesDepth;
 std::map<int, int> TypesNodeCount;
 std::map<int, std::string> TIDNames;
-
+std::map<int, int> TypeTreeActiveNodes;
 
 double AverageTypeTreeDepth;
 uint64_t NumOfMemAccesses; 
 double AverageTypeTreeDepthInEpoch;
 uint64_t NumOfMemAccessesInEpoch; 
+uint64_t ActiveCompositeTypes;
 
 
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
@@ -594,7 +595,7 @@ void printTypeTreeNodeCount ()
 }
 
 
-std::map<int, int> TypeTreeActiveNodes;
+
 
 void buildActiveNodes()
 {
@@ -610,7 +611,7 @@ void buildActiveNodes()
         // it's just a basic type
         if (mp.size() < 2)
         {
-            TypeTreeActiveNodes[tid] = 1;
+            TypeTreeActiveNodes[tid] = 0;
             continue;
         }
 
@@ -660,7 +661,7 @@ int main(INT32 argc, CHAR **argv) {
     NumOfMemAccesses = 0; 
     AverageTypeTreeDepthInEpoch = 0;
     NumOfMemAccessesInEpoch = 0; 
-
+    ActiveCompositeTypes = 0;
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);
 
@@ -728,7 +729,7 @@ int main(INT32 argc, CHAR **argv) {
     //     HashMapTID[key] = value;
 
     // }
-    assert(0);
+    //assert(0);
     // Never returns
     PIN_StartProgram();
 
