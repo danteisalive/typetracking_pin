@@ -41,8 +41,9 @@ extern uint64_t NumOfMemAccesses;
 extern double AverageTypeTreeDepthInEpoch;
 extern uint64_t NumOfMemAccessesInEpoch; 
 extern std::map<int, int> TypesDepth;
-extern std::map<int, int> TypeTreeActiveNodes;
-extern uint64_t ActiveCompositeTypes;
+extern std::map<int, std::vector<int> > TypeTreeActiveNodes;
+// extern uint64_t ActiveCompositeTypes;
+extern std::map<int, int> TypeTreeActiveNodesInEpoch;
 
 extern std::map<int, std::map<int, std::set<std::pair<int, int> > > > typeTree;
 
@@ -110,7 +111,7 @@ VOID docount() {
 
         *out << std::dec
              << AverageTypeTreeDepthInEpoch / (double)NumOfMemAccessesInEpoch << " "
-             << (double)ActiveCompositeTypes /  (double)NumOfMemAccessesInEpoch << " "
+             << TypeTreeActiveNodesInEpoch.size() << " "
              << std::endl 
              << std::flush;
         
@@ -118,7 +119,7 @@ VOID docount() {
         //<< std::flush;
         AverageTypeTreeDepthInEpoch = 0;
         NumOfMemAccessesInEpoch = 0;
-        ActiveCompositeTypes = 0;
+        TypeTreeActiveNodesInEpoch.clear();
 
     }
 }
@@ -591,9 +592,14 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 AverageTypeTreeDepthInEpoch += tt_depth_iter->second;
                 AverageTypeTreeDepth += tt_depth_iter->second;
 
-                std::map<int, int>::iterator active_comp_iter = TypeTreeActiveNodes.find(t->info->tid_info->tid);
-                assert(active_comp_iter != TypeTreeActiveNodes.end());
-                ActiveCompositeTypes += active_comp_iter->second;
+                std::map<int, std::vector<int> >::iterator active_comp_iter = TypeTreeActiveNodes.find(t->info->tid_info->tid);
+                if(active_comp_iter != TypeTreeActiveNodes.end())
+                {
+                    for (size_t i = 0; i < active_comp_iter->second.size(); i++ )
+                    {
+                        TypeTreeActiveNodesInEpoch[active_comp_iter->second[i]] = 1;
+                    }
+                }
 
                 if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {
                     //*out << "Could not find effective_info\n";
@@ -709,9 +715,14 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 AverageTypeTreeDepthInEpoch += tt_depth_iter->second;
                 AverageTypeTreeDepth += tt_depth_iter->second;
 
-                std::map<int, int>::iterator active_comp_iter = TypeTreeActiveNodes.find(t->info->tid_info->tid);
-                assert(active_comp_iter != TypeTreeActiveNodes.end());
-                ActiveCompositeTypes += active_comp_iter->second;
+                std::map<int, std::vector<int> >::iterator active_comp_iter = TypeTreeActiveNodes.find(t->info->tid_info->tid);
+                if(active_comp_iter != TypeTreeActiveNodes.end())
+                {
+                    for (size_t i = 0; i < active_comp_iter->second.size(); i++ )
+                    {
+                        TypeTreeActiveNodesInEpoch[active_comp_iter->second[i]] = 1;
+                    }
+                }
 
 
                 if (typeTree.find(t->info->tid_info->tid) == typeTree.end()) {

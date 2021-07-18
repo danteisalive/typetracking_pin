@@ -89,13 +89,14 @@ DefaultLVPT *lvpt;
 std::map<int, int> TypesDepth;
 std::map<int, int> TypesNodeCount;
 std::map<int, std::string> TIDNames;
-std::map<int, int> TypeTreeActiveNodes;
+std::map<int, std::vector<int> > TypeTreeActiveNodes;
+std::map<int, int> TypeTreeActiveNodesInEpoch;
 
 double AverageTypeTreeDepth;
 uint64_t NumOfMemAccesses; 
 double AverageTypeTreeDepthInEpoch;
 uint64_t NumOfMemAccessesInEpoch; 
-uint64_t ActiveCompositeTypes;
+
 
 
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
@@ -611,11 +612,9 @@ void buildActiveNodes()
         // it's just a basic type
         if (mp.size() < 2)
         {
-            TypeTreeActiveNodes[tid] = 0;
             continue;
         }
 
-        int TIDNodeCount = 0;
         std::cout << "TID = " << tid << std::endl;
         while (mpItr != mp.end()) {
             int offset = mpItr->first;
@@ -624,22 +623,21 @@ void buildActiveNodes()
             while (setItr != set.end()) {
                 
                 if ((*setItr).first == tid) {  // Composite Type
-                    TIDNodeCount++;
+                    TypeTreeActiveNodes[tid].push_back((*setItr).first );
                 }
                 else if ((*setItr).second > 8) // Composite Type
                 {
-                    TIDNodeCount++;
+                    TypeTreeActiveNodes[tid].push_back((*setItr).first );
                 }
-                std::cout << "\t\tSubObject TID = " << (*setItr).first << " SubObject Size = " << (*setItr).second << " Composite Node Count = " << TIDNodeCount << std::endl;
+                std::cout << "\t\tSubObject TID = " << (*setItr).first << " SubObject Size = " << (*setItr).second << " Composite Node Count = " << TypeTreeActiveNodes[tid].size() << std::endl;
                 setItr++;
             }
-            std::cout << "\tOffset = " << offset << " Composite Node Count: " << TIDNodeCount << std::endl;
+            std::cout << "\tOffset = " << offset << " Composite Node Count: " << TypeTreeActiveNodes[tid].size() << std::endl;
             mpItr++;
         }
 
 
-        std::cout << std::dec << "Setting TID = " << tid << " Composite Node Counts = " <<  TIDNodeCount << std::endl;
-        TypeTreeActiveNodes[tid] = TIDNodeCount;
+        std::cout << std::dec << "Setting TID = " << tid << " Composite Node Counts = " <<  TypeTreeActiveNodes[tid].size() << std::endl;
         std::cout << std::dec << "--------------------------------------------------" << std::endl;
     }
 
@@ -661,7 +659,7 @@ int main(INT32 argc, CHAR **argv) {
     NumOfMemAccesses = 0; 
     AverageTypeTreeDepthInEpoch = 0;
     NumOfMemAccessesInEpoch = 0; 
-    ActiveCompositeTypes = 0;
+    //ActiveCompositeTypes = 0;
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);
 
@@ -729,7 +727,7 @@ int main(INT32 argc, CHAR **argv) {
     //     HashMapTID[key] = value;
 
     // }
-    //assert(0);
+    // assert(0);
     // Never returns
     PIN_StartProgram();
 
