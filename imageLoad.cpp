@@ -593,6 +593,60 @@ void printTypeTreeNodeCount ()
     }
 }
 
+
+std::map<int, int> TypeTreeActiveNodes;
+
+void buildActiveNodes()
+{
+
+    std::map<int, std::map<int, std::set<std::pair<int, int> > > >::iterator itr;
+
+    for (itr = typeTree.begin(); itr != typeTree.end(); itr++) {
+
+        int tid = itr->first;
+        std::map<int, std::set<std::pair<int, int> > > mp = itr->second;
+        std::map<int, std::set<std::pair<int, int> > >::iterator mpItr = mp.begin();
+        
+        // it's just a basic type
+        if (mp.size() < 2)
+        {
+            TypeTreeActiveNodes[tid] = 1;
+            continue;
+        }
+
+        int TIDNodeCount = 0;
+        std::cout << "TID = " << tid << std::endl;
+        while (mpItr != mp.end()) {
+            int offset = mpItr->first;
+            std::set<std::pair<int, int> > set = mpItr->second;
+            std::set<std::pair<int, int> >::iterator setItr = set.begin();
+            while (setItr != set.end()) {
+                
+                if ((*setItr).first == tid) {  // Composite Type
+                    TIDNodeCount++;
+                }
+                else if ((*setItr).second > 8) // Composite Type
+                {
+                    TIDNodeCount++;
+                }
+                std::cout << "\t\tSubObject TID = " << (*setItr).first << " SubObject Size = " << (*setItr).second << " Composite Node Count = " << TIDNodeCount << std::endl;
+                setItr++;
+            }
+            std::cout << "\tOffset = " << offset << " Composite Node Count: " << TIDNodeCount << std::endl;
+            mpItr++;
+        }
+
+
+        std::cout << std::dec << "Setting TID = " << tid << " Composite Node Counts = " <<  TIDNodeCount << std::endl;
+        TypeTreeActiveNodes[tid] = TIDNodeCount;
+        std::cout << std::dec << "--------------------------------------------------" << std::endl;
+    }
+
+
+
+
+}
+
 int main(INT32 argc, CHAR **argv) {
     PIN_InitSymbols();
     PIN_Init(argc, argv);
@@ -626,14 +680,20 @@ int main(INT32 argc, CHAR **argv) {
     for (itr = effInfos.begin(); itr != effInfos.end(); ++itr) {
         buildTypeTree(itr->second);
     }
+    
     printTypeTree();
     *out << std::flush;
+
+
     buildTypeTreeDepthMap();
     printDepthTree();
     *out << std::flush;
-    buildTypeTreeNodeCountMap();
-    printTypeTreeNodeCount();
-    *out << std::flush;
+
+    // buildTypeTreeNodeCountMap();
+    // printTypeTreeNodeCount();
+    // *out << std::flush;
+    
+    buildActiveNodes();
     
     // Replace 'Plop' with your file name.
     // std::ifstream           TIDFile(TIDFileName.c_str());
