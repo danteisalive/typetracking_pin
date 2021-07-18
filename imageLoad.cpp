@@ -58,6 +58,8 @@ UINT64 NumOfCalls = 0;
 UINT64 icount = 0;
 size_t total_number_of_allocations = 0;
 size_t total_number_of_freed_allocations = 0;
+
+
 #define EFFECTIVETYPECHECK "effective_type_check"
 
 KNOB<string> KnobTypeDotFile(KNOB_MODE_WRITEONCE, "pintool", "d", "merged.dot",
@@ -260,6 +262,7 @@ int main(INT32 argc, CHAR **argv) {
 
     ParentTypePredictor = new DefaultLVPT(1024, 16, 0, 1);
     BasicTypePredictor = new DefaultBasicTypePredictor(1024, 16, 0, 1);
+
 
     // Register Instruction to be called to instrument instructions
     INS_AddInstrumentFunction(Instruction, 0);

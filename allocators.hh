@@ -195,6 +195,7 @@ VOID docount() {
         // find the percentage of type tree
         double totalTypeTreeUsage = 0.0;
         std::vector<double> dist;
+        std::vector<int> spatialCorrelationsInEpochs(3,0);
         for (TypeTreeUsage::iterator it = TyCHETypeTreeUsage.begin(); it != TyCHETypeTreeUsage.end(); it++)
         {
             assert(TyCheTypeLayout.find(it->first) != TyCheTypeLayout.end());
@@ -204,7 +205,7 @@ VOID docount() {
             for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = typeTreeIterator->second.begin(); offsetsIterator != typeTreeIterator->second.end(); offsetsIterator++)
             {
                 dist.push_back(offsetsIterator->second.second);
-                *out << "Offset: " << offsetsIterator->first << " Accsses: " << std::dec << offsetsIterator->second.second << "\n";
+                //*out << "Offset: " << offsetsIterator->first << " Accsses: " << std::dec << offsetsIterator->second.second << "\n";
                 if (offsetsIterator->second.second > 0) subTreeUsed++;
                 offsetsIterator->second.second = 0;
             }
@@ -215,7 +216,10 @@ VOID docount() {
 
             if (dist.size() >= 3){
                 double MoransIndex  = SpatialCorrelation(dist);
-                *out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
+                if (MoransIndex > 0.2)                                  spatialCorrelationsInEpochs[0]++;
+                else if (MoransIndex >= -0.2 && MoransIndex <= 0.2)     spatialCorrelationsInEpochs[1]++;
+                else                                                    spatialCorrelationsInEpochs[2]++;
+                //*out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
             }
 
             dist.clear();
@@ -295,6 +299,9 @@ VOID docount() {
             << total_number_of_allocations << " "
             << total_number_of_freed_allocations << " "
             << (totalTypeTreeUsage * 100.0 / TyCHETypeTreeUsage.size()) << " "
+            << spatialCorrelationsInEpochs[0] << " "
+            << spatialCorrelationsInEpochs[1] << " "
+            << spatialCorrelationsInEpochs[2] << " "
             << '\n'
             << std::flush;
 
