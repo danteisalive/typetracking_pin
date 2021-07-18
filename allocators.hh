@@ -87,6 +87,33 @@ size_t FindOffset(const EFFECTIVE_TYPE *t, const void* ptr, ADDRINT pc);
 void AccessMetaCache(const EFFECTIVE_TYPE* t, const size_t offset);
 void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc);
 
+double SpatialCorrelation(std::vector<double>& vals)
+{
+    assert(vals.size() >= 3);
+    double mean;
+    double totalValues = 0;
+    for (size_t i = 0; i < vals.size(); i++)
+    {
+        totalValues += vals[i];
+    }
+    mean = totalValues/(double)vals.size();
+
+    double sigma = (vals[0] - mean) * (vals[0] - mean);
+    double nominator = 1.0 * (vals[0] - mean) * (vals[1] - mean);
+    for (size_t i = 1; i < vals.size()-1; i++)
+    {
+        sigma       += (vals[i] - mean) * (vals[i] - mean); 
+        nominator   += 0.5 * (vals[i] - mean) * (vals[i-1] - mean);
+        nominator   += 0.5 * (vals[i] - mean) * (vals[i+1] - mean);
+    }
+    sigma += (vals[vals.size()-1] - mean) * (vals[vals.size()-1] - mean);
+    nominator += 1.0 * (vals[vals.size()-1] - mean) * (vals[vals.size()-2] - mean);
+
+    double MoransIndex = nominator/sigma;
+    return MoransIndex;
+    
+}
+
 uint64_t Val2Str(const PIN_REGISTER &value, const UINT size) {
     //*out << "Called Val2Str2 with size=" << size << "\n" << std::flush;
     switch (size) {
@@ -167,6 +194,7 @@ VOID docount() {
 
         // find the percentage of type tree
         double totalTypeTreeUsage = 0.0;
+        std::vector<double> dist;
         for (TypeTreeUsage::iterator it = TyCHETypeTreeUsage.begin(); it != TyCHETypeTreeUsage.end(); it++)
         {
             assert(TyCheTypeLayout.find(it->first) != TyCheTypeLayout.end());
@@ -175,6 +203,8 @@ VOID docount() {
             int subTreeUsed = 0;
             for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = typeTreeIterator->second.begin(); offsetsIterator != typeTreeIterator->second.end(); offsetsIterator++)
             {
+                dist.push_back(offsetsIterator->second.second);
+                *out << "Offset: " << offsetsIterator->first << " Accsses: " << std::dec << offsetsIterator->second.second << "\n";
                 if (offsetsIterator->second.second > 0) subTreeUsed++;
                 offsetsIterator->second.second = 0;
             }
@@ -183,8 +213,68 @@ VOID docount() {
             double percentage = (double)subTreeUsed/(double)typeTreeIterator->second.size();
             totalTypeTreeUsage += percentage;
 
+            if (dist.size() >= 3){
+                double MoransIndex  = SpatialCorrelation(dist);
+                *out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
+            }
+
+            dist.clear();
+
         }
 
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // dist.push_back(100);
+        // if (dist.size() >= 3){
+        //     double MoransIndex  = SpatialCorrelation(dist);
+        //     *out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
+        // }
+        // dist.clear();
+
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // dist.push_back(0);
+        // dist.push_back(0);
+        // dist.push_back(0);
+        // dist.push_back(0);
+        // if (dist.size() >= 3){
+        //     double MoransIndex  = SpatialCorrelation(dist);
+        //     *out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
+        // }
+        // dist.clear();
+
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // dist.push_back(0);
+        // dist.push_back(40);
+        // dist.push_back(100);
+        // dist.push_back(10);
+        // dist.push_back(0);
+        // dist.push_back(0);
+        // dist.push_back(10);
+        // dist.push_back(0);
+        // dist.push_back(100);
+        // dist.push_back(100);
+        // dist.push_back(0);
+        // if (dist.size() >= 3){
+        //     double MoransIndex  = SpatialCorrelation(dist);
+        //     *out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
+        // }
         // for (TypesLayout::iterator it = TyCheTypeLayout.begin(); it != TyCheTypeLayout.end(); it++)
         // {
         //     for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = it->second.begin(); offsetsIterator != it->second.end(); offsetsIterator++)
