@@ -98,7 +98,6 @@ double AverageTypeTreeDepthInEpoch;
 uint64_t NumOfMemAccessesInEpoch; 
 
 
-
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 <<
     // std::endl;
@@ -310,7 +309,27 @@ VOID Fini(INT32 code, VOID *v) {
     *out << AverageTypeTreeDepth/(double)NumOfMemAccesses << " "
          << std::endl << std::flush;
 
+    std::map<int,int> compositeTypes;
+    for (std::map<int, std::vector<int> >::iterator itr = TypeTreeActiveNodes.begin(); itr != TypeTreeActiveNodes.end(); itr++) {
+        for (size_t  i = 0; i < itr->second.size(); i++)
+        {
+            compositeTypes[itr->second[i]] = 1;
+        }
+    }
+    *out << "Total Number of Composite Types: " << compositeTypes.size() << "\n";
+
+    int maxDepth = 0;
+    for (std::map<int,int>::iterator it = TypesDepth.begin(); it != TypesDepth.end(); it++)
+    {
+        if (it->second > maxDepth) maxDepth = it->second;
+    }
+    *out << "Type Tree Max Depth: " << maxDepth << "\n";
+
+
     out->close();
+
+
+
 }
 void retreiveEffInfosFromFile(const std::string hashFileName) {
     //*out << hashFileName << "\n";
@@ -640,6 +659,7 @@ void buildActiveNodes()
         std::cout << std::dec << "Setting TID = " << tid << " Composite Node Counts = " <<  TypeTreeActiveNodes[tid].size() << std::endl;
         std::cout << std::dec << "--------------------------------------------------" << std::endl;
     }
+    
 
 
 
@@ -727,7 +747,7 @@ int main(INT32 argc, CHAR **argv) {
     //     HashMapTID[key] = value;
 
     // }
-    // assert(0);
+    //assert(0);
     // Never returns
     PIN_StartProgram();
 
