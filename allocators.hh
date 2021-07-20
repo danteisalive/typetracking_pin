@@ -64,7 +64,8 @@ extern TypesCount TC;
 extern InsTypeCount ITC;
 extern InsTypeCount ParrentTypeIDs;
 extern TypesLayout TyCheTypeLayout;
-extern TypeTreeUsage TyCHETypeTreeUsage;
+//extern TypeTreeUsage TyCHETypeTreeUsage;
+extern TypesLayout AllocationsTypes;
 extern UINT64 ParentTID;
 
 extern UINT64 NumOfCalls;
@@ -80,12 +81,40 @@ extern UINT64 icount;
 extern size_t total_number_of_allocations;
 extern size_t total_number_of_freed_allocations;
 
+extern double overallLayoutUsage;
+extern std::vector<uint64_t> overalSpatialCorrelation;
+extern uint64_t overallLiveAllocations;
+
 
 void VerifyTypeLayout(const EFFECTIVE_TYPE* t);
 void UpdateStatics(const EFFECTIVE_META * meta);
 size_t FindOffset(const EFFECTIVE_TYPE *t, const void* ptr, ADDRINT pc);
 void AccessMetaCache(const EFFECTIVE_TYPE* t, const size_t offset);
 void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc);
+
+void InsertIntoAllocationsTypes(const EFFECTIVE_META * meta, uint64_t offset)
+{
+
+    const EFFECTIVE_TYPE *t = meta->type;
+    uint64_t PID = meta->PID;
+    uint64_t TID = (uint64_t)t->tyche_meta;
+    // we already have an entry for this allocation PID
+    if (AllocationsTypes.find(PID) == AllocationsTypes.end())
+    {
+        // use TID to find the layout of the allocation
+        assert(TyCheTypeLayout.find(TID) != TyCheTypeLayout.end());
+
+        if (TyCheTypeLayout[TID].size() < 3) return;
+
+        AllocationsTypes[PID] = TyCheTypeLayout[TID];
+    }
+
+    if (AllocationsTypes[PID].find(offset) != AllocationsTypes[PID].end())
+    {
+        AllocationsTypes[PID][offset].second++;
+    }
+}
+
 
 double SpatialCorrelation(std::vector<double>& vals)
 {
@@ -193,37 +222,68 @@ VOID docount() {
         
 
         // find the percentage of type tree
+        // double totalTypeTreeUsage = 0.0;
+        // for (TypeTreeUsage::iterator it = TyCHETypeTreeUsage.begin(); it != TyCHETypeTreeUsage.end(); it++)
+        // {
+        //     // assert(TyCheTypeLayout.find(it->first) != TyCheTypeLayout.end());
+        //     // TypesLayout::iterator typeTreeIterator = TyCheTypeLayout.find(it->first);
+        //     // assert(typeTreeIterator != TyCheTypeLayout.end());
+        //     // int subTreeUsed = 0;
+        //     for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = typeTreeIterator->second.begin(); offsetsIterator != typeTreeIterator->second.end(); offsetsIterator++)
+        //     {
+        //         //*out << "Offset: " << offsetsIterator->first << " Accsses: " << std::dec << offsetsIterator->second.second << "\n";
+        //         // if (offsetsIterator->second.second > 0) subTreeUsed++;
+        //         offsetsIterator->second.second = 0;
+        //     }
+
+        //     // assert(typeTreeIterator->second.size() != 0);
+        //     // double percentage = (double)subTreeUsed/(double)typeTreeIterator->second.size();
+        //     // totalTypeTreeUsage += percentage;
+
+        // }
+
         double totalTypeTreeUsage = 0.0;
+        uint64_t totalLiveAllocations = 0;
         std::vector<double> dist;
         std::vector<int> spatialCorrelationsInEpochs(3,0);
-        for (TypeTreeUsage::iterator it = TyCHETypeTreeUsage.begin(); it != TyCHETypeTreeUsage.end(); it++)
+        for (TypesLayout::iterator it = AllocationsTypes.begin(); it != AllocationsTypes.end(); it++)
         {
-            assert(TyCheTypeLayout.find(it->first) != TyCheTypeLayout.end());
-            TypesLayout::iterator typeTreeIterator = TyCheTypeLayout.find(it->first);
-            assert(typeTreeIterator != TyCheTypeLayout.end());
+            totalLiveAllocations++;
             int subTreeUsed = 0;
-            for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = typeTreeIterator->second.begin(); offsetsIterator != typeTreeIterator->second.end(); offsetsIterator++)
+            for (std::map<uint64_t,std::pair<std::string, uint64_t> >::iterator offsetsIterator = it->second.begin(); offsetsIterator != it->second.end(); offsetsIterator++)
             {
-                dist.push_back(offsetsIterator->second.second);
-                //*out << "Offset: " << offsetsIterator->first << " Accsses: " << std::dec << offsetsIterator->second.second << "\n";
                 if (offsetsIterator->second.second > 0) subTreeUsed++;
-                offsetsIterator->second.second = 0;
+                dist.push_back(offsetsIterator->second.second);
             }
 
-            assert(typeTreeIterator->second.size() != 0);
-            double percentage = (double)subTreeUsed/(double)typeTreeIterator->second.size();
+            assert(dist.size() >= 3);
+
+            double MoransIndex  = SpatialCorrelation(dist);
+            if (MoransIndex > 0.2)                                  spatialCorrelationsInEpochs[0]++;
+            else if (MoransIndex >= -0.2 && MoransIndex <= 0.2)     spatialCorrelationsInEpochs[1]++;
+            else                                                    spatialCorrelationsInEpochs[2]++;
+            //*out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
+            assert(it->second.size()> 0);
+            double percentage = (double)subTreeUsed/(double)it->second.size();
             totalTypeTreeUsage += percentage;
-
-            if (dist.size() >= 3){
-                double MoransIndex  = SpatialCorrelation(dist);
-                if (MoransIndex > 0.2)                                  spatialCorrelationsInEpochs[0]++;
-                else if (MoransIndex >= -0.2 && MoransIndex <= 0.2)     spatialCorrelationsInEpochs[1]++;
-                else                                                    spatialCorrelationsInEpochs[2]++;
-                //*out << "Layout Size: " << dist.size() << " MoransIndex: " << std::dec << MoransIndex << "\n";
-            }
-
             dist.clear();
 
+        }
+
+        overallLayoutUsage      += totalTypeTreeUsage;
+        overallLiveAllocations  += totalLiveAllocations;
+        overalSpatialCorrelation[0] += spatialCorrelationsInEpochs[0];
+        overalSpatialCorrelation[1] += spatialCorrelationsInEpochs[1];
+        overalSpatialCorrelation[2] += spatialCorrelationsInEpochs[2];
+        
+        double layoutUsage = 0.0;
+        std::vector<double> spatialCorrelationsPercentageInEpochs(3,0.0);
+        if (totalLiveAllocations != 0)
+        {
+            layoutUsage = totalTypeTreeUsage * 100.0 / (double)totalLiveAllocations;
+            spatialCorrelationsPercentageInEpochs[0] = (double)spatialCorrelationsInEpochs[0] * 100.0 / (double)totalLiveAllocations;
+            spatialCorrelationsPercentageInEpochs[1] = (double)spatialCorrelationsInEpochs[1] * 100.0 / (double)totalLiveAllocations;
+            spatialCorrelationsPercentageInEpochs[2] = (double)spatialCorrelationsInEpochs[2] * 100.0 / (double)totalLiveAllocations;
         }
 
         // dist.push_back(100);
@@ -298,7 +358,11 @@ VOID docount() {
             << uniqueTypes95Percent << " "
             << total_number_of_allocations << " "
             << total_number_of_freed_allocations << " "
-            << (totalTypeTreeUsage * 100.0 / TyCHETypeTreeUsage.size()) << " "
+            << totalLiveAllocations << " "
+            << layoutUsage << " "
+            << spatialCorrelationsPercentageInEpochs[0] << " "
+            << spatialCorrelationsPercentageInEpochs[1] << " "
+            << spatialCorrelationsPercentageInEpochs[2] << " "
             << spatialCorrelationsInEpochs[0] << " "
             << spatialCorrelationsInEpochs[1] << " "
             << spatialCorrelationsInEpochs[2] << " "
@@ -318,7 +382,8 @@ VOID docount() {
 
         TC.clear();
         TypesUsedInEpoch.clear();
-        TyCHETypeTreeUsage.clear();
+        // TyCHETypeTreeUsage.clear();
+        AllocationsTypes.clear();
 
         
 
@@ -401,6 +466,8 @@ VOID RecordMemRead(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
                 // Access Parent and Basic Type Predictors
                 AccessTypePredictors(t, offset, pc);
 
+                InsertIntoAllocationsTypes(meta, offset);
+
             }
 
         }
@@ -449,6 +516,8 @@ VOID RecordMemWrite(ADDRINT pc, ADDRINT addr, ADDRINT size, string *disass,
 
                 // Access Parent and Basic Type Predictors
                 AccessTypePredictors(t, offset, pc);
+
+                InsertIntoAllocationsTypes(meta, offset);
                 
             }
 
@@ -763,8 +832,8 @@ void AccessTypePredictors(const EFFECTIVE_TYPE *t, size_t offset, ADDRINT pc)
     //assert(offsetsIterator != typeTreeIterator->second.end());
     if (offsetsIterator != typeTreeIterator->second.end())
     {
-        TyCHETypeTreeUsage[(uint64_t)t->tyche_meta] = 0;
-        offsetsIterator->second.second++;
+        // TyCHETypeTreeUsage[(uint64_t)t->tyche_meta] = 0;
+        // offsetsIterator->second.second++;
         BasicTypePredictor->lookup((uint64_t)pc, offsetsIterator->second.first);
     }
 }

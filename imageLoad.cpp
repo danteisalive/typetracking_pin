@@ -77,10 +77,15 @@ InsTypeCount ParrentTypeIDs;
 TypesLayout  TyCheTypeLayout;
 UINT64 ParentTID;
 InsTypeCount TypesUsedInEpoch;
-TypeTreeUsage TyCHETypeTreeUsage;
+// TypeTreeUsage TyCHETypeTreeUsage;
+TypesLayout AllocationsTypes;
 
 DefaultLVPT *ParentTypePredictor;
 DefaultBasicTypePredictor *BasicTypePredictor;
+
+double overallLayoutUsage;
+std::vector<uint64_t> overalSpatialCorrelation;
+uint64_t overallLiveAllocations;
 
 VOID Arg1Before(CHAR *name, ADDRINT arg1, ADDRINT arg2) {
     //*out << "EFFECTIVE_SAN: " << arg1 << " and hex : " << std::hex << arg1 <<
@@ -248,6 +253,15 @@ VOID Fini(INT32 code, VOID *v) {
     *out << "------------------------------------------------------------------------\n" << std::flush;
 
 
+    *out << std::dec
+            << overallLiveAllocations << " "
+            << overallLayoutUsage  * 100.0 /  (double)overallLiveAllocations << " "
+            << (double)overalSpatialCorrelation[0] * 100.0 / (double)overallLiveAllocations << " "
+            << (double)overalSpatialCorrelation[1] * 100.0 / (double)overallLiveAllocations << " "
+            << (double)overalSpatialCorrelation[2] * 100.0 / (double)overallLiveAllocations << " "
+            << '\n'
+            << std::flush;
+
     out->close();
 }
 
@@ -262,6 +276,11 @@ int main(INT32 argc, CHAR **argv) {
 
     ParentTypePredictor = new DefaultLVPT(1024, 16, 0, 1);
     BasicTypePredictor = new DefaultBasicTypePredictor(1024, 16, 0, 1);
+
+
+    overallLayoutUsage = 0.0;
+    overalSpatialCorrelation.resize(3,0);
+    overallLiveAllocations = 0;
 
 
     // Register Instruction to be called to instrument instructions
